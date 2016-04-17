@@ -1,0 +1,590 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LibFuzzer – a library for coverage-guided fuzz testing. &mdash; LLVM 3.8 文档</title>
+    
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="next" title="LLVM Alias Analysis Infrastructure" href="AliasAnalysis.html" />
+    <link rel="prev" title="LLVM Extensions" href="Extensions.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body role="document">
+<div class="logo">
+  <a href="index.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="AliasAnalysis.html" title="LLVM Alias Analysis Infrastructure"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="Extensions.html" title="LLVM Extensions"
+             accesskey="P">上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="libfuzzer-a-library-for-coverage-guided-fuzz-testing">
+<h1>LibFuzzer &#8211; a library for coverage-guided fuzz testing.<a class="headerlink" href="#libfuzzer-a-library-for-coverage-guided-fuzz-testing" title="永久链接至标题">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id4">Introduction</a></li>
+<li><a class="reference internal" href="#flags" id="id5">Flags</a></li>
+<li><a class="reference internal" href="#usage-examples" id="id6">Usage examples</a><ul>
+<li><a class="reference internal" href="#toy-example" id="id7">Toy example</a></li>
+<li><a class="reference internal" href="#pcre2" id="id8">PCRE2</a></li>
+<li><a class="reference internal" href="#heartbleed" id="id9">Heartbleed</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-features" id="id10">Advanced features</a><ul>
+<li><a class="reference internal" href="#dictionaries" id="id11">Dictionaries</a></li>
+<li><a class="reference internal" href="#data-flow-guided-fuzzing" id="id12">Data-flow-guided fuzzing</a></li>
+<li><a class="reference internal" href="#afl-compatibility" id="id13">AFL compatibility</a></li>
+<li><a class="reference internal" href="#how-good-is-my-fuzzer" id="id14">How good is my fuzzer?</a></li>
+<li><a class="reference internal" href="#user-supplied-mutators" id="id15">User-supplied mutators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fuzzing-components-of-llvm" id="id16">Fuzzing components of LLVM</a><ul>
+<li><a class="reference internal" href="#clang-format-fuzzer" id="id17">clang-format-fuzzer</a></li>
+<li><a class="reference internal" href="#clang-fuzzer" id="id18">clang-fuzzer</a></li>
+<li><a class="reference internal" href="#llvm-as-fuzzer" id="id19">llvm-as-fuzzer</a></li>
+<li><a class="reference internal" href="#llvm-mc-fuzzer" id="id20">llvm-mc-fuzzer</a></li>
+<li><a class="reference internal" href="#buildbot" id="id21">Buildbot</a></li>
+<li><a class="reference internal" href="#pre-fuzzed-test-inputs-in-git" id="id22">Pre-fuzzed test inputs in git</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#faq" id="id23">FAQ</a><ul>
+<li><a class="reference internal" href="#q-why-fuzzer-does-not-use-any-of-the-llvm-support" id="id24">Q. Why Fuzzer does not use any of the LLVM support?</a></li>
+<li><a class="reference internal" href="#q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows" id="id25">Q. What about Windows then? The Fuzzer contains code that does not build on Windows.</a></li>
+<li><a class="reference internal" href="#q-when-this-fuzzer-is-not-a-good-solution-for-a-problem" id="id26">Q. When this Fuzzer is not a good solution for a problem?</a></li>
+<li><a class="reference internal" href="#q-so-what-exactly-this-fuzzer-is-good-for" id="id27">Q. So, what exactly this Fuzzer is good for?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#trophies" id="id28">Trophies</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p>This library is intended primarily for in-process coverage-guided fuzz testing
+(fuzzing) of other libraries. The typical workflow looks like this:</p>
+<ul class="simple">
+<li>Build the Fuzzer library as a static archive (or just a set of .o files).
+Note that the Fuzzer contains the main() function.
+Preferably do <em>not</em> use sanitizers while building the Fuzzer.</li>
+<li>Build the library you are going to test with
+<cite>-fsanitize-coverage={bb,edge}[,indirect-calls,8bit-counters]</cite>
+and one of the sanitizers. We recommend to build the library in several
+different modes (e.g. asan, msan, lsan, ubsan, etc) and even using different
+optimizations options (e.g. -O0, -O1, -O2) to diversify testing.</li>
+<li>Build a test driver using the same options as the library.
+The test driver is a C/C++ file containing interesting calls to the library
+inside a single function  <code class="docutils literal"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span> <span class="pre">int</span> <span class="pre">LLVMFuzzerTestOneInput(const</span> <span class="pre">uint8_t</span> <span class="pre">*Data,</span> <span class="pre">size_t</span> <span class="pre">Size);</span></code>.
+Currently, the only expected return value is 0, others are reserved for future.</li>
+<li>Link the Fuzzer, the library and the driver together into an executable
+using the same sanitizer options as for the library.</li>
+<li>Collect the initial corpus of inputs for the
+fuzzer (a directory with test inputs, one file per input).
+The better your inputs are the faster you will find something interesting.
+Also try to keep your inputs small, otherwise the Fuzzer will run too slow.
+By default, the Fuzzer limits the size of every input to 64 bytes
+(use <code class="docutils literal"><span class="pre">-max_len=N</span></code> to override).</li>
+<li>Run the fuzzer with the test corpus. As new interesting test cases are
+discovered they will be added to the corpus. If a bug is discovered by
+the sanitizer (asan, etc) it will be reported as usual and the reproducer
+will be written to disk.
+Each Fuzzer process is single-threaded (unless the library starts its own
+threads). You can run the Fuzzer on the same corpus in multiple processes
+in parallel.</li>
+</ul>
+<p>The Fuzzer is similar in concept to <a class="reference external" href="http://lcamtuf.coredump.cx/afl/">AFL</a>,
+but uses in-process Fuzzing, which is more fragile, more restrictive, but
+potentially much faster as it has no overhead for process start-up.
+It uses LLVM&#8217;s <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html">SanitizerCoverage</a> instrumentation to get in-process
+coverage-feedback</p>
+<p>The code resides in the LLVM repository, requires the fresh Clang compiler to build
+and is used to fuzz various parts of LLVM,
+but the Fuzzer itself does not (and should not) depend on any
+part of LLVM and can be used for other projects w/o requiring the rest of LLVM.</p>
+</div>
+<div class="section" id="flags">
+<h2><a class="toc-backref" href="#id5">Flags</a><a class="headerlink" href="#flags" title="永久链接至标题">¶</a></h2>
+<p>The most important flags are:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>seed                                  0       Random seed. If 0, seed is generated.
+runs                                  -1      Number of individual test runs (-1 for infinite runs).
+max_len                               64      Maximum length of the test input.
+cross_over                            1       If 1, cross over inputs.
+mutate_depth                          5       Apply this number of consecutive mutations to each input.
+timeout                               1200    Timeout in seconds (if positive). If one unit runs more than this number of seconds the process will abort.
+max_total_time                        0       If positive, indicates the maximal total time in seconds to run the fuzzer.
+help                                  0       Print help.
+merge                                 0       If 1, the 2-nd, 3-rd, etc corpora will be merged into the 1-st corpus. Only interesting units will be taken.
+jobs                                  0       Number of jobs to run. If jobs &gt;= 1 we spawn this number of jobs in separate worker processes with stdout/stderr redirected to fuzz-JOB.log.
+workers                               0       Number of simultaneous worker processes to run the jobs. If zero, &quot;min(jobs,NumberOfCpuCores()/2)&quot; is used.
+sync_command                          0       Execute an external command &quot;&lt;sync_command&gt; &lt;test_corpus&gt;&quot; to synchronize the test corpus.
+sync_timeout                          600     Minimum timeout between syncs.
+use_traces                            0       Experimental: use instruction traces
+only_ascii                            0       If 1, generate only ASCII (isprint+isspace) inputs.
+test_single_input                     &quot;&quot;      Use specified file content as test input. Test will be run only once. Useful for debugging a particular case.
+artifact_prefix                       &quot;&quot;      Write fuzzing artifacts (crash, timeout, or slow inputs) as $(artifact_prefix)file
+exact_artifact_path                   &quot;&quot;      Write the single artifact on failure (crash, timeout) as $(exact_artifact_path). This overrides -artifact_prefix and will not use checksum in the file name. Do not use the same path for several parallel processes.
+</pre></div>
+</div>
+<p>For the full list of flags run the fuzzer binary with <code class="docutils literal"><span class="pre">-help=1</span></code>.</p>
+</div>
+<div class="section" id="usage-examples">
+<h2><a class="toc-backref" href="#id6">Usage examples</a><a class="headerlink" href="#usage-examples" title="永久链接至标题">¶</a></h2>
+<div class="section" id="toy-example">
+<h3><a class="toc-backref" href="#id7">Toy example</a><a class="headerlink" href="#toy-example" title="永久链接至标题">¶</a></h3>
+<p>A simple function that does something interesting if it receives the input &#8220;HI!&#8221;:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="n">EOF</span> <span class="o">&gt;&gt;</span> <span class="n">test_fuzzer</span><span class="o">.</span><span class="n">cc</span>
+<span class="c1">#include &lt;stdint.h&gt;</span>
+<span class="c1">#include &lt;stddef.h&gt;</span>
+<span class="n">extern</span> <span class="s2">&quot;C&quot;</span> <span class="nb">int</span> <span class="n">LLVMFuzzerTestOneInput</span><span class="p">(</span><span class="n">const</span> <span class="n">uint8_t</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">)</span>
+       <span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;!&#39;</span><span class="p">)</span>
+       <span class="n">__builtin_trap</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">EOF</span>
+<span class="c1"># Get lib/Fuzzer. Assuming that you already have fresh clang in PATH.</span>
+<span class="n">svn</span> <span class="n">co</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">llvm</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">svn</span><span class="o">/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">trunk</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">Fuzzer</span>
+<span class="c1"># Build lib/Fuzzer files.</span>
+<span class="n">clang</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">O2</span> <span class="o">-</span><span class="n">std</span><span class="o">=</span><span class="n">c</span><span class="o">++</span><span class="mi">11</span> <span class="n">Fuzzer</span><span class="o">/*.</span><span class="n">cpp</span> <span class="o">-</span><span class="n">IFuzzer</span>
+<span class="c1"># Build test_fuzzer.cc with asan and link against lib/Fuzzer.</span>
+<span class="n">clang</span><span class="o">++</span> <span class="o">-</span><span class="n">fsanitize</span><span class="o">=</span><span class="n">address</span> <span class="o">-</span><span class="n">fsanitize</span><span class="o">-</span><span class="n">coverage</span><span class="o">=</span><span class="n">edge</span> <span class="n">test_fuzzer</span><span class="o">.</span><span class="n">cc</span> <span class="n">Fuzzer</span><span class="o">*.</span><span class="n">o</span>
+<span class="c1"># Run the fuzzer with no corpus.</span>
+<span class="o">./</span><span class="n">a</span><span class="o">.</span><span class="n">out</span>
+</pre></div>
+</div>
+<p>You should get <code class="docutils literal"><span class="pre">Illegal</span> <span class="pre">instruction</span> <span class="pre">(core</span> <span class="pre">dumped)</span></code> pretty quickly.</p>
+</div>
+<div class="section" id="pcre2">
+<h3><a class="toc-backref" href="#id8">PCRE2</a><a class="headerlink" href="#pcre2" title="永久链接至标题">¶</a></h3>
+<p>Here we show how to use lib/Fuzzer on something real, yet simple: <a class="reference external" href="http://www.pcre.org/">pcre2</a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>COV_FLAGS=&quot; -fsanitize-coverage=edge,indirect-calls,8bit-counters&quot;
+# Get PCRE2
+svn co svn://vcs.exim.org/pcre2/code/trunk pcre
+# Get lib/Fuzzer. Assuming that you already have fresh clang in PATH.
+svn co http://llvm.org/svn/llvm-project/llvm/trunk/lib/Fuzzer
+# Build PCRE2 with AddressSanitizer and coverage.
+(cd pcre; ./autogen.sh; CC=&quot;clang -fsanitize=address $COV_FLAGS&quot; ./configure --prefix=`pwd`/../inst &amp;&amp; make -j &amp;&amp; make install)
+# Build lib/Fuzzer files.
+clang -c -g -O2 -std=c++11 Fuzzer/*.cpp -IFuzzer
+# Build the actual function that does something interesting with PCRE2.
+cat &lt;&lt; EOF &gt; pcre_fuzzer.cc
+#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+#include &quot;pcre2posix.h&quot;
+extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+  if (size &lt; 1) return 0;
+  char *str = new char[size+1];
+  memcpy(str, data, size);
+  str[size] = 0;
+  regex_t preg;
+  if (0 == regcomp(&amp;preg, str, 0)) {
+    regexec(&amp;preg, str, 0, 0, 0);
+    regfree(&amp;preg);
+  }
+  delete [] str;
+  return 0;
+}
+EOF
+clang++ -g -fsanitize=address $COV_FLAGS -c -std=c++11  -I inst/include/ pcre_fuzzer.cc
+# Link.
+clang++ -g -fsanitize=address -Wl,--whole-archive inst/lib/*.a -Wl,-no-whole-archive Fuzzer*.o pcre_fuzzer.o -o pcre_fuzzer
+</pre></div>
+</div>
+<p>This will give you a binary of the fuzzer, called <code class="docutils literal"><span class="pre">pcre_fuzzer</span></code>.
+Now, create a directory that will hold the test corpus:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="n">CORPUS</span>
+</pre></div>
+</div>
+<p>For simple input languages like regular expressions this is all you need.
+For more complicated inputs populate the directory with some input samples.
+Now run the fuzzer with the corpus dir as the only parameter:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">pcre_fuzzer</span> <span class="o">./</span><span class="n">CORPUS</span>
+</pre></div>
+</div>
+<p>You will see output like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Seed</span><span class="p">:</span> <span class="mi">1876794929</span>
+<span class="c1">#0      READ   cov 0 bits 0 units 1 exec/s 0</span>
+<span class="c1">#1      pulse  cov 3 bits 0 units 1 exec/s 0</span>
+<span class="c1">#1      INITED cov 3 bits 0 units 1 exec/s 0</span>
+<span class="c1">#2      pulse  cov 208 bits 0 units 1 exec/s 0</span>
+<span class="c1">#2      NEW    cov 208 bits 0 units 2 exec/s 0 L: 64</span>
+<span class="c1">#3      NEW    cov 217 bits 0 units 3 exec/s 0 L: 63</span>
+<span class="c1">#4      pulse  cov 217 bits 0 units 3 exec/s 0</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">Seed:</span></code> line shows you the current random seed (you can change it with <code class="docutils literal"><span class="pre">-seed=N</span></code> flag).</li>
+<li>The <code class="docutils literal"><span class="pre">READ</span></code>  line shows you how many input files were read (since you passed an empty dir there were inputs, but one dummy input was synthesised).</li>
+<li>The <code class="docutils literal"><span class="pre">INITED</span></code> line shows you that how many inputs will be fuzzed.</li>
+<li>The <code class="docutils literal"><span class="pre">NEW</span></code> lines appear with the fuzzer finds a new interesting input, which is saved to the CORPUS dir. If multiple corpus dirs are given, the first one is used.</li>
+<li>The <code class="docutils literal"><span class="pre">pulse</span></code> lines appear periodically to show the current status.</li>
+</ul>
+<p>Now, interrupt the fuzzer and run it again the same way. You will see:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Seed</span><span class="p">:</span> <span class="mi">1879995378</span>
+<span class="c1">#0      READ   cov 0 bits 0 units 564 exec/s 0</span>
+<span class="c1">#1      pulse  cov 502 bits 0 units 564 exec/s 0</span>
+<span class="o">...</span>
+<span class="c1">#512    pulse  cov 2933 bits 0 units 564 exec/s 512</span>
+<span class="c1">#564    INITED cov 2991 bits 0 units 344 exec/s 564</span>
+<span class="c1">#1024   pulse  cov 2991 bits 0 units 344 exec/s 1024</span>
+<span class="c1">#1455   NEW    cov 2995 bits 0 units 345 exec/s 1455 L: 49</span>
+</pre></div>
+</div>
+<p>This time you were running the fuzzer with a non-empty input corpus (564 items).
+As the first step, the fuzzer minimized the set to produce 344 interesting items (the <code class="docutils literal"><span class="pre">INITED</span></code> line)</p>
+<p>It is quite convenient to store test corpuses in git.
+As an example, here is a git repository with test inputs for the above PCRE2 fuzzer:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">kcc</span><span class="o">/</span><span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">.</span><span class="n">git</span>
+<span class="o">./</span><span class="n">pcre_fuzzer</span> <span class="o">./</span><span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">/</span><span class="n">pcre2</span><span class="o">/</span><span class="n">C1</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>You may run <code class="docutils literal"><span class="pre">N</span></code> independent fuzzer jobs in parallel on <code class="docutils literal"><span class="pre">M</span></code> CPUs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>N=100; M=4; ./pcre_fuzzer ./CORPUS -jobs=$N -workers=$M
+</pre></div>
+</div>
+<p>By default (<code class="docutils literal"><span class="pre">-reload=1</span></code>) the fuzzer processes will periodically scan the CORPUS directory
+and reload any new tests. This way the test inputs found by one process will be picked up
+by all others.</p>
+<p>If <code class="docutils literal"><span class="pre">-workers=$M</span></code> is not supplied, <code class="docutils literal"><span class="pre">min($N,NumberOfCpuCore/2)</span></code> will be used.</p>
+</div>
+<div class="section" id="heartbleed">
+<h3><a class="toc-backref" href="#id9">Heartbleed</a><a class="headerlink" href="#heartbleed" title="永久链接至标题">¶</a></h3>
+<p>Remember <a class="reference external" href="http://en.wikipedia.org/wiki/Heartbleed">Heartbleed</a>?
+As it was recently <a class="reference external" href="https://blog.hboeck.de/archives/868-How-Heartbleed-couldve-been-found.html">shown</a>,
+fuzzing with AddressSanitizer can find Heartbleed. Indeed, here are the step-by-step instructions
+to find Heartbleed with LibFuzzer:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">openssl</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">openssl</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="n">f</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="n">xf</span> <span class="n">openssl</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="n">f</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">COV_FLAGS</span><span class="o">=</span><span class="s2">&quot;-fsanitize-coverage=edge,indirect-calls&quot;</span> <span class="c1"># -fsanitize-coverage=8bit-counters</span>
+<span class="p">(</span><span class="n">cd</span> <span class="n">openssl</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="n">f</span><span class="o">/</span> <span class="o">&amp;&amp;</span> <span class="o">./</span><span class="n">config</span> <span class="o">&amp;&amp;</span>
+  <span class="n">make</span> <span class="o">-</span><span class="n">j</span> <span class="mi">32</span> <span class="n">CC</span><span class="o">=</span><span class="s2">&quot;clang -g -fsanitize=address $COV_FLAGS&quot;</span><span class="p">)</span>
+<span class="c1"># Get and build LibFuzzer</span>
+<span class="n">svn</span> <span class="n">co</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">llvm</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">svn</span><span class="o">/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">trunk</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">Fuzzer</span>
+<span class="n">clang</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">O2</span> <span class="o">-</span><span class="n">std</span><span class="o">=</span><span class="n">c</span><span class="o">++</span><span class="mi">11</span> <span class="n">Fuzzer</span><span class="o">/*.</span><span class="n">cpp</span> <span class="o">-</span><span class="n">IFuzzer</span>
+<span class="c1"># Get examples of key/pem files.</span>
+<span class="n">git</span> <span class="n">clone</span>   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">hannob</span><span class="o">/</span><span class="n">selftls</span>
+<span class="n">cp</span> <span class="n">selftls</span><span class="o">/</span><span class="n">server</span><span class="o">*</span> <span class="o">.</span> <span class="o">-</span><span class="n">v</span>
+<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="n">EOF</span> <span class="o">&gt;</span> <span class="n">handshake</span><span class="o">-</span><span class="n">fuzz</span><span class="o">.</span><span class="n">cc</span>
+<span class="c1">#include &lt;openssl/ssl.h&gt;</span>
+<span class="c1">#include &lt;openssl/err.h&gt;</span>
+<span class="c1">#include &lt;assert.h&gt;</span>
+<span class="c1">#include &lt;stdint.h&gt;</span>
+<span class="c1">#include &lt;stddef.h&gt;</span>
+
+<span class="n">SSL_CTX</span> <span class="o">*</span><span class="n">sctx</span><span class="p">;</span>
+<span class="nb">int</span> <span class="n">Init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">SSL_library_init</span><span class="p">();</span>
+  <span class="n">SSL_load_error_strings</span><span class="p">();</span>
+  <span class="n">ERR_load_BIO_strings</span><span class="p">();</span>
+  <span class="n">OpenSSL_add_all_algorithms</span><span class="p">();</span>
+  <span class="k">assert</span> <span class="p">(</span><span class="n">sctx</span> <span class="o">=</span> <span class="n">SSL_CTX_new</span><span class="p">(</span><span class="n">TLSv1_method</span><span class="p">()));</span>
+  <span class="k">assert</span> <span class="p">(</span><span class="n">SSL_CTX_use_certificate_file</span><span class="p">(</span><span class="n">sctx</span><span class="p">,</span> <span class="s2">&quot;server.pem&quot;</span><span class="p">,</span> <span class="n">SSL_FILETYPE_PEM</span><span class="p">));</span>
+  <span class="k">assert</span> <span class="p">(</span><span class="n">SSL_CTX_use_PrivateKey_file</span><span class="p">(</span><span class="n">sctx</span><span class="p">,</span> <span class="s2">&quot;server.key&quot;</span><span class="p">,</span> <span class="n">SSL_FILETYPE_PEM</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">extern</span> <span class="s2">&quot;C&quot;</span> <span class="nb">int</span> <span class="n">LLVMFuzzerTestOneInput</span><span class="p">(</span><span class="n">const</span> <span class="n">uint8_t</span> <span class="o">*</span><span class="n">Data</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">Size</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">static</span> <span class="nb">int</span> <span class="n">unused</span> <span class="o">=</span> <span class="n">Init</span><span class="p">();</span>
+  <span class="n">SSL</span> <span class="o">*</span><span class="n">server</span> <span class="o">=</span> <span class="n">SSL_new</span><span class="p">(</span><span class="n">sctx</span><span class="p">);</span>
+  <span class="n">BIO</span> <span class="o">*</span><span class="n">sinbio</span> <span class="o">=</span> <span class="n">BIO_new</span><span class="p">(</span><span class="n">BIO_s_mem</span><span class="p">());</span>
+  <span class="n">BIO</span> <span class="o">*</span><span class="n">soutbio</span> <span class="o">=</span> <span class="n">BIO_new</span><span class="p">(</span><span class="n">BIO_s_mem</span><span class="p">());</span>
+  <span class="n">SSL_set_bio</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">sinbio</span><span class="p">,</span> <span class="n">soutbio</span><span class="p">);</span>
+  <span class="n">SSL_set_accept_state</span><span class="p">(</span><span class="n">server</span><span class="p">);</span>
+  <span class="n">BIO_write</span><span class="p">(</span><span class="n">sinbio</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Size</span><span class="p">);</span>
+  <span class="n">SSL_do_handshake</span><span class="p">(</span><span class="n">server</span><span class="p">);</span>
+  <span class="n">SSL_free</span><span class="p">(</span><span class="n">server</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">EOF</span>
+<span class="c1"># Build the fuzzer.</span>
+<span class="n">clang</span><span class="o">++</span> <span class="o">-</span><span class="n">g</span> <span class="n">handshake</span><span class="o">-</span><span class="n">fuzz</span><span class="o">.</span><span class="n">cc</span>  <span class="o">-</span><span class="n">fsanitize</span><span class="o">=</span><span class="n">address</span> \
+  <span class="n">openssl</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="n">f</span><span class="o">/</span><span class="n">libssl</span><span class="o">.</span><span class="n">a</span> <span class="n">openssl</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="n">f</span><span class="o">/</span><span class="n">libcrypto</span><span class="o">.</span><span class="n">a</span> <span class="n">Fuzzer</span><span class="o">*.</span><span class="n">o</span>
+<span class="c1"># Run 20 independent fuzzer jobs.</span>
+<span class="o">./</span><span class="n">a</span><span class="o">.</span><span class="n">out</span>  <span class="o">-</span><span class="n">jobs</span><span class="o">=</span><span class="mi">20</span> <span class="o">-</span><span class="n">workers</span><span class="o">=</span><span class="mi">20</span>
+</pre></div>
+</div>
+<p>Voila:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#1048576        pulse  cov 3424 bits 0 units 9 exec/s 24385</span>
+<span class="o">=================================================================</span>
+<span class="o">==</span><span class="mi">17488</span><span class="o">==</span><span class="n">ERROR</span><span class="p">:</span> <span class="n">AddressSanitizer</span><span class="p">:</span> <span class="n">heap</span><span class="o">-</span><span class="n">buffer</span><span class="o">-</span><span class="n">overflow</span> <span class="n">on</span> <span class="n">address</span> <span class="mh">0x629000004748</span> <span class="n">at</span> <span class="n">pc</span> <span class="mh">0x00000048c979</span> <span class="n">bp</span> <span class="mh">0x7fffe3e864f0</span> <span class="n">sp</span> <span class="mh">0x7fffe3e85ca8</span>
+<span class="n">READ</span> <span class="n">of</span> <span class="n">size</span> <span class="mi">60731</span> <span class="n">at</span> <span class="mh">0x629000004748</span> <span class="n">thread</span> <span class="n">T0</span>
+    <span class="c1">#0 0x48c978 in __asan_memcpy</span>
+    <span class="c1">#1 0x4db504 in tls1_process_heartbeat openssl-1.0.1f/ssl/t1_lib.c:2586:3</span>
+    <span class="c1">#2 0x580be3 in ssl3_read_bytes openssl-1.0.1f/ssl/s3_pkt.c:1092:4</span>
+</pre></div>
+</div>
+<p>Note: a <a class="reference external" href="https://boringssl.googlesource.com/boringssl/+/HEAD/FUZZING.md">similar fuzzer</a>
+is now a part of the boringssl source tree.</p>
+</div>
+</div>
+<div class="section" id="advanced-features">
+<h2><a class="toc-backref" href="#id10">Advanced features</a><a class="headerlink" href="#advanced-features" title="永久链接至标题">¶</a></h2>
+<div class="section" id="dictionaries">
+<h3><a class="toc-backref" href="#id11">Dictionaries</a><a class="headerlink" href="#dictionaries" title="永久链接至标题">¶</a></h3>
+<p><em>EXPERIMENTAL</em>.
+LibFuzzer supports user-supplied dictionaries with input language keywords
+or other interesting byte sequences (e.g. multi-byte magic values).
+Use <code class="docutils literal"><span class="pre">-dict=DICTIONARY_FILE</span></code>. For some input languages using a dictionary
+may significantly improve the search speed.
+The dictionary syntax is similar to that used by <a class="reference external" href="http://lcamtuf.coredump.cx/afl/">AFL</a> for its <code class="docutils literal"><span class="pre">-x</span></code> option:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Lines starting with &#39;#&#39; and empty lines are ignored.</span>
+
+<span class="c1"># Adds &quot;blah&quot; (w/o quotes) to the dictionary.</span>
+<span class="n">kw1</span><span class="o">=</span><span class="s2">&quot;blah&quot;</span>
+<span class="c1"># Use \\ for backslash and \&quot; for quotes.</span>
+<span class="n">kw2</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">ac</span><span class="se">\\</span><span class="s2">dc</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+<span class="c1"># Use \xAB for hex values</span>
+<span class="n">kw3</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\xF7\xF8</span><span class="s2">&quot;</span>
+<span class="c1"># the name of the keyword followed by &#39;=&#39; may be omitted:</span>
+<span class="s2">&quot;foo</span><span class="se">\x0A</span><span class="s2">bar&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-flow-guided-fuzzing">
+<h3><a class="toc-backref" href="#id12">Data-flow-guided fuzzing</a><a class="headerlink" href="#data-flow-guided-fuzzing" title="永久链接至标题">¶</a></h3>
+<p><em>EXPERIMENTAL</em>.
+With an additional compiler flag <code class="docutils literal"><span class="pre">-fsanitize-coverage=trace-cmp</span></code> (see <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html#tracing-data-flow">SanitizerCoverageTraceDataFlow</a>)
+and extra run-time flag <code class="docutils literal"><span class="pre">-use_traces=1</span></code> the fuzzer will try to apply <em>data-flow-guided fuzzing</em>.
+That is, the fuzzer will record the inputs to comparison instructions, switch statements,
+and several libc functions (<code class="docutils literal"><span class="pre">memcmp</span></code>, <code class="docutils literal"><span class="pre">strcmp</span></code>, <code class="docutils literal"><span class="pre">strncmp</span></code>, etc).
+It will later use those recorded inputs during mutations.</p>
+<p>This mode can be combined with <a class="reference external" href="http://clang.llvm.org/docs/DataFlowSanitizer.html">DataFlowSanitizer</a> to achieve better sensitivity.</p>
+</div>
+<div class="section" id="afl-compatibility">
+<h3><a class="toc-backref" href="#id13">AFL compatibility</a><a class="headerlink" href="#afl-compatibility" title="永久链接至标题">¶</a></h3>
+<p>LibFuzzer can be used in parallel with <a class="reference external" href="http://lcamtuf.coredump.cx/afl/">AFL</a> on the same test corpus.
+Both fuzzers expect the test corpus to reside in a directory, one file per input.
+You can run both fuzzers on the same corpus in parallel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">afl</span><span class="o">-</span><span class="n">fuzz</span> <span class="o">-</span><span class="n">i</span> <span class="n">testcase_dir</span> <span class="o">-</span><span class="n">o</span> <span class="n">findings_dir</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">program</span> <span class="o">-</span><span class="n">r</span> <span class="o">@@</span>
+<span class="o">./</span><span class="n">llvm</span><span class="o">-</span><span class="n">fuzz</span> <span class="n">testcase_dir</span> <span class="n">findings_dir</span>  <span class="c1"># Will write new tests to testcase_dir</span>
+</pre></div>
+</div>
+<p>Periodically restart both fuzzers so that they can use each other&#8217;s findings.</p>
+</div>
+<div class="section" id="how-good-is-my-fuzzer">
+<h3><a class="toc-backref" href="#id14">How good is my fuzzer?</a><a class="headerlink" href="#how-good-is-my-fuzzer" title="永久链接至标题">¶</a></h3>
+<p>Once you implement your target function <code class="docutils literal"><span class="pre">LLVMFuzzerTestOneInput</span></code> and fuzz it to death,
+you will want to know whether the function or the corpus can be improved further.
+One easy to use metric is, of course, code coverage.
+You can get the coverage for your corpus like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ASAN_OPTIONS</span><span class="o">=</span><span class="n">coverage_pcs</span><span class="o">=</span><span class="mi">1</span> <span class="o">./</span><span class="n">fuzzer</span> <span class="n">CORPUS_DIR</span> <span class="o">-</span><span class="n">runs</span><span class="o">=</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>This will run all the tests in the CORPUS_DIR but will not generate any new tests
+and dump covered PCs to disk before exiting.
+Then you can subtract the set of covered PCs from the set of all instrumented PCs in the binary,
+see <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html">SanitizerCoverage</a> for details.</p>
+</div>
+<div class="section" id="user-supplied-mutators">
+<h3><a class="toc-backref" href="#id15">User-supplied mutators</a><a class="headerlink" href="#user-supplied-mutators" title="永久链接至标题">¶</a></h3>
+<p>LibFuzzer allows to use custom (user-supplied) mutators,
+see <a class="reference external" href="https://github.com/llvm-mirror/llvm/blob/master/lib/Fuzzer/FuzzerInterface.h">FuzzerInterface.h</a></p>
+</div>
+</div>
+<div class="section" id="fuzzing-components-of-llvm">
+<h2><a class="toc-backref" href="#id16">Fuzzing components of LLVM</a><a class="headerlink" href="#fuzzing-components-of-llvm" title="永久链接至标题">¶</a></h2>
+<div class="section" id="clang-format-fuzzer">
+<h3><a class="toc-backref" href="#id17">clang-format-fuzzer</a><a class="headerlink" href="#clang-format-fuzzer" title="永久链接至标题">¶</a></h3>
+<p>The inputs are random pieces of C++-like text.</p>
+<p>Build (make sure to use fresh clang as the host compiler):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cmake</span> <span class="o">-</span><span class="n">GNinja</span>  <span class="o">-</span><span class="n">DCMAKE_C_COMPILER</span><span class="o">=</span><span class="n">clang</span> <span class="o">-</span><span class="n">DCMAKE_CXX_COMPILER</span><span class="o">=</span><span class="n">clang</span><span class="o">++</span> <span class="o">-</span><span class="n">DLLVM_USE_SANITIZER</span><span class="o">=</span><span class="n">Address</span> <span class="o">-</span><span class="n">DLLVM_USE_SANITIZE_COVERAGE</span><span class="o">=</span><span class="n">YES</span> <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">llvm</span>
+<span class="n">ninja</span> <span class="n">clang</span><span class="o">-</span><span class="nb">format</span><span class="o">-</span><span class="n">fuzzer</span>
+<span class="n">mkdir</span> <span class="n">CORPUS_DIR</span>
+<span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">clang</span><span class="o">-</span><span class="nb">format</span><span class="o">-</span><span class="n">fuzzer</span> <span class="n">CORPUS_DIR</span>
+</pre></div>
+</div>
+<p>Optionally build other kinds of binaries (asan+Debug, msan, ubsan, etc).</p>
+<p>Tracking bug: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23052">https://llvm.org/bugs/show_bug.cgi?id=23052</a></p>
+</div>
+<div class="section" id="clang-fuzzer">
+<h3><a class="toc-backref" href="#id18">clang-fuzzer</a><a class="headerlink" href="#clang-fuzzer" title="永久链接至标题">¶</a></h3>
+<p>The behavior is very similar to <code class="docutils literal"><span class="pre">clang-format-fuzzer</span></code>.</p>
+<p>Tracking bug: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23057">https://llvm.org/bugs/show_bug.cgi?id=23057</a></p>
+</div>
+<div class="section" id="llvm-as-fuzzer">
+<h3><a class="toc-backref" href="#id19">llvm-as-fuzzer</a><a class="headerlink" href="#llvm-as-fuzzer" title="永久链接至标题">¶</a></h3>
+<p>Tracking bug: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=24639">https://llvm.org/bugs/show_bug.cgi?id=24639</a></p>
+</div>
+<div class="section" id="llvm-mc-fuzzer">
+<h3><a class="toc-backref" href="#id20">llvm-mc-fuzzer</a><a class="headerlink" href="#llvm-mc-fuzzer" title="永久链接至标题">¶</a></h3>
+<p>This tool fuzzes the MC layer. Currently it is only able to fuzz the
+disassembler but it is hoped that assembly, and round-trip verification will be
+added in future.</p>
+<p>When run in dissassembly mode, the inputs are opcodes to be disassembled. The
+fuzzer will consume as many instructions as possible and will stop when it
+finds an invalid instruction or runs out of data.</p>
+<p>Please note that the command line interface differs slightly from that of other
+fuzzers. The fuzzer arguments should follow <code class="docutils literal"><span class="pre">--fuzzer-args</span></code> and should have
+a single dash, while other arguments control the operation mode and target in a
+similar manner to <code class="docutils literal"><span class="pre">llvm-mc</span></code> and should have two dashes. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">llvm</span><span class="o">-</span><span class="n">mc</span><span class="o">-</span><span class="n">fuzzer</span> <span class="o">--</span><span class="n">triple</span><span class="o">=</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span> <span class="o">--</span><span class="n">disassemble</span> <span class="o">--</span><span class="n">fuzzer</span><span class="o">-</span><span class="n">args</span> <span class="o">-</span><span class="n">max_len</span><span class="o">=</span><span class="mi">4</span> <span class="o">-</span><span class="n">jobs</span><span class="o">=</span><span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="buildbot">
+<h3><a class="toc-backref" href="#id21">Buildbot</a><a class="headerlink" href="#buildbot" title="永久链接至标题">¶</a></h3>
+<p>We have a buildbot that runs the above fuzzers for LLVM components
+24/7/365 at <a class="reference external" href="http://lab.llvm.org:8011/builders/sanitizer-x86_64-linux-fuzzer">http://lab.llvm.org:8011/builders/sanitizer-x86_64-linux-fuzzer</a> .</p>
+</div>
+<div class="section" id="pre-fuzzed-test-inputs-in-git">
+<h3><a class="toc-backref" href="#id22">Pre-fuzzed test inputs in git</a><a class="headerlink" href="#pre-fuzzed-test-inputs-in-git" title="永久链接至标题">¶</a></h3>
+<p>The buildbot occumulates large test corpuses over time.
+The corpuses are stored in git on github and can be used like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">kcc</span><span class="o">/</span><span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">.</span><span class="n">git</span>
+<span class="nb">bin</span><span class="o">/</span><span class="n">clang</span><span class="o">-</span><span class="nb">format</span><span class="o">-</span><span class="n">fuzzer</span> <span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">clang</span><span class="o">-</span><span class="nb">format</span><span class="o">/</span><span class="n">C1</span>
+<span class="nb">bin</span><span class="o">/</span><span class="n">clang</span><span class="o">-</span><span class="n">fuzzer</span>        <span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">clang</span><span class="o">/</span><span class="n">C1</span><span class="o">/</span>
+<span class="nb">bin</span><span class="o">/</span><span class="n">llvm</span><span class="o">-</span><span class="k">as</span><span class="o">-</span><span class="n">fuzzer</span>      <span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">llvm</span><span class="o">-</span><span class="k">as</span><span class="o">/</span><span class="n">C1</span>  <span class="o">-</span><span class="n">only_ascii</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="faq">
+<h2><a class="toc-backref" href="#id23">FAQ</a><a class="headerlink" href="#faq" title="永久链接至标题">¶</a></h2>
+<div class="section" id="q-why-fuzzer-does-not-use-any-of-the-llvm-support">
+<h3><a class="toc-backref" href="#id24">Q. Why Fuzzer does not use any of the LLVM support?</a><a class="headerlink" href="#q-why-fuzzer-does-not-use-any-of-the-llvm-support" title="永久链接至标题">¶</a></h3>
+<p>There are two reasons.</p>
+<p>First, we want this library to be used outside of the LLVM w/o users having to
+build the rest of LLVM. This may sound unconvincing for many LLVM folks,
+but in practice the need for building the whole LLVM frightens many potential
+users &#8211; and we want more users to use this code.</p>
+<p>Second, there is a subtle technical reason not to rely on the rest of LLVM, or
+any other large body of code (maybe not even STL). When coverage instrumentation
+is enabled, it will also instrument the LLVM support code which will blow up the
+coverage set of the process (since the fuzzer is in-process). In other words, by
+using more external dependencies we will slow down the fuzzer while the main
+reason for it to exist is extreme speed.</p>
+</div>
+<div class="section" id="q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows">
+<h3><a class="toc-backref" href="#id25">Q. What about Windows then? The Fuzzer contains code that does not build on Windows.</a><a class="headerlink" href="#q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows" title="永久链接至标题">¶</a></h3>
+<p>The sanitizer coverage support does not work on Windows either as of 01/2015.
+Once it&#8217;s there, we&#8217;ll need to re-implement OS-specific parts (I/O, signals).</p>
+</div>
+<div class="section" id="q-when-this-fuzzer-is-not-a-good-solution-for-a-problem">
+<h3><a class="toc-backref" href="#id26">Q. When this Fuzzer is not a good solution for a problem?</a><a class="headerlink" href="#q-when-this-fuzzer-is-not-a-good-solution-for-a-problem" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>If the test inputs are validated by the target library and the validator
+asserts/crashes on invalid inputs, the in-process fuzzer is not applicable
+(we could use fork() w/o exec, but it comes with extra overhead).</li>
+<li>Bugs in the target library may accumulate w/o being detected. E.g. a memory
+corruption that goes undetected at first and then leads to a crash while
+testing another input. This is why it is highly recommended to run this
+in-process fuzzer with all sanitizers to detect most bugs on the spot.</li>
+<li>It is harder to protect the in-process fuzzer from excessive memory
+consumption and infinite loops in the target library (still possible).</li>
+<li>The target library should not have significant global state that is not
+reset between the runs.</li>
+<li>Many interesting target libs are not designed in a way that supports
+the in-process fuzzer interface (e.g. require a file path instead of a
+byte array).</li>
+<li>If a single test run takes a considerable fraction of a second (or
+more) the speed benefit from the in-process fuzzer is negligible.</li>
+<li>If the target library runs persistent threads (that outlive
+execution of one test) the fuzzing results will be unreliable.</li>
+</ul>
+</div>
+<div class="section" id="q-so-what-exactly-this-fuzzer-is-good-for">
+<h3><a class="toc-backref" href="#id27">Q. So, what exactly this Fuzzer is good for?</a><a class="headerlink" href="#q-so-what-exactly-this-fuzzer-is-good-for" title="永久链接至标题">¶</a></h3>
+<p>This Fuzzer might be a good choice for testing libraries that have relatively
+small inputs, each input takes &lt; 1ms to run, and the library code is not expected
+to crash on invalid inputs.
+Examples: regular expression matchers, text or binary format parsers.</p>
+</div>
+</div>
+<div class="section" id="trophies">
+<h2><a class="toc-backref" href="#id28">Trophies</a><a class="headerlink" href="#trophies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>GLIBC: <a class="reference external" href="https://sourceware.org/glibc/wiki/FuzzingLibc">https://sourceware.org/glibc/wiki/FuzzingLibc</a></li>
+<li>MUSL LIBC:<ul>
+<li><a class="reference external" href="http://git.musl-libc.org/cgit/musl/commit/?id=39dfd58417ef642307d90306e1c7e50aaec5a35c">http://git.musl-libc.org/cgit/musl/commit/?id=39dfd58417ef642307d90306e1c7e50aaec5a35c</a></li>
+<li><a class="reference external" href="http://www.openwall.com/lists/oss-security/2015/03/30/3">http://www.openwall.com/lists/oss-security/2015/03/30/3</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="https://github.com/zeux/pugixml/issues/39">pugixml</a></li>
+<li>PCRE: Search for &#8220;LLVM fuzzer&#8221; in <a class="reference external" href="http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup">http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup</a>;
+also in <a class="reference external" href="https://bugs.exim.org/buglist.cgi?bug_status=__all__&amp;content=libfuzzer&amp;no_redirect=1&amp;order=Importance&amp;product=PCRE&amp;query_format=specific">bugzilla</a></li>
+<li><a class="reference external" href="http://bugs.icu-project.org/trac/ticket/11838">ICU</a></li>
+<li><a class="reference external" href="https://savannah.nongnu.org/search/?words=LibFuzzer&amp;type_of_search=bugs&amp;Search=Search&amp;exact=1#options">Freetype</a></li>
+<li><a class="reference external" href="https://github.com/behdad/harfbuzz/issues/139">Harfbuzz</a></li>
+<li><a class="reference external" href="http://www3.sqlite.org/cgi/src/info/088009efdd56160b">SQLite</a></li>
+<li><a class="reference external" href="http://bugs.python.org/issue25388">Python</a></li>
+<li>OpenSSL/BoringSSL: <a class="reference external" href="https://boringssl.googlesource.com/boringssl/+/cb852981cd61733a7a1ae4fd8755b7ff950e857d">[1]</a></li>
+<li><a class="reference external" href="https://bugzilla.gnome.org/buglist.cgi?bug_status=__all__&amp;content=libFuzzer&amp;list_id=68957&amp;order=Importance&amp;product=libxml2&amp;query_format=specific">Libxml2</a></li>
+<li><a class="reference external" href="https://github.com/iovisor/bpf-fuzzer">Linux Kernel&#8217;s BPF verifier</a></li>
+<li>LLVM: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23057">Clang</a>, <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23052">Clang-format</a>, <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=24411">libc++</a>, <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=24639">llvm-as</a>, Disassembler: <a class="reference external" href="http://reviews.llvm.org/rL247405">http://reviews.llvm.org/rL247405</a>, <a class="reference external" href="http://reviews.llvm.org/rL247414">http://reviews.llvm.org/rL247414</a>, <a class="reference external" href="http://reviews.llvm.org/rL247416">http://reviews.llvm.org/rL247416</a>, <a class="reference external" href="http://reviews.llvm.org/rL247417">http://reviews.llvm.org/rL247417</a>, <a class="reference external" href="http://reviews.llvm.org/rL247420">http://reviews.llvm.org/rL247420</a>, <a class="reference external" href="http://reviews.llvm.org/rL247422">http://reviews.llvm.org/rL247422</a>.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="AliasAnalysis.html" title="LLVM Alias Analysis Infrastructure"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="Extensions.html" title="LLVM Extensions"
+             >上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2003-2016, LLVM Project.
+      最后更新于 2016-04-17.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+    </div>
+  </body>
+</html>

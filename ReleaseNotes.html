@@ -1,0 +1,390 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LLVM 3.8 Release Notes &mdash; LLVM 3.8 文档</title>
+    
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="next" title="LLVM’s Analysis and Transform Passes" href="Passes.html" />
+    <link rel="prev" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits" href="tutorial/OCamlLangImpl8.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body role="document">
+<div class="logo">
+  <a href="index.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="Passes.html" title="LLVM’s Analysis and Transform Passes"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="tutorial/OCamlLangImpl8.html" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits"
+             accesskey="P">上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-3-8-release-notes">
+<h1>LLVM 3.8 Release Notes<a class="headerlink" href="#llvm-3-8-release-notes" title="永久链接至标题">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
+<li><a class="reference internal" href="#non-comprehensive-list-of-changes-in-this-release" id="id2">Non-comprehensive list of changes in this release</a><ul>
+<li><a class="reference internal" href="#changes-to-the-arm-backends" id="id3">Changes to the ARM Backends</a></li>
+<li><a class="reference internal" href="#changes-to-the-mips-target" id="id4">Changes to the MIPS Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-powerpc-target" id="id5">Changes to the PowerPC Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-x86-target" id="id6">Changes to the X86 Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-hexagon-target" id="id7">Changes to the Hexagon Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-avr-target" id="id8">Changes to the AVR Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-ocaml-bindings" id="id9">Changes to the OCaml bindings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#external-open-source-projects-using-llvm-3-8" id="id10">External Open Source Projects Using LLVM 3.8</a><ul>
+<li><a class="reference internal" href="#ldc-the-llvm-based-d-compiler" id="id11">LDC - the LLVM-based D compiler</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-information" id="id12">Additional Information</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p>This document contains the release notes for the LLVM Compiler Infrastructure,
+release 3.8.  Here we describe the status of LLVM, including major improvements
+from the previous release, improvements in various subprojects of LLVM, and
+some of the current users of the code.  All LLVM releases may be downloaded
+from the <a class="reference external" href="http://llvm.org/releases/">LLVM releases web site</a>.</p>
+<p>For more information about LLVM, including information about the latest
+release, please check out the <a class="reference external" href="http://llvm.org/">main LLVM web site</a>.  If you
+have questions or comments, the <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">LLVM Developer&#8217;s Mailing List</a> is a good place to send
+them.</p>
+</div>
+<div class="section" id="non-comprehensive-list-of-changes-in-this-release">
+<h2><a class="toc-backref" href="#id2">Non-comprehensive list of changes in this release</a><a class="headerlink" href="#non-comprehensive-list-of-changes-in-this-release" title="永久链接至标题">¶</a></h2>
+<ul>
+<li><p class="first">With this release, the minimum Windows version required for running LLVM is
+Windows 7. Earlier versions, including Windows Vista and XP are no longer
+supported.</p>
+</li>
+<li><p class="first">With this release, the autoconf build system is deprecated. It will be removed
+in the 3.9 release. Please migrate to using CMake. For more information see:
+<a class="reference external" href="CMake.html">Building LLVM with CMake</a></p>
+</li>
+<li><p class="first">We have documented our C API stability guarantees for both development and
+release branches, as well as documented how to extend the C API. Please see
+the <a class="reference external" href="DeveloperPolicy.html#c-api-changes">developer documentation</a> for more
+information.</p>
+</li>
+<li><p class="first">The C API function <code class="docutils literal"><span class="pre">LLVMLinkModules</span></code> is deprecated. It will be removed in the
+3.9 release. Please migrate to <code class="docutils literal"><span class="pre">LLVMLinkModules2</span></code>. Unlike the old function the
+new one</p>
+<blockquote>
+<div><ul class="simple">
+<li>Doesn&#8217;t take an unused parameter.</li>
+<li>Destroys the source instead of only damaging it.</li>
+<li>Does not record a message. Use the diagnostic handler instead.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">The C API functions <code class="docutils literal"><span class="pre">LLVMParseBitcode</span></code>, <code class="docutils literal"><span class="pre">LLVMParseBitcodeInContext</span></code>,
+<code class="docutils literal"><span class="pre">LLVMGetBitcodeModuleInContext</span></code> and <code class="docutils literal"><span class="pre">LLVMGetBitcodeModule</span></code> have been deprecated.
+They will be removed in 3.9. Please migrate to the versions with a 2 suffix.
+Unlike the old ones the new ones do not record a diagnostic message. Use
+the diagnostic handler instead.</p>
+</li>
+<li><p class="first">The deprecated C APIs <code class="docutils literal"><span class="pre">LLVMGetBitcodeModuleProviderInContext</span></code> and
+<code class="docutils literal"><span class="pre">LLVMGetBitcodeModuleProvider</span></code> have been removed.</p>
+</li>
+<li><p class="first">The deprecated C APIs <code class="docutils literal"><span class="pre">LLVMCreateExecutionEngine</span></code>, <code class="docutils literal"><span class="pre">LLVMCreateInterpreter</span></code>,
+<code class="docutils literal"><span class="pre">LLVMCreateJITCompiler</span></code>, <code class="docutils literal"><span class="pre">LLVMAddModuleProvider</span></code> and <code class="docutils literal"><span class="pre">LLVMRemoveModuleProvider</span></code>
+have been removed.</p>
+</li>
+<li><p class="first">With this release, the C API headers have been reorganized to improve build
+time. Type specific declarations have been moved to Type.h, and error
+handling routines have been moved to ErrorHandling.h. Both are included in
+Core.h so nothing should change for projects directly including the headers,
+but transitive dependencies may be affected.</p>
+</li>
+<li><p class="first">llvm-ar now supports thin archives.</p>
+</li>
+<li><p class="first">llvm doesn&#8217;t produce <code class="docutils literal"><span class="pre">.data.rel.ro.local</span></code> or <code class="docutils literal"><span class="pre">.data.rel</span></code> sections anymore.</p>
+</li>
+<li><p class="first">Aliases to <code class="docutils literal"><span class="pre">available_externally</span></code> globals are now rejected by the verifier.</p>
+</li>
+<li><p class="first">The IR Linker has been split into <code class="docutils literal"><span class="pre">IRMover</span></code> that moves bits from one module to
+another and Linker proper that decides what to link.</p>
+</li>
+<li><p class="first">Support for dematerializing has been dropped.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">RegisterScheduler::setDefault</span></code> was removed. Targets that used to call into the
+command line parser to set the <code class="docutils literal"><span class="pre">DAGScheduler</span></code>, and that don&#8217;t have enough
+control with <code class="docutils literal"><span class="pre">setSchedulingPreference</span></code>, should look into overriding the
+<code class="docutils literal"><span class="pre">SubTargetHook</span></code> &#8220;<code class="docutils literal"><span class="pre">getDAGScheduler()</span></code>&#8221;.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">ilist_iterator&lt;T&gt;</span></code> no longer has implicit conversions to and from <code class="docutils literal"><span class="pre">T*</span></code>,
+since <code class="docutils literal"><span class="pre">ilist_iterator&lt;T&gt;</span></code> may be pointing at the sentinel (which is usually
+not of type <code class="docutils literal"><span class="pre">T</span></code> at all).  To convert from an iterator <code class="docutils literal"><span class="pre">I</span></code> to a pointer,
+use <code class="docutils literal"><span class="pre">&amp;*I</span></code>; to convert from a pointer <code class="docutils literal"><span class="pre">P</span></code> to an iterator, use
+<code class="docutils literal"><span class="pre">P-&gt;getIterator()</span></code>.  Alternatively, explicit conversions via
+<code class="docutils literal"><span class="pre">static_cast&lt;T&gt;(U)</span></code> are still available.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">ilist_node&lt;T&gt;::getNextNode()</span></code> and <code class="docutils literal"><span class="pre">ilist_node&lt;T&gt;::getPrevNode()</span></code> now
+fail at compile time when the node cannot access its parent list.
+Previously, when the sentinel was was an <code class="docutils literal"><span class="pre">ilist_half_node&lt;T&gt;</span></code>, this API
+could return the sentinel instead of <code class="docutils literal"><span class="pre">nullptr</span></code>.  Frustrated callers should
+be updated to use <code class="docutils literal"><span class="pre">iplist&lt;T&gt;::getNextNode(T*)</span></code> instead.  Alternatively, if
+the node <code class="docutils literal"><span class="pre">N</span></code> is guaranteed not to be the last in the list, it is safe to
+call <code class="docutils literal"><span class="pre">&amp;*++N-&gt;getIterator()</span></code> directly.</p>
+</li>
+<li><p class="first">The <a class="reference external" href="tutorial/index.html">Kaleidoscope tutorials</a> have been updated to use
+the ORC JIT APIs.</p>
+</li>
+<li><p class="first">ORC now has a basic set of C bindings.</p>
+</li>
+<li><p class="first">Optional support for linking clang and the LLVM tools with a single libLLVM
+shared library. To enable this, pass <code class="docutils literal"><span class="pre">-DLLVM_LINK_LLVM_DYLIB=ON</span></code> to CMake.
+See <a class="reference external" href="CMake.html">Building LLVM with CMake</a> for more details.</p>
+</li>
+<li><p class="first">The optimization to move the prologue and epilogue of functions in colder
+code path (shrink-wrapping) is now enabled by default.</p>
+</li>
+<li><p class="first">A new target-independent gcc-compatible emulated Thread Local Storage mode
+is added.  When <code class="docutils literal"><span class="pre">-femultated-tls</span></code> flag is used, all accesses to TLS
+variables are converted to calls to <code class="docutils literal"><span class="pre">__emutls_get_address</span></code> in the runtime
+library.</p>
+</li>
+<li><p class="first">MSVC-compatible exception handling has been completely overhauled. New
+instructions have been introduced to facilitate this:
+<a class="reference external" href="ExceptionHandling.html#new-exception-handling-instructions">New exception handling instructions</a>.
+While we have done our best to test this feature thoroughly, it would
+not be completely surprising if there were a few lingering issues that
+early adopters might bump into.</p>
+</li>
+</ul>
+<div class="section" id="changes-to-the-arm-backends">
+<h3><a class="toc-backref" href="#id3">Changes to the ARM Backends</a><a class="headerlink" href="#changes-to-the-arm-backends" title="永久链接至标题">¶</a></h3>
+<p>During this release the AArch64 target has:</p>
+<ul class="simple">
+<li>Added support for more sanitizers (MSAN, TSAN) and made them compatible with
+all VMA kernel configurations (currently tested on 39 and 42 bits).</li>
+<li>Gained initial LLD support in the new ELF back-end</li>
+<li>Extended the Load/Store optimiser and cleaned up some of the bad decisions
+made earlier.</li>
+<li>Expanded LLDB support, including watchpoints, native building, Renderscript,
+LLDB-server, debugging 32-bit applications.</li>
+<li>Added support for the <code class="docutils literal"><span class="pre">Exynos</span> <span class="pre">M1</span></code> chip.</li>
+</ul>
+<p>During this release the ARM target has:</p>
+<ul class="simple">
+<li>Gained massive performance improvements on embedded benchmarks due to finally
+running the stride vectorizer in full form, incrementing the performance gains
+that we already had in the previous releases with limited stride vectorization.</li>
+<li>Expanded LLDB support, including watchpoints, unwind tables</li>
+<li>Extended the Load/Store optimiser and cleaned up some of the bad decisions
+made earlier.</li>
+<li>Simplified code generation for global variable addresses in ELF, resulting in
+a significant (4% in Chromium) reduction in code size.</li>
+<li>Gained some additional code size improvements, though there&#8217;s still a long road
+ahead, especially for older cores.</li>
+<li>Added some EABI floating point comparison functions to Compiler-RT</li>
+<li>Added support for Windows+GNU triple, <code class="docutils literal"><span class="pre">+features</span></code> in <code class="docutils literal"><span class="pre">-mcpu</span></code>/<code class="docutils literal"><span class="pre">-march</span></code> options.</li>
+</ul>
+</div>
+<div class="section" id="changes-to-the-mips-target">
+<h3><a class="toc-backref" href="#id4">Changes to the MIPS Target</a><a class="headerlink" href="#changes-to-the-mips-target" title="永久链接至标题">¶</a></h3>
+<p>During this release the MIPS target has:</p>
+<ul class="simple">
+<li>Significantly extended support for the Integrated Assembler. See below for
+more information</li>
+<li>Added support for the <code class="docutils literal"><span class="pre">P5600</span></code> processor.</li>
+<li>Added support for the <code class="docutils literal"><span class="pre">interrupt</span></code> attribute for MIPS32R2 and later. This
+attribute will generate a function which can be used as a interrupt handler
+on bare metal MIPS targets using the static relocation model.</li>
+<li>Added support for the <code class="docutils literal"><span class="pre">ERETNC</span></code> instruction found in MIPS32R5 and later.</li>
+<li>Added support for OpenCL. See <a class="reference external" href="http://portablecl.org/">http://portablecl.org/</a>.</li>
+<li>Address spaces 1 to 255 are now reserved for software use and conversions
+between them are no-op casts.</li>
+<li>Removed the <code class="docutils literal"><span class="pre">mips16</span></code> value for the <code class="docutils literal"><span class="pre">-mcpu</span></code> option since it is an <abbr title="Application Specific Extension">ASE</abbr> and not a processor. If you were using this,
+please specify another CPU and use <code class="docutils literal"><span class="pre">-mips16</span></code> to enable MIPS16.</li>
+<li>Removed <code class="docutils literal"><span class="pre">copy_u.w</span></code> from 32-bit MSA and <code class="docutils literal"><span class="pre">copy_u.d</span></code> from 64-bit MSA since
+they have been removed from the MSA specification due to forward compatibility
+issues.  For example, 32-bit MSA code containing <code class="docutils literal"><span class="pre">copy_u.w</span></code> would behave
+differently on a 64-bit processor supporting MSA. The corresponding intrinsics
+are still available and may expand to <code class="docutils literal"><span class="pre">copy_s.[wd]</span></code> where this is
+appropriate for forward compatibility purposes.</li>
+<li>Relaxed the <code class="docutils literal"><span class="pre">-mnan</span></code> option to allow <code class="docutils literal"><span class="pre">-mnan=2008</span></code> on MIPS32R2/MIPS64R2 for
+compatibility with GCC.</li>
+<li>Made MIPS64R6 the default CPU for 64-bit Android triples.</li>
+</ul>
+<p>The MIPS target has also fixed various bugs including the following notable
+fixes:</p>
+<ul class="simple">
+<li>Fixed reversed operands on <code class="docutils literal"><span class="pre">mthi</span></code>/<code class="docutils literal"><span class="pre">mtlo</span></code> in the DSP <abbr title="Application Specific Extension">ASE</abbr>.</li>
+<li>The code generator no longer uses <code class="docutils literal"><span class="pre">jal</span></code> for calls to absolute immediate
+addresses.</li>
+<li>Disabled fast instruction selection on MIPS32R6 and MIPS64R6 since this is not
+yet supported.</li>
+<li>Corrected addend for <code class="docutils literal"><span class="pre">R_MIPS_HI16</span></code> and <code class="docutils literal"><span class="pre">R_MIPS_PCHI16</span></code> in MCJIT</li>
+<li>The code generator no longer crashes when handling subregisters of an 64-bit
+FPU register with undefined value.</li>
+<li>The code generator no longer attempts to use <code class="docutils literal"><span class="pre">$zero</span></code> for operands that do
+not permit <code class="docutils literal"><span class="pre">$zero</span></code>.</li>
+<li>Corrected the opcode used for <code class="docutils literal"><span class="pre">ll</span></code>/<code class="docutils literal"><span class="pre">sc</span></code> when using MIPS32R6/MIPS64R6 and
+the Integrated Assembler.</li>
+<li>Added support for atomic load and atomic store.</li>
+<li>Corrected debug info when dynamically re-aligning the stack.</li>
+</ul>
+<p>We have made a large number of improvements to the integrated assembler for
+MIPS. In this release, the integrated assembler isn&#8217;t quite production-ready
+since there are a few known issues related to bare-metal support, checking
+immediates on instructions, and the N32/N64 ABI&#8217;s. However, the current support
+should be sufficient for many users of the O32 ABI, particularly those targeting
+MIPS32 on Linux or bare-metal MIPS32.</p>
+<p>If you would like to try the integrated assembler, please use
+<code class="docutils literal"><span class="pre">-fintegrated-as</span></code>.</p>
+</div>
+<div class="section" id="changes-to-the-powerpc-target">
+<h3><a class="toc-backref" href="#id5">Changes to the PowerPC Target</a><a class="headerlink" href="#changes-to-the-powerpc-target" title="永久链接至标题">¶</a></h3>
+<p>There are numerous improvements to the PowerPC target in this release:</p>
+<ul class="simple">
+<li>Shrink wrapping optimization has been enabled for PowerPC Little Endian</li>
+<li>Direct move instructions are used when converting scalars to vectors</li>
+<li>Thread Sanitizer (TSAN) is now supported for PowerPC</li>
+<li>New MI peephole pass to clean up redundant XXPERMDI instructions</li>
+<li>Add branch hints to highly biased branch instructions (code reaching
+unreachable terminators and exceptional control flow constructs)</li>
+<li>Promote boolean return values to integer to prevent excessive usage of
+condition registers</li>
+<li>Additional vector APIs for vector comparisons and vector merges have been
+added to altivec.h</li>
+<li>Many bugs have been identified and fixed</li>
+</ul>
+</div>
+<div class="section" id="changes-to-the-x86-target">
+<h3><a class="toc-backref" href="#id6">Changes to the X86 Target</a><a class="headerlink" href="#changes-to-the-x86-target" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>TLS is enabled for Cygwin as emutls.</li>
+<li>Smaller code for materializing 32-bit 1 and -1 constants at <code class="docutils literal"><span class="pre">-Os</span></code>.</li>
+<li>More efficient code for wide integer compares. (E.g. 64-bit compares
+on 32-bit targets.)</li>
+<li>Tail call support for <code class="docutils literal"><span class="pre">thiscall</span></code>, <code class="docutils literal"><span class="pre">stdcall</span></code>, <code class="docutils literal"><span class="pre">vectorcall</span></code>, and
+<code class="docutils literal"><span class="pre">fastcall</span></code> functions.</li>
+</ul>
+</div>
+<div class="section" id="changes-to-the-hexagon-target">
+<h3><a class="toc-backref" href="#id7">Changes to the Hexagon Target</a><a class="headerlink" href="#changes-to-the-hexagon-target" title="永久链接至标题">¶</a></h3>
+<p>In addition to general code size and performance improvements, Hexagon target
+now has basic support for Hexagon V60 architecture and Hexagon Vector
+Extensions (HVX).</p>
+</div>
+<div class="section" id="changes-to-the-avr-target">
+<h3><a class="toc-backref" href="#id8">Changes to the AVR Target</a><a class="headerlink" href="#changes-to-the-avr-target" title="永久链接至标题">¶</a></h3>
+<p>Slightly less than half of the AVR backend has been merged in at this point. It is still
+missing a number large parts which cause it to be unusable, but is well on the
+road to being completely merged and workable.</p>
+</div>
+<div class="section" id="changes-to-the-ocaml-bindings">
+<h3><a class="toc-backref" href="#id9">Changes to the OCaml bindings</a><a class="headerlink" href="#changes-to-the-ocaml-bindings" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>The ocaml function link_modules has been replaced with link_modules&#8217; which
+uses LLVMLinkModules2.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="external-open-source-projects-using-llvm-3-8">
+<h2><a class="toc-backref" href="#id10">External Open Source Projects Using LLVM 3.8</a><a class="headerlink" href="#external-open-source-projects-using-llvm-3-8" title="永久链接至标题">¶</a></h2>
+<p>An exciting aspect of LLVM is that it is used as an enabling technology for
+a lot of other language and tools projects. This section lists some of the
+projects that have already been updated to work with LLVM 3.8.</p>
+<div class="section" id="ldc-the-llvm-based-d-compiler">
+<h3><a class="toc-backref" href="#id11">LDC - the LLVM-based D compiler</a><a class="headerlink" href="#ldc-the-llvm-based-d-compiler" title="永久链接至标题">¶</a></h3>
+<p><a class="reference external" href="http://dlang.org">D</a> is a language with C-like syntax and static typing. It
+pragmatically combines efficiency, control, and modeling power, with safety and
+programmer productivity. D supports powerful concepts like Compile-Time Function
+Execution (CTFE) and Template Meta-Programming, provides an innovative approach
+to concurrency and offers many classical paradigms.</p>
+<p><a class="reference external" href="http://wiki.dlang.org/LDC">LDC</a> uses the frontend from the reference compiler
+combined with LLVM as backend to produce efficient native code. LDC targets
+x86/x86_64 systems like Linux, OS X and Windows and also PowerPC (32/64 bit)
+and ARM. Ports to other architectures like AArch64 and MIPS64 are underway.</p>
+</div>
+</div>
+<div class="section" id="additional-information">
+<h2><a class="toc-backref" href="#id12">Additional Information</a><a class="headerlink" href="#additional-information" title="永久链接至标题">¶</a></h2>
+<p>A wide variety of additional information is available on the <a class="reference external" href="http://llvm.org/">LLVM web page</a>, in particular in the <a class="reference external" href="http://llvm.org/docs/">documentation</a> section.  The web page also contains versions of the
+API documentation which is up-to-date with the Subversion version of the source
+code.  You can access versions of these documents specific to this release by
+going into the <code class="docutils literal"><span class="pre">llvm/docs/</span></code> directory in the LLVM tree.</p>
+<p>If you have any questions or comments about LLVM, please feel free to contact
+us via the <a class="reference external" href="http://llvm.org/docs/#maillist">mailing lists</a>.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="Passes.html" title="LLVM’s Analysis and Transform Passes"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="tutorial/OCamlLangImpl8.html" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits"
+             >上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2003-2016, LLVM Project.
+      最后更新于 2016-04-17.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+    </div>
+  </body>
+</html>

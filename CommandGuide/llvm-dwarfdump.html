@@ -1,0 +1,129 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>llvm-dwarfdump - print contents of DWARF sections &mdash; LLVM 3.8 文档</title>
+    
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
+    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="next" title="bugpoint - automatic test case reduction tool" href="bugpoint.html" />
+    <link rel="prev" title="llvm-symbolizer - convert addresses into source code locations" href="llvm-symbolizer.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body role="document">
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="bugpoint.html" title="bugpoint - automatic test case reduction tool"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="llvm-symbolizer.html" title="llvm-symbolizer - convert addresses into source code locations"
+             accesskey="P">上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-dwarfdump-print-contents-of-dwarf-sections">
+<h1>llvm-dwarfdump - print contents of DWARF sections<a class="headerlink" href="#llvm-dwarfdump-print-contents-of-dwarf-sections" title="永久链接至标题">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="永久链接至标题">¶</a></h2>
+<p><strong class="program">llvm-dwarfdump</strong> [<em>options</em>] [<em>filenames...</em>]</p>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
+<p><strong class="program">llvm-dwarfdump</strong> parses DWARF sections in the object files
+and prints their contents in human-readable form.</p>
+</div>
+<div class="section" id="options">
+<h2>OPTIONS<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-debug-dump">
+<code class="descname">-debug-dump</code><code class="descclassname">=section</code><a class="headerlink" href="#cmdoption-debug-dump" title="永久链接至目标">¶</a></dt>
+<dd><p>Specify the DWARF section to dump.
+For example, use <code class="docutils literal"><span class="pre">abbrev</span></code> to dump the contents of <code class="docutils literal"><span class="pre">.debug_abbrev</span></code> section,
+<code class="docutils literal"><span class="pre">loc.dwo</span></code> to dump the contents of <code class="docutils literal"><span class="pre">.debug_loc.dwo</span></code> etc.
+See <code class="docutils literal"><span class="pre">llvm-dwarfdump</span> <span class="pre">--help</span></code> for the complete list of supported sections.
+Use <code class="docutils literal"><span class="pre">all</span></code> to dump all DWARF sections. It is the default.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="exit-status">
+<h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="永久链接至标题">¶</a></h2>
+<p><strong class="program">llvm-dwarfdump</strong> returns 0 if the input files were parsed and dumped
+successfully. Otherwise, it returns 1.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="bugpoint.html" title="bugpoint - automatic test case reduction tool"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="llvm-symbolizer.html" title="llvm-symbolizer - convert addresses into source code locations"
+             >上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2003-2016, LLVM Project.
+      最后更新于 2016-04-17.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+    </div>
+  </body>
+</html>

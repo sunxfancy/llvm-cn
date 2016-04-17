@@ -1,0 +1,640 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. Kaleidoscope: Adding JIT and Optimizer Support &mdash; LLVM 3.8 文档</title>
+    
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
+    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <link rel="next" title="5. Kaleidoscope: Extending the Language: Control Flow" href="LangImpl5.html" />
+    <link rel="prev" title="3. Kaleidoscope: Code generation to LLVM IR" href="LangImpl3.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body role="document">
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="LangImpl5.html" title="5. Kaleidoscope: Extending the Language: Control Flow"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="LangImpl3.html" title="3. Kaleidoscope: Code generation to LLVM IR"
+             accesskey="P">上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="kaleidoscope-adding-jit-and-optimizer-support">
+<h1>4. Kaleidoscope: Adding JIT and Optimizer Support<a class="headerlink" href="#kaleidoscope-adding-jit-and-optimizer-support" title="永久链接至标题">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#chapter-4-introduction" id="id1">Chapter 4 Introduction</a></li>
+<li><a class="reference internal" href="#trivial-constant-folding" id="id2">Trivial Constant Folding</a></li>
+<li><a class="reference internal" href="#llvm-optimization-passes" id="id3">LLVM Optimization Passes</a></li>
+<li><a class="reference internal" href="#adding-a-jit-compiler" id="id4">Adding a JIT Compiler</a></li>
+<li><a class="reference internal" href="#full-code-listing" id="id5">Full Code Listing</a></li>
+</ul>
+</div>
+<div class="section" id="chapter-4-introduction">
+<h2><a class="toc-backref" href="#id1">4.1. Chapter 4 Introduction</a><a class="headerlink" href="#chapter-4-introduction" title="永久链接至标题">¶</a></h2>
+<p>Welcome to Chapter 4 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>&#8221; tutorial. Chapters 1-3 described the implementation
+of a simple language and added support for generating LLVM IR. This
+chapter describes two new techniques: adding optimizer support to your
+language, and adding JIT compiler support. These additions will
+demonstrate how to get nice, efficient code for the Kaleidoscope
+language.</p>
+</div>
+<div class="section" id="trivial-constant-folding">
+<h2><a class="toc-backref" href="#id2">4.2. Trivial Constant Folding</a><a class="headerlink" href="#trivial-constant-folding" title="永久链接至标题">¶</a></h2>
+<p>Our demonstration for Chapter 3 is elegant and easy to extend.
+Unfortunately, it does not produce wonderful code. The IRBuilder,
+however, does give us obvious optimizations when compiling simple code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="p">;</span>
+<span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@test</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="mf">3.000000e+00</span><span class="p">,</span> <span class="o">%</span><span class="n">x</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code is not a literal transcription of the AST built by parsing the
+input. That would be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="p">;</span>
+<span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@test</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="mf">2.000000e+00</span><span class="p">,</span> <span class="mf">1.000000e+00</span>
+        <span class="o">%</span><span class="n">addtmp1</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span><span class="p">,</span> <span class="o">%</span><span class="n">x</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Constant folding, as seen above, in particular, is a very common and
+very important optimization: so much so that many language implementors
+implement constant folding support in their AST representation.</p>
+<p>With LLVM, you don&#8217;t need this support in the AST. Since all calls to
+build LLVM IR go through the LLVM IR builder, the builder itself checked
+to see if there was a constant folding opportunity when you call it. If
+so, it just does the constant fold and return the constant instead of
+creating an instruction.</p>
+<p>Well, that was easy :). In practice, we recommend always using
+<code class="docutils literal"><span class="pre">IRBuilder</span></code> when generating code like this. It has no &#8220;syntactic
+overhead&#8221; for its use (you don&#8217;t have to uglify your compiler with
+constant checks everywhere) and it can dramatically reduce the amount of
+LLVM IR that is generated in some cases (particular for languages with a
+macro preprocessor or that use a lot of constants).</p>
+<p>On the other hand, the <code class="docutils literal"><span class="pre">IRBuilder</span></code> is limited by the fact that it does
+all of its analysis inline with the code as it is built. If you take a
+slightly more complex example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@test</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="mf">3.000000e+00</span><span class="p">,</span> <span class="o">%</span><span class="n">x</span>
+        <span class="o">%</span><span class="n">addtmp1</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">,</span> <span class="mf">3.000000e+00</span>
+        <span class="o">%</span><span class="n">multmp</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span><span class="p">,</span> <span class="o">%</span><span class="n">addtmp1</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this case, the LHS and RHS of the multiplication are the same value.
+We&#8217;d really like to see this generate &#8220;<code class="docutils literal"><span class="pre">tmp</span> <span class="pre">=</span> <span class="pre">x+3;</span> <span class="pre">result</span> <span class="pre">=</span> <span class="pre">tmp*tmp;</span></code>&#8221;
+instead of computing &#8220;<code class="docutils literal"><span class="pre">x+3</span></code>&#8221; twice.</p>
+<p>Unfortunately, no amount of local analysis will be able to detect and
+correct this. This requires two transformations: reassociation of
+expressions (to make the add&#8217;s lexically identical) and Common
+Subexpression Elimination (CSE) to delete the redundant add instruction.
+Fortunately, LLVM provides a broad range of optimizations that you can
+use, in the form of &#8220;passes&#8221;.</p>
+</div>
+<div class="section" id="llvm-optimization-passes">
+<h2><a class="toc-backref" href="#id3">4.3. LLVM Optimization Passes</a><a class="headerlink" href="#llvm-optimization-passes" title="永久链接至标题">¶</a></h2>
+<p>LLVM provides many optimization passes, which do many different sorts of
+things and have different tradeoffs. Unlike other systems, LLVM doesn&#8217;t
+hold to the mistaken notion that one set of optimizations is right for
+all languages and for all situations. LLVM allows a compiler implementor
+to make complete decisions about what optimizations to use, in which
+order, and in what situation.</p>
+<p>As a concrete example, LLVM supports both &#8220;whole module&#8221; passes, which
+look across as large of body of code as they can (often a whole file,
+but if run at link time, this can be a substantial portion of the whole
+program). It also supports and includes &#8220;per-function&#8221; passes which just
+operate on a single function at a time, without looking at other
+functions. For more information on passes and how they are run, see the
+<a class="reference external" href="../WritingAnLLVMPass.html">How to Write a Pass</a> document and the
+<a class="reference external" href="../Passes.html">List of LLVM Passes</a>.</p>
+<p>For Kaleidoscope, we are currently generating functions on the fly, one
+at a time, as the user types them in. We aren&#8217;t shooting for the
+ultimate optimization experience in this setting, but we also want to
+catch the easy and quick stuff where possible. As such, we will choose
+to run a few per-function optimizations as the user types the function
+in. If we wanted to make a &#8220;static Kaleidoscope compiler&#8221;, we would use
+exactly the code we have now, except that we would defer running the
+optimizer until the entire file has been parsed.</p>
+<p>In order to get per-function optimizations going, we need to set up a
+<a class="reference external" href="../WritingAnLLVMPass.html#what-passmanager-doesr">FunctionPassManager</a> to hold
+and organize the LLVM optimizations that we want to run. Once we have
+that, we can add a set of optimizations to run. We&#8217;ll need a new
+FunctionPassManager for each module that we want to optimize, so we&#8217;ll
+write a function to create and initialize both the module and pass manager
+for us:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">InitializeModuleAndPassManager</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Open a new module.</span>
+  <span class="n">TheModule</span> <span class="o">=</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;my cool jit&quot;</span><span class="p">,</span> <span class="n">getGlobalContext</span><span class="p">());</span>
+  <span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">setDataLayout</span><span class="p">(</span><span class="n">TheJIT</span><span class="o">-&gt;</span><span class="n">getTargetMachine</span><span class="p">().</span><span class="n">createDataLayout</span><span class="p">());</span>
+
+  <span class="c1">// Create a new pass manager attached to it.</span>
+  <span class="n">TheFPM</span> <span class="o">=</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">FunctionPassManager</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TheModule</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+
+  <span class="c1">// Provide basic AliasAnalysis support for GVN.</span>
+  <span class="n">TheFPM</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">createBasicAliasAnalysisPass</span><span class="p">());</span>
+  <span class="c1">// Do simple &quot;peephole&quot; optimizations and bit-twiddling optzns.</span>
+  <span class="n">TheFPM</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">createInstructionCombiningPass</span><span class="p">());</span>
+  <span class="c1">// Reassociate expressions.</span>
+  <span class="n">TheFPM</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">createReassociatePass</span><span class="p">());</span>
+  <span class="c1">// Eliminate Common SubExpressions.</span>
+  <span class="n">TheFPM</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">createGVNPass</span><span class="p">());</span>
+  <span class="c1">// Simplify the control flow graph (deleting unreachable blocks, etc).</span>
+  <span class="n">TheFPM</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">createCFGSimplificationPass</span><span class="p">());</span>
+
+  <span class="n">TheFPM</span><span class="p">.</span><span class="n">doInitialization</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code initializes the global module <code class="docutils literal"><span class="pre">TheModule</span></code>, and the function pass
+manager <code class="docutils literal"><span class="pre">TheFPM</span></code>, which is attached to <code class="docutils literal"><span class="pre">TheModule</span></code>. Once the pass manager is
+set up, we use a series of &#8220;add&#8221; calls to add a bunch of LLVM passes.</p>
+<p>In this case, we choose to add five passes: one analysis pass (alias analysis),
+and four optimization passes. The passes we choose here are a pretty standard set
+of &#8220;cleanup&#8221; optimizations that are useful for a wide variety of code. I won&#8217;t
+delve into what they do but, believe me, they are a good starting place :).</p>
+<p>Once the PassManager is set up, we need to make use of it. We do this by
+running it after our newly created function is constructed (in
+<code class="docutils literal"><span class="pre">FunctionAST::codegen()</span></code>), but before it is returned to the client:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">Value</span> <span class="o">*</span><span class="n">RetVal</span> <span class="o">=</span> <span class="n">Body</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">())</span> <span class="p">{</span>
+  <span class="c1">// Finish off the function.</span>
+  <span class="n">Builder</span><span class="p">.</span><span class="n">CreateRet</span><span class="p">(</span><span class="n">RetVal</span><span class="p">);</span>
+
+  <span class="c1">// Validate the generated code, checking for consistency.</span>
+  <span class="n">verifyFunction</span><span class="p">(</span><span class="o">*</span><span class="n">TheFunction</span><span class="p">);</span>
+
+  <span class="c1">// Optimize the function.</span>
+  <span class="n">TheFPM</span><span class="o">-&gt;</span><span class="n">run</span><span class="p">(</span><span class="o">*</span><span class="n">TheFunction</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">TheFunction</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>As you can see, this is pretty straightforward. The
+<code class="docutils literal"><span class="pre">FunctionPassManager</span></code> optimizes and updates the LLVM Function* in
+place, improving (hopefully) its body. With this in place, we can try
+our test above again:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@test</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">,</span> <span class="mf">3.000000e+00</span>
+        <span class="o">%</span><span class="n">multmp</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span><span class="p">,</span> <span class="o">%</span><span class="n">addtmp</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>As expected, we now get our nicely optimized code, saving a floating
+point add instruction from every execution of this function.</p>
+<p>LLVM provides a wide variety of optimizations that can be used in
+certain circumstances. Some <a class="reference external" href="../Passes.html">documentation about the various
+passes</a> is available, but it isn&#8217;t very complete.
+Another good source of ideas can come from looking at the passes that
+<code class="docutils literal"><span class="pre">Clang</span></code> runs to get started. The &#8220;<code class="docutils literal"><span class="pre">opt</span></code>&#8221; tool allows you to
+experiment with passes from the command line, so you can see if they do
+anything.</p>
+<p>Now that we have reasonable code coming out of our front-end, lets talk
+about executing it!</p>
+</div>
+<div class="section" id="adding-a-jit-compiler">
+<h2><a class="toc-backref" href="#id4">4.4. Adding a JIT Compiler</a><a class="headerlink" href="#adding-a-jit-compiler" title="永久链接至标题">¶</a></h2>
+<p>Code that is available in LLVM IR can have a wide variety of tools
+applied to it. For example, you can run optimizations on it (as we did
+above), you can dump it out in textual or binary forms, you can compile
+the code to an assembly file (.s) for some target, or you can JIT
+compile it. The nice thing about the LLVM IR representation is that it
+is the &#8220;common currency&#8221; between many different parts of the compiler.</p>
+<p>In this section, we&#8217;ll add JIT compiler support to our interpreter. The
+basic idea that we want for Kaleidoscope is to have the user enter
+function bodies as they do now, but immediately evaluate the top-level
+expressions they type in. For example, if they type in &#8220;1 + 2;&#8221;, we
+should evaluate and print out 3. If they define a function, they should
+be able to call it from the command line.</p>
+<p>In order to do this, we first declare and initialize the JIT. This is
+done by adding a global variable <code class="docutils literal"><span class="pre">TheJIT</span></code>, and initializing it in
+<code class="docutils literal"><span class="pre">main</span></code>:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;</span> <span class="n">TheJIT</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">..</span>
+  <span class="n">TheJIT</span> <span class="o">=</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;</span><span class="p">();</span>
+
+  <span class="c1">// Run the main &quot;interpreter loop&quot; now.</span>
+  <span class="n">MainLoop</span><span class="p">();</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The KaleidoscopeJIT class is a simple JIT built specifically for these
+tutorials. In later chapters we will look at how it works and extend it with
+new features, but for now we will take it as given. Its API is very simple::
+<code class="docutils literal"><span class="pre">addModule</span></code> adds an LLVM IR module to the JIT, making its functions
+available for execution; <code class="docutils literal"><span class="pre">removeModule</span></code> removes a module, freeing any
+memory associated with the code in that module; and <code class="docutils literal"><span class="pre">findSymbol</span></code> allows us
+to look up pointers to the compiled code.</p>
+<p>We can take this simple API and change our code that parses top-level expressions to
+look like this:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">HandleTopLevelExpression</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Evaluate a top-level expression into an anonymous function.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">FnAST</span> <span class="o">=</span> <span class="n">ParseTopLevelExpr</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">FnAST</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">())</span> <span class="p">{</span>
+
+      <span class="c1">// JIT the module containing the anonymous expression, keeping a handle so</span>
+      <span class="c1">// we can free it later.</span>
+      <span class="k">auto</span> <span class="n">H</span> <span class="o">=</span> <span class="n">TheJIT</span><span class="o">-&gt;</span><span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">TheModule</span><span class="p">));</span>
+      <span class="n">InitializeModuleAndPassManager</span><span class="p">();</span>
+
+      <span class="c1">// Search the JIT for the __anon_expr symbol.</span>
+      <span class="k">auto</span> <span class="n">ExprSymbol</span> <span class="o">=</span> <span class="n">TheJIT</span><span class="o">-&gt;</span><span class="n">findSymbol</span><span class="p">(</span><span class="s">&quot;__anon_expr&quot;</span><span class="p">);</span>
+      <span class="n">assert</span><span class="p">(</span><span class="n">ExprSymbol</span> <span class="o">&amp;&amp;</span> <span class="s">&quot;Function not found&quot;</span><span class="p">);</span>
+
+      <span class="c1">// Get the symbol&#39;s address and cast it to the right type (takes no</span>
+      <span class="c1">// arguments, returns a double) so we can call it as a native function.</span>
+      <span class="kt">double</span> <span class="p">(</span><span class="o">*</span><span class="n">FP</span><span class="p">)()</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span> <span class="p">(</span><span class="o">*</span><span class="p">)())(</span><span class="kt">intptr_t</span><span class="p">)</span><span class="n">ExprSymbol</span><span class="p">.</span><span class="n">getAddress</span><span class="p">();</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Evaluated to %f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">FP</span><span class="p">());</span>
+
+      <span class="c1">// Delete the anonymous expression module from the JIT.</span>
+      <span class="n">TheJIT</span><span class="o">-&gt;</span><span class="n">removeModule</span><span class="p">(</span><span class="n">H</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>If parsing and codegen succeeed, the next step is to add the module containing
+the top-level expression to the JIT. We do this by calling addModule, which
+triggers code generation for all the functions in the module, and returns a
+handle that can be used to remove the module from the JIT later. Once the module
+has been added to the JIT it can no longer be modified, so we also open a new
+module to hold subsequent code by calling <code class="docutils literal"><span class="pre">InitializeModuleAndPassManager()</span></code>.</p>
+<p>Once we&#8217;ve added the module to the JIT we need to get a pointer to the final
+generated code. We do this by calling the JIT&#8217;s findSymbol method, and passing
+the name of the top-level expression function: <code class="docutils literal"><span class="pre">__anon_expr</span></code>. Since we just
+added this function, we assert that findSymbol returned a result.</p>
+<p>Next, we get the in-memory address of the <code class="docutils literal"><span class="pre">__anon_expr</span></code> function by calling
+<code class="docutils literal"><span class="pre">getAddress()</span></code> on the symbol. Recall that we compile top-level expressions
+into a self-contained LLVM function that takes no arguments and returns the
+computed double. Because the LLVM JIT compiler matches the native platform ABI,
+this means that you can just cast the result pointer to a function pointer of
+that type and call it directly. This means, there is no difference between JIT
+compiled code and native machine code that is statically linked into your
+application.</p>
+<p>Finally, since we don&#8217;t support re-evaluation of top-level expressions, we
+remove the module from the JIT when we&#8217;re done to free the associated memory.
+Recall, however, that the module we created a few lines earlier (via
+<code class="docutils literal"><span class="pre">InitializeModuleAndPassManager</span></code>) is still open and waiting for new code to be
+added.</p>
+<p>With just these two changes, lets see how Kaleidoscope works now!</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="mi">4</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">Read</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">expression</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@0</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+  <span class="n">ret</span> <span class="n">double</span> <span class="mf">9.000000e+00</span>
+<span class="p">}</span>
+
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">9.000000</span>
+</pre></div>
+</div>
+<p>Well this looks like it is basically working. The dump of the function
+shows the &#8220;no argument function that always returns double&#8221; that we
+synthesize for each top-level expression that is typed in. This
+demonstrates very basic functionality, but can we do more?</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>ready&gt; def testfunc(x y) x + y*2;
+Read function definition:
+define double @testfunc(double %x, double %y) {
+entry:
+  %multmp = fmul double %y, 2.000000e+00
+  %addtmp = fadd double %multmp, %x
+  ret double %addtmp
+}
+
+ready&gt; testfunc(4, 10);
+Read top-level expression:
+define double @1() {
+entry:
+  %calltmp = call double @testfunc(double 4.000000e+00, double 1.000000e+01)
+  ret double %calltmp
+}
+
+Evaluated to 24.000000
+
+ready&gt; testfunc(5, 10);
+ready&gt; LLVM ERROR: Program used external function &#39;testfunc&#39; which could not be resolved!
+</pre></div>
+</div>
+<p>Function definitions and calls also work, but something went very wrong on that
+last line. The call looks valid, so what happened? As you may have guessed from
+the the API a Module is a unit of allocation for the JIT, and testfunc was part
+of the same module that contained anonymous expression. When we removed that
+module from the JIT to free the memory for the anonymous expression, we deleted
+the definition of <code class="docutils literal"><span class="pre">testfunc</span></code> along with it. Then, when we tried to call
+testfunc a second time, the JIT could no longer find it.</p>
+<p>The easiest way to fix this is to put the anonymous expression in a separate
+module from the rest of the function definitions. The JIT will happily resolve
+function calls across module boundaries, as long as each of the functions called
+has a prototype, and is added to the JIT before it is called. By putting the
+anonymous expression in a different module we can delete it without affecting
+the rest of the functions.</p>
+<p>In fact, we&#8217;re going to go a step further and put every function in its own
+module. Doing so allows us to exploit a useful property of the KaleidoscopeJIT
+that will make our environment more REPL-like: Functions can be added to the
+JIT more than once (unlike a module where every function must have a unique
+definition). When you look up a symbol in KaleidoscopeJIT it will always return
+the most recent definition:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+  <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">,</span> <span class="mf">1.000000e+00</span>
+  <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">3.000000</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+  <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">,</span> <span class="mf">2.000000e+00</span>
+  <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">4.000000</span>
+</pre></div>
+</div>
+<p>To allow each function to live in its own module we&#8217;ll need a way to
+re-generate previous function declarations into each new module we open:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;</span> <span class="n">TheJIT</span><span class="p">;</span>
+
+<span class="p">...</span>
+
+<span class="n">Function</span> <span class="o">*</span><span class="n">getFunction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// First, see if the function has already been added to the current module.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="o">*</span><span class="n">F</span> <span class="o">=</span> <span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">getFunction</span><span class="p">(</span><span class="n">Name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">F</span><span class="p">;</span>
+
+  <span class="c1">// If not, check whether we can codegen the declaration from some existing</span>
+  <span class="c1">// prototype.</span>
+  <span class="k">auto</span> <span class="n">FI</span> <span class="o">=</span> <span class="n">FunctionProtos</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">Name</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">FI</span> <span class="o">!=</span> <span class="n">FunctionProtos</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">FI</span><span class="o">-&gt;</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">();</span>
+
+  <span class="c1">// If no existing prototype exists, return null.</span>
+  <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">...</span>
+
+<span class="n">Value</span> <span class="o">*</span><span class="n">CallExprAST</span><span class="o">::</span><span class="n">codegen</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Look up the name in the global module table.</span>
+  <span class="n">Function</span> <span class="o">*</span><span class="n">CalleeF</span> <span class="o">=</span> <span class="n">getFunction</span><span class="p">(</span><span class="n">Callee</span><span class="p">);</span>
+
+<span class="p">...</span>
+
+<span class="n">Function</span> <span class="o">*</span><span class="n">FunctionAST</span><span class="o">::</span><span class="n">codegen</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Transfer ownership of the prototype to the FunctionProtos map, but keep a</span>
+  <span class="c1">// reference to it for use below.</span>
+  <span class="k">auto</span> <span class="o">&amp;</span><span class="n">P</span> <span class="o">=</span> <span class="o">*</span><span class="n">Proto</span><span class="p">;</span>
+  <span class="n">FunctionProtos</span><span class="p">[</span><span class="n">Proto</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Proto</span><span class="p">);</span>
+  <span class="n">Function</span> <span class="o">*</span><span class="n">TheFunction</span> <span class="o">=</span> <span class="n">getFunction</span><span class="p">(</span><span class="n">P</span><span class="p">.</span><span class="n">getName</span><span class="p">());</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">TheFunction</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>To enable this, we&#8217;ll start by adding a new global, <code class="docutils literal"><span class="pre">FunctionProtos</span></code>, that
+holds the most recent prototype for each function. We&#8217;ll also add a convenience
+method, <code class="docutils literal"><span class="pre">getFunction()</span></code>, to replace calls to <code class="docutils literal"><span class="pre">TheModule-&gt;getFunction()</span></code>.
+Our convenience method searches <code class="docutils literal"><span class="pre">TheModule</span></code> for an existing function
+declaration, falling back to generating a new declaration from FunctionProtos if
+it doesn&#8217;t find one. In <code class="docutils literal"><span class="pre">CallExprAST::codegen()</span></code> we just need to replace the
+call to <code class="docutils literal"><span class="pre">TheModule-&gt;getFunction()</span></code>. In <code class="docutils literal"><span class="pre">FunctionAST::codegen()</span></code> we need to
+update the FunctionProtos map first, then call <code class="docutils literal"><span class="pre">getFunction()</span></code>. With this
+done, we can always obtain a function declaration in the current module for any
+previously declared function.</p>
+<p>We also need to update HandleDefinition and HandleExtern:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">HandleDefinition</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">FnAST</span> <span class="o">=</span> <span class="n">ParseDefinition</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="o">*</span><span class="n">FnIR</span> <span class="o">=</span> <span class="n">FnAST</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">())</span> <span class="p">{</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Read function definition:&quot;</span><span class="p">);</span>
+      <span class="n">FnIR</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">();</span>
+      <span class="n">TheJIT</span><span class="o">-&gt;</span><span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">TheModule</span><span class="p">));</span>
+      <span class="n">InitializeModuleAndPassManager</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// Skip token for error recovery.</span>
+     <span class="n">getNextToken</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">HandleExtern</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">ProtoAST</span> <span class="o">=</span> <span class="n">ParseExtern</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="o">*</span><span class="n">FnIR</span> <span class="o">=</span> <span class="n">ProtoAST</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">())</span> <span class="p">{</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Read extern: &quot;</span><span class="p">);</span>
+      <span class="n">FnIR</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">();</span>
+      <span class="n">FunctionProtos</span><span class="p">[</span><span class="n">ProtoAST</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ProtoAST</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// Skip token for error recovery.</span>
+    <span class="n">getNextToken</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In HandleDefinition, we add two lines to transfer the newly defined function to
+the JIT and open a new module. In HandleExtern, we just need to add one line to
+add the prototype to FunctionProtos.</p>
+<p>With these changes made, lets try our REPL again (I removed the dump of the
+anonymous functions this time, you should get the idea by now :) :</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">3.000000</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">4.000000</span>
+</pre></div>
+</div>
+<p>It works!</p>
+<p>Even with this simple code, we get some surprisingly powerful capabilities -
+check this out:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="n">extern</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">extern</span><span class="p">:</span>
+<span class="n">declare</span> <span class="n">double</span> <span class="nd">@sin</span><span class="p">(</span><span class="n">double</span><span class="p">)</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">extern</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">extern</span><span class="p">:</span>
+<span class="n">declare</span> <span class="n">double</span> <span class="nd">@cos</span><span class="p">(</span><span class="n">double</span><span class="p">)</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">sin</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">expression</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@2</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+  <span class="n">ret</span> <span class="n">double</span> <span class="mh">0x3FEAED548F090CEE</span>
+<span class="p">}</span>
+
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">0.841471</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+  <span class="o">%</span><span class="n">calltmp</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@sin</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span>
+  <span class="o">%</span><span class="n">multmp</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp</span><span class="p">,</span> <span class="o">%</span><span class="n">calltmp</span>
+  <span class="o">%</span><span class="n">calltmp2</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@cos</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">x</span><span class="p">)</span>
+  <span class="o">%</span><span class="n">multmp4</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp2</span><span class="p">,</span> <span class="o">%</span><span class="n">calltmp2</span>
+  <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp</span><span class="p">,</span> <span class="o">%</span><span class="n">multmp4</span>
+  <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
+
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">foo</span><span class="p">(</span><span class="mf">4.0</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">expression</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@3</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+  <span class="o">%</span><span class="n">calltmp</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="mf">4.000000e+00</span><span class="p">)</span>
+  <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp</span>
+<span class="p">}</span>
+
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">1.000000</span>
+</pre></div>
+</div>
+<p>Whoa, how does the JIT know about sin and cos? The answer is surprisingly
+simple: The KaleidoscopeJIT has a straightforward symbol resolution rule that
+it uses to find symbols that aren&#8217;t available in any given module: First
+it searches all the modules that have already been added to the JIT, from the
+most recent to the oldest, to find the newest definition. If no definition is
+found inside the JIT, it falls back to calling &#8220;<code class="docutils literal"><span class="pre">dlsym(&quot;sin&quot;)</span></code>&#8221; on the
+Kaleidoscope process itself. Since &#8220;<code class="docutils literal"><span class="pre">sin</span></code>&#8221; is defined within the JIT&#8217;s
+address space, it simply patches up calls in the module to call the libm
+version of <code class="docutils literal"><span class="pre">sin</span></code> directly.</p>
+<p>In the future we&#8217;ll see how tweaking this symbol resolution rule can be used to
+enable all sorts of useful features, from security (restricting the set of
+symbols available to JIT&#8217;d code), to dynamic code generation based on symbol
+names, and even lazy compilation.</p>
+<p>One immediate benefit of the symbol resolution rule is that we can now extend
+the language by writing arbitrary C++ code to implement operations. For example,
+if we add:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">/// putchard - putchar that takes a double and returns 0.</span>
+<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="kt">double</span> <span class="n">putchard</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">fputc</span><span class="p">((</span><span class="kt">char</span><span class="p">)</span><span class="n">X</span><span class="p">,</span> <span class="n">stderr</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now we can produce simple output to the console by using things like:
+&#8220;<code class="docutils literal"><span class="pre">extern</span> <span class="pre">putchard(x);</span> <span class="pre">putchard(120);</span></code>&#8221;, which prints a lowercase &#8216;x&#8217;
+on the console (120 is the ASCII code for &#8216;x&#8217;). Similar code could be
+used to implement file I/O, console input, and many other capabilities
+in Kaleidoscope.</p>
+<p>This completes the JIT and optimizer chapter of the Kaleidoscope
+tutorial. At this point, we can compile a non-Turing-complete
+programming language, optimize and JIT compile it in a user-driven way.
+Next up we&#8217;ll look into <a class="reference external" href="LangImpl5.html">extending the language with control flow
+constructs</a>, tackling some interesting LLVM IR issues
+along the way.</p>
+</div>
+<div class="section" id="full-code-listing">
+<h2><a class="toc-backref" href="#id5">4.5. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="永久链接至标题">¶</a></h2>
+<p>Here is the complete code listing for our running example, enhanced with
+the LLVM JIT and optimizer. To build this example, use:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
+clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --system-libs --libs core mcjit native<span class="sb">`</span> -O3 -o toy
+<span class="c1"># Run</span>
+./toy
+</pre></div>
+</div>
+<p>If you are compiling this on Linux, make sure to add the &#8220;-rdynamic&#8221;
+option as well. This makes sure that the external functions are resolved
+properly at runtime.</p>
+<p>Here is the code:</p>
+<p><a class="reference external" href="LangImpl5.html">Next: Extending the language: control flow</a></p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="LangImpl5.html" title="5. Kaleidoscope: Extending the Language: Control Flow"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="LangImpl3.html" title="3. Kaleidoscope: Code generation to LLVM IR"
+             >上一页</a> |</li>
+  <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2003-2016, LLVM Project.
+      最后更新于 2016-04-17.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+    </div>
+  </body>
+</html>
