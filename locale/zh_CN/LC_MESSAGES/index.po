@@ -725,7 +725,7 @@ msgstr ""
 
 #: ../../index.rst:365
 msgid "Description of the ``inalloca`` argument attribute."
-msgstr " ``inalloca`` 参数属性的相关描述"
+msgstr "描述了 ``inalloca`` 参数属性的相关信息"
 
 #: ../../index.rst:368
 msgid ":doc:`FaultMaps`"
@@ -781,7 +781,7 @@ msgstr ""
 msgid ""
 "Describes the LLVMBuild organization and files used by LLVM to specify "
 "component descriptions."
-msgstr ""
+msgstr "描述了LLVMBuild 组织和LLVM用到的文件的详细说明"
 
 #: ../../index.rst:404
 msgid ":doc:`MakefileGuide`"
@@ -789,7 +789,7 @@ msgstr ""
 
 #: ../../index.rst:404
 msgid "Describes how the LLVM makefiles work and how to use them."
-msgstr ""
+msgstr "描述了LLVM的Makefiles如何工作以及如何使用它们。"
 
 #: ../../index.rst:407
 msgid ":doc:`HowToReleaseLLVM`"
@@ -797,7 +797,7 @@ msgstr ""
 
 #: ../../index.rst:407
 msgid "This is a guide to preparing LLVM releases. Most developers can ignore it."
-msgstr ""
+msgstr "这是一份准备LLVM发布版的指导，大多数开发者可以忽略它。"
 
 #: ../../index.rst:410
 msgid ":doc:`ReleaseProcess`"
@@ -807,7 +807,7 @@ msgstr ""
 msgid ""
 "This is a guide to validate a new release, during the release process. "
 "Most developers can ignore it."
-msgstr ""
+msgstr "这是一个如何校验新发布版的指导，大多数开发者可以忽略它。"
 
 #: ../../index.rst:413
 msgid ":doc:`Packaging`"
@@ -815,7 +815,7 @@ msgstr ""
 
 #: ../../index.rst:413
 msgid "Advice on packaging LLVM into a distribution."
-msgstr ""
+msgstr "打包LLVM成分发版的建议。"
 
 #: ../../index.rst:417
 msgid ":doc:`Phabricator`"
@@ -825,7 +825,8 @@ msgstr ""
 msgid ""
 "Describes how to use the Phabricator code review tool hosted on "
 "http://reviews.llvm.org/ and its command line interface, Arcanist."
-msgstr ""
+msgstr "关于如何使用Phabricator代码审阅工具审阅托管在 http://reviews.llvm.org/ 上的代码，"
+"以及相关的命令行接口。——Arcanist"
 
 #: ../../index.rst:420
 msgid "Community"
@@ -840,17 +841,17 @@ msgstr ""
 
 #: ../../index.rst:427
 msgid "Mailing Lists"
-msgstr ""
+msgstr "邮件列表"
 
 #: ../../index.rst:429
 msgid ""
 "If you can't find what you need in these docs, try consulting the mailing"
 " lists."
-msgstr ""
+msgstr "如何你在文档中找不到你需要的内容，可以尝试查看邮件列表。"
 
 #: ../../index.rst:437
 msgid "`Developer's List (llvm-dev)`__"
-msgstr ""
+msgstr "`开发者列表 (llvm-dev)`__"
 
 #: ../../index.rst:433
 msgid ""
@@ -861,7 +862,7 @@ msgstr ""
 
 #: ../../index.rst:446
 msgid "`Commits Archive (llvm-commits)`__"
-msgstr ""
+msgstr "`提交归档 (llvm-commits)`__"
 
 #: ../../index.rst:440
 msgid ""
@@ -874,7 +875,7 @@ msgstr ""
 
 #: ../../index.rst:452
 msgid "`Bugs & Patches Archive (llvm-bugs)`__"
-msgstr ""
+msgstr "`Bug和补丁归档 (llvm-bugs)`__"
 
 #: ../../index.rst:449
 msgid ""
@@ -884,7 +885,7 @@ msgstr ""
 
 #: ../../index.rst:459
 msgid "`Test Results Archive (llvm-testresults)`__"
-msgstr ""
+msgstr "`测试结果归档 (llvm-testresults)`__"
 
 #: ../../index.rst:455
 msgid ""
@@ -895,7 +896,7 @@ msgstr ""
 
 #: ../../index.rst:465
 msgid "`LLVM Announcements List (llvm-announce)`__"
-msgstr ""
+msgstr "`LLVM公共列表 (llvm-announce)`__"
 
 #: ../../index.rst:462
 msgid ""
