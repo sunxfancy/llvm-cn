@@ -27,20 +27,24 @@ msgid ""
 "industrial strength compilers to specialized JIT applications to small "
 "research projects."
 msgstr ""
+"LLVM编译器基础设施提供了一系列项目，从工业级的编译器到专业的JIT应用，再到小型的研究项目都有。"
+
 
 #: ../../index.rst:8
 msgid ""
 "Similarly, documentation is broken down into several high-level groupings"
 " targeted at different audiences:"
 msgstr ""
+"同样的，文档也被按照不同的目标读者，从高层次划分成为了几个部分："
 
 #: ../../index.rst:12
 msgid "LLVM Design & Overview"
-msgstr ""
+msgstr "LLVM设计概览"
+
 
 #: ../../index.rst:14
 msgid "Several introductory papers and presentations."
-msgstr ""
+msgstr "一些介绍性的文章和展示"
 
 #: ../../index.rst:22
 msgid ":doc:`LangRef`"
@@ -48,53 +52,53 @@ msgstr ""
 
 #: ../../index.rst:22
 msgid "Defines the LLVM intermediate representation."
-msgstr ""
+msgstr "LLVM语言参考手册：一些关于LLVM中间表示的相关定义，详细介绍了LLVM字节码的含义和规范"
 
 #: ../../index.rst:27
 msgid "`Introduction to the LLVM Compiler`__"
-msgstr ""
+msgstr "`LLVM编译器简介`__"
 
 #: ../../index.rst:25
 msgid "Presentation providing a users introduction to LLVM."
-msgstr ""
+msgstr "提供对用户的LLVM简介（08年的一份PPT文稿）"
 
 #: ../../index.rst:33
 msgid "`Intro to LLVM`__"
-msgstr ""
+msgstr "`Intro to LLVM（LLVM介绍）`__"
 
 #: ../../index.rst:30
 msgid "Book chapter providing a compiler hacker's introduction to LLVM."
-msgstr ""
+msgstr "一本介绍LLVM编译器hack技术的书籍"
 
 #: ../../index.rst:38
 msgid ""
 "`LLVM: A Compilation Framework for Lifelong Program Analysis & "
 "Transformation`__"
-msgstr ""
+msgstr "`LLVM: 为分析转换长生命周期程序而设计的编译器框架`__"
 
 #: ../../index.rst:36
 msgid "Design overview."
-msgstr ""
+msgstr "设计概览"
 
 #: ../../index.rst:43
 msgid "`LLVM: An Infrastructure for Multi-Stage Optimization`__"
-msgstr ""
+msgstr "`LLVM: 多级优化的编译器基础设施`__"
 
 #: ../../index.rst:41
 msgid "More details (quite old now)."
-msgstr ""
+msgstr "更多的细节（相当过时的）"
 
 #: ../../index.rst:46
 msgid "`Publications mentioning LLVM <http://llvm.org/pubs>`_"
-msgstr ""
+msgstr "`提及LLVM的相关出版物 <http://llvm.org/pubs>`_"
 
 #: ../../index.rst:49
 msgid "User Guides"
-msgstr ""
+msgstr "用户指南"
 
 #: ../../index.rst:51
 msgid "For those new to the LLVM system."
-msgstr ""
+msgstr "适合刚入门的读者。"
 
 #: ../../index.rst:53
 msgid ""
@@ -104,6 +108,10 @@ msgid ""
 "is intended for users who have a need to work with the intermediate LLVM "
 "representation."
 msgstr ""
+"注意： 如果您仅仅关心如何使用基于LLVM的编译器，您可以参考 `Clang <http://clang.llvm.org>`_ "
+"或 `DragonEgg <http://dragonegg.llvm.org>`_ 。"
+"这里的文档是为要使用LLVM中间表示的用户准备的，这里涵盖更多的LLVM字节码的相关细节。"
+
 
 #: ../../index.rst:89
 msgid ":doc:`GettingStarted`"
@@ -115,6 +123,7 @@ msgid ""
 " Everything from unpacking and compilation of the distribution to "
 "execution of some tools."
 msgstr ""
+"讨论如何开始了解LLVM项目并快速入门，我们将介绍从解压缩到编译整个项目的各种细节问题。"
 
 #: ../../index.rst:93
 msgid ":doc:`CMake`"
@@ -125,6 +134,9 @@ msgid ""
 "An addendum to the main Getting Started guide for those using the `CMake "
 "build system <http://www.cmake.org>`_."
 msgstr ""
+"使用 `CMake <http://www.cmake.org>`_ 构建系统的入门指导补充"
+
+
 
 #: ../../index.rst:96
 msgid ":doc:`HowToBuildOnARM`"
@@ -132,7 +144,7 @@ msgstr ""
 
 #: ../../index.rst:96
 msgid "Notes on building and testing LLVM/Clang on ARM."
-msgstr ""
+msgstr "在ARM平台构建和测试LLVM/Clang"
 
 #: ../../index.rst:99
 msgid ":doc:`HowToCrossCompileLLVM`"
@@ -140,7 +152,7 @@ msgstr ""
 
 #: ../../index.rst:99
 msgid "Notes on cross-building and testing LLVM/Clang."
-msgstr ""
+msgstr "如何跨平台编译和测试LLVM/Clang"
 
 #: ../../index.rst:103
 msgid ":doc:`GettingStartedVS`"
@@ -151,6 +163,8 @@ msgid ""
 "An addendum to the main Getting Started guide for those using Visual "
 "Studio on Windows."
 msgstr ""
+"在Windows平台使用Visual Studio的用户入门指导补充"
+
 
 #: ../../index.rst:107
 msgid ":doc:`BuildingLLVMWithAutotools`"
@@ -161,6 +175,8 @@ msgid ""
 "An addendum to the Getting Started guide with instructions for building "
 "LLVM with the Autotools build system."
 msgstr ""
+"入门指南的补充，关于使用LLVM的Autotools构建系统的构建指导"
+
 
 #: ../../index.rst:111
 msgid ":doc:`tutorial/index`"
@@ -171,16 +187,21 @@ msgid ""
 "Tutorials about using LLVM. Includes a tutorial about making a custom "
 "language with LLVM."
 msgstr ""
+"使用LLVM项目的教程，包括使用LLVM制作一款个人定制语言的编译器教程。"
+
 
 #: ../../index.rst:115
 msgid ":doc:`LLVM Command Guide <CommandGuide/index>`"
 msgstr ""
+
 
 #: ../../index.rst:114
 msgid ""
 "A reference manual for the LLVM command line utilities (\"man\" pages for"
 " LLVM tools)."
 msgstr ""
+"LLVM命令行工具的参考手册 （LLVM命令行工具的 \"man\" 文档"）"
+
 
 #: ../../index.rst:118
 msgid ":doc:`Passes`"
@@ -189,6 +210,8 @@ msgstr ""
 #: ../../index.rst:118
 msgid "A list of optimizations and analyses implemented in LLVM."
 msgstr ""
+"LLVM中一系列优化和分析的实现"
+
 
 #: ../../index.rst:121
 msgid ":doc:`FAQ`"
@@ -197,6 +220,7 @@ msgstr ""
 #: ../../index.rst:121
 msgid "A list of common questions and problems and their solutions."
 msgstr ""
+"一系列常见问题和其解决方案"
 
 #: ../../index.rst:124
 msgid ":doc:`Release notes for the current release <ReleaseNotes>`"
@@ -205,6 +229,8 @@ msgstr ""
 #: ../../index.rst:124
 msgid "This describes new features, known bugs, and other limitations."
 msgstr ""
+"介绍最新的特性，已知的异常和其他局限性。"
+
 
 #: ../../index.rst:128
 msgid ":doc:`HowToSubmitABug`"
@@ -215,6 +241,7 @@ msgid ""
 "Instructions for properly submitting information about any bugs you run "
 "into in the LLVM system."
 msgstr ""
+"提交LLVM错误信息的相关指导"
 
 #: ../../index.rst:132
 msgid ":doc:`SphinxQuickstartTemplate`"
@@ -225,6 +252,7 @@ msgid ""
 "A template + tutorial for writing new Sphinx documentation. It is meant "
 "to be read in source form."
 msgstr ""
+"编写Sphinx文档的一个模板，同时也是一份教程，您应该阅读它的源码形式，它可以在LLVM源码的docs目录下找到"
 
 #: ../../index.rst:135
 msgid ":doc:`LLVM Testing Infrastructure Guide <TestingGuide>`"
@@ -232,15 +260,15 @@ msgstr ""
 
 #: ../../index.rst:135
 msgid "A reference manual for using the LLVM testing infrastructure."
-msgstr ""
+msgstr "LLVM测试框架的使用参考手册"
 
 #: ../../index.rst:140
 msgid "`How to build the C, C++, ObjC, and ObjC++ front end`__"
-msgstr ""
+msgstr "`如何构建 C, C++, ObjC, 和 ObjC++ 的前端`__"
 
 #: ../../index.rst:138
 msgid "Instructions for building the clang front-end from source."
-msgstr ""
+msgstr "从源码构建Clang前端的构建指导"
 
 #: ../../index.rst:143
 msgid ":doc:`Lexicon`"
@@ -248,7 +276,7 @@ msgstr ""
 
 #: ../../index.rst:143
 msgid "Definition of acronyms, terms and concepts used in LLVM."
-msgstr ""
+msgstr "缩略语，术语和LLVM所用到的概念定义。"
 
 #: ../../index.rst:146
 msgid ":doc:`HowToAddABuilder`"
@@ -256,7 +284,7 @@ msgstr ""
 
 #: ../../index.rst:146
 msgid "Instructions for adding new builder to LLVM buildbot master."
-msgstr ""
+msgstr "添加新的构建器到LLVM buildbot master，增加新的自动构建机器人。"
 
 #: ../../index.rst:149
 msgid ":doc:`YamlIO`"
@@ -264,7 +292,7 @@ msgstr ""
 
 #: ../../index.rst:149
 msgid "A reference guide for using LLVM's YAML I/O library."
-msgstr ""
+msgstr "使用 LLVM 的 YAML I/O 库的参考指南"
 
 #: ../../index.rst:153
 msgid ":doc:`GetElementPtr`"
@@ -274,7 +302,7 @@ msgstr ""
 msgid ""
 "Answers to some very frequent questions about LLVM's most frequently "
 "misunderstood instruction."
-msgstr ""
+msgstr "回答一下对LLVM指令的常见误解，详细介绍GetElementPtr指令的含义和用法"
 
 #: ../../index.rst:158
 msgid ":doc:`Frontend/PerformanceTips`"
@@ -285,10 +313,11 @@ msgid ""
 "A collection of tips for frontend authors on how to generate IR which "
 "LLVM is able to effectively optimize."
 msgstr ""
+"编译器前端作者的小提醒，关于如何生成高效的LLVM IR"
 
 #: ../../index.rst:161
 msgid "Programming Documentation"
-msgstr ""
+msgstr "开发者文档"
 
 #: ../../index.rst:163
 msgid "For developers of applications which use LLVM as a library."
@@ -912,4 +941,3 @@ msgstr ""
 #: ../../index.rst:492
 msgid ":ref:`search`"
 msgstr ""
-
