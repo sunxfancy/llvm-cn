@@ -321,7 +321,7 @@ msgstr "开发者文档"
 
 #: ../../index.rst:163
 msgid "For developers of applications which use LLVM as a library."
-msgstr ""
+msgstr "适合希望将LLVM作为第三方库使用的应用开发者阅读。"
 
 #: ../../index.rst:180
 msgid ":doc:`LLVM Language Reference Manual <LangRef>`"
@@ -331,7 +331,7 @@ msgstr ""
 msgid ""
 "Defines the LLVM intermediate representation and the assembly form of the"
 " different nodes."
-msgstr ""
+msgstr "LLVM语言参考手册：一些关于LLVM中间表示的相关定义，详细介绍了LLVM字节码的含义和规范"
 
 #: ../../index.rst:183
 msgid ":doc:`Atomics`"
@@ -339,7 +339,7 @@ msgstr ""
 
 #: ../../index.rst:183
 msgid "Information about LLVM's concurrency model."
-msgstr ""
+msgstr "原子指令和并发指南：LLVM并发模型的相关信息"
 
 #: ../../index.rst:187
 msgid ":doc:`ProgrammersManual`"
@@ -350,6 +350,7 @@ msgid ""
 "Introduction to the general layout of the LLVM sourcebase, important "
 "classes and APIs, and some tips & tricks."
 msgstr ""
+"介绍LLVM源代码的基础部分，重要的类和相关API接口，也包含一些重要的提示和技巧。"
 
 #: ../../index.rst:190
 msgid ":doc:`Extensions`"
@@ -360,6 +361,7 @@ msgid ""
 "LLVM-specific extensions to tools and formats LLVM seeks compatibility "
 "with."
 msgstr ""
+"LLVM特殊的扩展工具和兼容格式"
 
 #: ../../index.rst:193
 msgid ":doc:`CommandLine`"
@@ -367,7 +369,8 @@ msgstr ""
 
 #: ../../index.rst:193
 msgid "Provides information on using the command line parsing library."
-msgstr ""
+msgstr "提供了命令行解析库的相关信息。"
+
 
 #: ../../index.rst:197
 msgid ":doc:`CodingStandards`"
@@ -377,7 +380,7 @@ msgstr ""
 msgid ""
 "Details the LLVM coding standards and provides useful information on "
 "writing efficient C++ code."
-msgstr ""
+msgstr "LLVM代码规范的细节，并且提供了编写高效C++代码的技巧信息"
 
 #: ../../index.rst:201
 msgid ":doc:`HowToSetUpLLVMStyleRTTI`"
@@ -388,6 +391,8 @@ msgid ""
 "How to make ``isa<>``, ``dyn_cast<>``, etc. available for clients of your"
 " class hierarchy."
 msgstr ""
+"如何让 ``isa<>``, ``dyn_cast<>``, 等指令可以用在您自定义的类中。"
+
 
 #: ../../index.rst:204
 msgid ":doc:`ExtendingLLVM`"
@@ -395,7 +400,7 @@ msgstr ""
 
 #: ../../index.rst:204
 msgid "Look here to see how to add instructions and intrinsics to LLVM."
-msgstr ""
+msgstr "这里介绍了如何添加新的LLVM指令，内联函数，内部类型等"
 
 #: ../../index.rst:208
 msgid "`Doxygen generated documentation <http://llvm.org/doxygen/>`_"
@@ -403,13 +408,13 @@ msgstr ""
 
 #: ../../index.rst:207
 msgid ""
-"(`classes <http://llvm.org/doxygen/inherits.html>`_) (`tarball "
+"(`classes类继承关系 <http://llvm.org/doxygen/inherits.html>`_) (`tarball下载 "
 "<http://llvm.org/doxygen/doxygen.tar.gz>`_)"
 msgstr ""
 
 #: ../../index.rst:210
 msgid ""
-"`Documentation for Go bindings "
+"`Go语言版LLVM绑定 相关文档 "
 "<http://godoc.org/llvm.org/llvm/bindings/go/llvm>`_"
 msgstr ""
 
@@ -423,7 +428,7 @@ msgstr ""
 
 #: ../../index.rst:216
 msgid "A list of helpful links for compiler writers."
-msgstr ""
+msgstr "一系列关于所支持的架构的相关信息，对于编译器开发者十分必要。"
 
 #: ../../index.rst:219
 msgid ":doc:`LibFuzzer`"
@@ -435,11 +440,11 @@ msgstr ""
 
 #: ../../index.rst:222
 msgid "Subsystem Documentation"
-msgstr ""
+msgstr "子系统文档"
 
 #: ../../index.rst:224
 msgid "For API clients and LLVM developers."
-msgstr ""
+msgstr "适合API客户端和LLVM开发者阅读。"
 
 #: ../../index.rst:263
 msgid ":doc:`WritingAnLLVMPass`"
@@ -447,7 +452,7 @@ msgstr ""
 
 #: ../../index.rst:263
 msgid "Information on how to write LLVM transformations and analyses."
-msgstr ""
+msgstr "如何去写一个LLVM转换分析过程（一个Pass）的相关信息。"
 
 #: ../../index.rst:266
 msgid ":doc:`WritingAnLLVMBackend`"
@@ -455,7 +460,7 @@ msgstr ""
 
 #: ../../index.rst:266
 msgid "Information on how to write LLVM backends for machine targets."
-msgstr ""
+msgstr "关于如何去写一个针对特性目标机型的LLVM的后端。"
 
 #: ../../index.rst:271
 msgid ":doc:`CodeGenerator`"
@@ -467,6 +472,8 @@ msgid ""
 "are working on retargetting LLVM to a new architecture, designing a new "
 "codegen pass, or enhancing existing components."
 msgstr ""
+"LLVM代码生成器的设计与实现，如果你正在重新制作一个新的目标架构，设计一个新的代码生成过程"
+"或者修改现有组件，这份文档将会十分有价值。"
 
 #: ../../index.rst:275
 msgid ":doc:`Machine IR (MIR) Format Reference Manual <MIRLangRef>`"
@@ -477,6 +484,7 @@ msgid ""
 "A reference manual for the MIR serialization format, which is used to "
 "test LLVM's code generation passes."
 msgstr ""
+"MIR串行化格式的参考文档，用来测试LLVM的代码生成过程。"
 
 #: ../../index.rst:279
 msgid ":doc:`TableGen <TableGen/index>`"
@@ -487,6 +495,8 @@ msgid ""
 "Describes the TableGen tool, which is used heavily by the LLVM code "
 "generator."
 msgstr ""
+"TableGen工具的介绍，一款LLVM代码生成部分很常用的工具。"
+
 
 #: ../../index.rst:283
 msgid ":doc:`AliasAnalysis`"
@@ -497,6 +507,8 @@ msgid ""
 "Information on how to write a new alias analysis implementation or how to"
 " use existing analyses."
 msgstr ""
+"关于如何给一个新的分析实现或现有实现起别名。"
+
 
 #: ../../index.rst:287
 msgid ":doc:`GarbageCollection`"
@@ -506,7 +518,8 @@ msgstr ""
 msgid ""
 "The interfaces source-language compilers should use for compiling GC'd "
 "programs."
-msgstr ""
+msgstr "编译器用来实现GC程序的源代码接口。"
+
 
 #: ../../index.rst:291
 msgid ":doc:`Source Level Debugging with LLVM <SourceLevelDebugging>`"
@@ -516,7 +529,7 @@ msgstr ""
 msgid ""
 "This document describes the design and philosophy behind the LLVM source-"
 "level debugger."
-msgstr ""
+msgstr "LLVM 源码级调试器的设计哲学描述文档"
 
 #: ../../index.rst:294
 msgid ":doc:`Vectorizers`"
@@ -524,7 +537,7 @@ msgstr ""
 
 #: ../../index.rst:294
 msgid "This document describes the current status of vectorization in LLVM."
-msgstr ""
+msgstr "这份文档描述了如何将LLVM的当前状态向量化。"
 
 #: ../../index.rst:298
 msgid ":doc:`ExceptionHandling`"
@@ -534,7 +547,7 @@ msgstr ""
 msgid ""
 "This document describes the design and implementation of exception "
 "handling in LLVM."
-msgstr ""
+msgstr "这份文档描述了如何设计和实现在LLVM中的异常处理。"
 
 #: ../../index.rst:302
 msgid ":doc:`Bugpoint`"
@@ -544,7 +557,7 @@ msgstr ""
 msgid ""
 "Automatic bug finder and test-case reducer description and usage "
 "information."
-msgstr ""
+msgstr "自动bug跟踪和测试用例减少器的描述和使用信息"
 
 #: ../../index.rst:305
 msgid ":doc:`BitCodeFormat`"
@@ -552,7 +565,7 @@ msgstr ""
 
 #: ../../index.rst:305
 msgid "This describes the file format and encoding used for LLVM \"bc\" files."
-msgstr ""
+msgstr "这份文档描述了LLVM “.bc” 文件的格式和编码。"
 
 #: ../../index.rst:309
 msgid ":doc:`System Library <SystemLibrary>`"
@@ -562,7 +575,7 @@ msgstr ""
 msgid ""
 "This document describes the LLVM System Library (``lib/System``) and how "
 "to keep LLVM source code portable"
-msgstr ""
+msgstr "这份文档描述了如何使用LLVM系统库（ ``lib/System`` ），以及如让LLVM源码保持可移植性"
 
 #: ../../index.rst:313
 msgid ":doc:`LinkTimeOptimization`"
@@ -572,7 +585,7 @@ msgstr ""
 msgid ""
 "This document describes the interface between LLVM intermodular optimizer"
 " and the linker and its design"
-msgstr ""
+msgstr "链接时优化：这份文档描述了LLVM模块内优化器和链接器之间的接口，以及设计思路"
 
 #: ../../index.rst:316
 msgid ":doc:`GoldPlugin`"
@@ -580,7 +593,7 @@ msgstr ""
 
 #: ../../index.rst:316
 msgid "How to build your programs with link-time optimization on Linux."
-msgstr ""
+msgstr "如何在Linux平台上，构建你的程序时启用链接时优化。"
 
 #: ../../index.rst:319
 msgid ":doc:`DebuggingJITedCode`"
@@ -588,7 +601,7 @@ msgstr ""
 
 #: ../../index.rst:319
 msgid "How to debug JITed code with GDB."
-msgstr ""
+msgstr "如何使用GDB调试Jit引擎中的代码。"
 
 #: ../../index.rst:322
 msgid ":doc:`MCJITDesignAndImplementation`"
@@ -596,7 +609,7 @@ msgstr ""
 
 #: ../../index.rst:322
 msgid "Describes the inner workings of MCJIT execution engine."
-msgstr ""
+msgstr "MCJIT执行引擎的内部工作描述"
 
 #: ../../index.rst:325
 msgid ":doc:`BranchWeightMetadata`"
@@ -604,7 +617,7 @@ msgstr ""
 
 #: ../../index.rst:325
 msgid "Provides information about Branch Prediction Information."
-msgstr ""
+msgstr "提供了分支预测技术的相关信息"
 
 #: ../../index.rst:329
 msgid ":doc:`BlockFrequencyTerminology`"
@@ -614,7 +627,7 @@ msgstr ""
 msgid ""
 "Provides information about terminology used in the ``BlockFrequencyInfo``"
 " analysis pass."
-msgstr ""
+msgstr "提供了一些关于在分析过程中，基本块频率信息（ ``BlockFrequencyInfo`` ）的术语信息"
 
 #: ../../index.rst:332
 msgid ":doc:`SegmentedStacks`"
@@ -622,7 +635,7 @@ msgstr ""
 
 #: ../../index.rst:332
 msgid "This document describes segmented stacks and how they are used in LLVM."
-msgstr ""
+msgstr "这份文档描述了分段栈和它是如何在LLVM被使用的。"
 
 #: ../../index.rst:335
 msgid ":doc:`MarkedUpDisassembly`"
@@ -630,7 +643,7 @@ msgstr ""
 
 #: ../../index.rst:335
 msgid "This document describes the optional rich disassembly output syntax."
-msgstr ""
+msgstr "这份文档描述了可选富反编译器的输出形式"
 
 #: ../../index.rst:338
 msgid ":doc:`HowToUseAttributes`"
@@ -638,7 +651,7 @@ msgstr ""
 
 #: ../../index.rst:338
 msgid "Answers some questions about the new Attributes infrastructure."
-msgstr ""
+msgstr "回答一些关于属性指令的相关问题。"
 
 #: ../../index.rst:341
 msgid ":doc:`NVPTXUsage`"
@@ -646,7 +659,7 @@ msgstr ""
 
 #: ../../index.rst:341
 msgid "This document describes using the NVPTX back-end to compile GPU kernels."
-msgstr ""
+msgstr "这份文档描述使用NVPTX后端去编译到GPU代码的方法。"
 
 #: ../../index.rst:344
 msgid ":doc:`AMDGPUUsage`"
@@ -654,7 +667,7 @@ msgstr ""
 
 #: ../../index.rst:344
 msgid "This document describes how to use the AMDGPU back-end."
-msgstr ""
+msgstr "这份代码描述了如何使用AMDGPU后端。"
 
 #: ../../index.rst:348
 msgid ":doc:`StackMaps`"
@@ -664,7 +677,7 @@ msgstr ""
 msgid ""
 "LLVM support for mapping instruction addresses to the location of values "
 "and allowing code to be patched."
-msgstr ""
+msgstr "LLVM对于映射指令地址到变量所在位置的相关支持，"
 
 #: ../../index.rst:352
 msgid ":doc:`BigEndianNEON`"
@@ -675,7 +688,8 @@ msgid ""
 "LLVM's support for generating NEON instructions on big endian ARM targets"
 " is somewhat nonintuitive. This document explains the implementation and "
 "rationale."
-msgstr ""
+msgstr "LLVM对于生成NEON instructions在大端ARM目标机型的支持是有点令人费解的，这份文档"
+"在解释其实现和基本原理"
 
 #: ../../index.rst:355
 msgid ":doc:`CoverageMappingFormat`"
@@ -685,7 +699,7 @@ msgstr ""
 msgid ""
 "This describes the format and encoding used for LLVM’s code coverage "
 "mapping."
-msgstr ""
+msgstr "这份文档描述了LLVM代码覆盖率映射的格式和编码方式。"
 
 #: ../../index.rst:359
 msgid ":doc:`Statepoints`"
@@ -695,7 +709,7 @@ msgstr ""
 msgid ""
 "This describes a set of experimental extensions for garbage collection "
 "support."
-msgstr ""
+msgstr "这份文档描述了对于垃圾回收机制的支持的一系列额外扩展。"
 
 #: ../../index.rst:362
 msgid ":doc:`MergeFunctions`"
@@ -703,7 +717,7 @@ msgstr ""
 
 #: ../../index.rst:362
 msgid "Describes functions merging optimization."
-msgstr ""
+msgstr "描述了合并功能优化。"
 
 #: ../../index.rst:365
 msgid ":doc:`InAlloca`"
@@ -711,7 +725,7 @@ msgstr ""
 
 #: ../../index.rst:365
 msgid "Description of the ``inalloca`` argument attribute."
-msgstr ""
+msgstr " ``inalloca`` 参数属性的相关描述"
 
 #: ../../index.rst:368
 msgid ":doc:`FaultMaps`"
@@ -719,7 +733,7 @@ msgstr ""
 
 #: ../../index.rst:368
 msgid "LLVM support for folding control flow into faulting machine instructions."
-msgstr ""
+msgstr "异常图和隐式检查：LLVM对于转换控制流到错误恢复语句的支持"
 
 #: ../../index.rst:371
 msgid ":doc:`CompileCudaWithLLVM`"
@@ -727,15 +741,15 @@ msgstr ""
 
 #: ../../index.rst:371
 msgid "LLVM support for CUDA."
-msgstr ""
+msgstr "LLVM对于CUDA的支持"
 
 #: ../../index.rst:374
 msgid "Development Process Documentation"
-msgstr ""
+msgstr "开发过程文档"
 
 #: ../../index.rst:376
 msgid "Information about LLVM's development process."
-msgstr ""
+msgstr "LLVM开发过程中的重要信息"
 
 #: ../../index.rst:391
 msgid ":doc:`DeveloperPolicy`"
@@ -743,7 +757,7 @@ msgstr ""
 
 #: ../../index.rst:391
 msgid "The LLVM project's policy towards developers and their contributions."
-msgstr ""
+msgstr "LLVM项目对于开发者和他们贡献的政策"
 
 #: ../../index.rst:397
 msgid ":doc:`Projects`"
@@ -756,6 +770,8 @@ msgid ""
 "test tree) allow the project code to be located outside (or inside) the "
 "``llvm/`` tree, while using LLVM header files and libraries."
 msgstr ""
+
+
 
 #: ../../index.rst:401
 msgid ":doc:`LLVMBuild`"
