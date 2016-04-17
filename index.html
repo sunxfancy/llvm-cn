@@ -184,7 +184,7 @@
 <dd><p class="first last">LLVM代码规范的细节，并且提供了编写高效C++代码的技巧信息</p>
 </dd>
 <dt><a class="reference internal" href="HowToSetUpLLVMStyleRTTI.html"><span class="doc">How to set up LLVM-style RTTI for your class hierarchy</span></a></dt>
-<dd><p class="first last">如何让``isa&lt;&gt;``, <code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>, 等指令可以用在您自定义的类中。</p>
+<dd><p class="first last">如何让 <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>, <code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>, 等指令可以用在您自定义的类中。</p>
 </dd>
 <dt><a class="reference internal" href="ExtendingLLVM.html"><span class="doc">Extending LLVM: Adding instructions, intrinsics, types, etc.</span></a></dt>
 <dd><p class="first last">这里介绍了如何添加新的LLVM指令，内联函数，内部类型等</p>
@@ -247,80 +247,99 @@
 <dd><p class="first last">这份文档描述了LLVM “.bc” 文件的格式和编码。</p>
 </dd>
 <dt><a class="reference internal" href="SystemLibrary.html"><span class="doc">System Library</span></a></dt>
-<dd>This document describes the LLVM System Library (<code class="docutils literal"><span class="pre">lib/System</span></code>) and
-how to keep LLVM source code portable</dd>
+<dd><p class="first last">这份文档描述了如何使用LLVM系统库（ <code class="docutils literal"><span class="pre">lib/System</span></code> ），以及如让LLVM源码保持可移植性</p>
+</dd>
 <dt><a class="reference internal" href="LinkTimeOptimization.html"><span class="doc">LLVM Link Time Optimization: Design and Implementation</span></a></dt>
-<dd>This document describes the interface between LLVM intermodular optimizer
-and the linker and its design</dd>
+<dd><p class="first last">链接时优化：这份文档描述了LLVM模块内优化器和链接器之间的接口，以及设计思路</p>
+</dd>
 <dt><a class="reference internal" href="GoldPlugin.html"><span class="doc">The LLVM gold plugin</span></a></dt>
-<dd>How to build your programs with link-time optimization on Linux.</dd>
+<dd><p class="first last">如何在Linux平台上，构建你的程序时启用链接时优化。</p>
+</dd>
 <dt><a class="reference internal" href="DebuggingJITedCode.html"><span class="doc">Debugging JIT-ed Code With GDB</span></a></dt>
-<dd>How to debug JITed code with GDB.</dd>
+<dd><p class="first last">如何使用GDB调试Jit引擎中的代码。</p>
+</dd>
 <dt><a class="reference internal" href="MCJITDesignAndImplementation.html"><span class="doc">MCJIT Design and Implementation</span></a></dt>
-<dd>Describes the inner workings of MCJIT execution engine.</dd>
+<dd><p class="first last">MCJIT执行引擎的内部工作描述</p>
+</dd>
 <dt><a class="reference internal" href="BranchWeightMetadata.html"><span class="doc">LLVM Branch Weight Metadata</span></a></dt>
-<dd>Provides information about Branch Prediction Information.</dd>
+<dd><p class="first last">提供了分支预测技术的相关信息</p>
+</dd>
 <dt><a class="reference internal" href="BlockFrequencyTerminology.html"><span class="doc">LLVM Block Frequency Terminology</span></a></dt>
-<dd>Provides information about terminology used in the <code class="docutils literal"><span class="pre">BlockFrequencyInfo</span></code>
-analysis pass.</dd>
+<dd><p class="first last">提供了一些关于在分析过程中，基本块频率信息（ <code class="docutils literal"><span class="pre">BlockFrequencyInfo</span></code> ）的术语信息</p>
+</dd>
 <dt><a class="reference internal" href="SegmentedStacks.html"><span class="doc">Segmented Stacks in LLVM</span></a></dt>
-<dd>This document describes segmented stacks and how they are used in LLVM.</dd>
+<dd><p class="first last">这份文档描述了分段栈和它是如何在LLVM被使用的。</p>
+</dd>
 <dt><a class="reference internal" href="MarkedUpDisassembly.html"><span class="doc">LLVM&#8217;s Optional Rich Disassembly Output</span></a></dt>
-<dd>This document describes the optional rich disassembly output syntax.</dd>
+<dd><p class="first last">这份文档描述了可选富反编译器的输出形式</p>
+</dd>
 <dt><a class="reference internal" href="HowToUseAttributes.html"><span class="doc">How To Use Attributes</span></a></dt>
-<dd>Answers some questions about the new Attributes infrastructure.</dd>
+<dd><p class="first last">回答一些关于属性指令的相关问题。</p>
+</dd>
 <dt><a class="reference internal" href="NVPTXUsage.html"><span class="doc">User Guide for NVPTX Back-end</span></a></dt>
-<dd>This document describes using the NVPTX back-end to compile GPU kernels.</dd>
+<dd><p class="first last">这份文档描述使用NVPTX后端去编译到GPU代码的方法。</p>
+</dd>
 <dt><a class="reference internal" href="AMDGPUUsage.html"><span class="doc">User Guide for AMDGPU Back-end</span></a></dt>
-<dd>This document describes how to use the AMDGPU back-end.</dd>
+<dd><p class="first last">这份代码描述了如何使用AMDGPU后端。</p>
+</dd>
 <dt><a class="reference internal" href="StackMaps.html"><span class="doc">Stack maps and patch points in LLVM</span></a></dt>
-<dd>LLVM support for mapping instruction addresses to the location of
-values and allowing code to be patched.</dd>
+<dd><p class="first last">LLVM对于映射指令地址到变量所在位置的相关支持，</p>
+</dd>
 <dt><a class="reference internal" href="BigEndianNEON.html"><span class="doc">Using ARM NEON instructions in big endian mode</span></a></dt>
-<dd>LLVM&#8217;s support for generating NEON instructions on big endian ARM targets is
-somewhat nonintuitive. This document explains the implementation and rationale.</dd>
+<dd><p class="first last">LLVM对于生成NEON instructions在大端ARM目标机型的支持是有点令人费解的，这份文档在解释其实现和基本原理</p>
+</dd>
 <dt><a class="reference internal" href="CoverageMappingFormat.html"><span class="doc">LLVM Code Coverage Mapping Format</span></a></dt>
-<dd>This describes the format and encoding used for LLVM’s code coverage mapping.</dd>
+<dd><p class="first last">这份文档描述了LLVM代码覆盖率映射的格式和编码方式。</p>
+</dd>
 <dt><a class="reference internal" href="Statepoints.html"><span class="doc">Garbage Collection Safepoints in LLVM</span></a></dt>
-<dd>This describes a set of experimental extensions for garbage
-collection support.</dd>
+<dd><p class="first last">这份文档描述了对于垃圾回收机制的支持的一系列额外扩展。</p>
+</dd>
 <dt><a class="reference internal" href="MergeFunctions.html"><span class="doc">MergeFunctions pass, how it works</span></a></dt>
-<dd>Describes functions merging optimization.</dd>
+<dd><p class="first last">描述了合并功能优化。</p>
+</dd>
 <dt><a class="reference internal" href="InAlloca.html"><span class="doc">Design and Usage of the InAlloca Attribute</span></a></dt>
-<dd>Description of the <code class="docutils literal"><span class="pre">inalloca</span></code> argument attribute.</dd>
+<dd><p class="first last">描述了 <code class="docutils literal"><span class="pre">inalloca</span></code> 参数属性的相关信息</p>
+</dd>
 <dt><a class="reference internal" href="FaultMaps.html"><span class="doc">FaultMaps and implicit checks</span></a></dt>
-<dd>LLVM support for folding control flow into faulting machine instructions.</dd>
+<dd><p class="first last">异常图和隐式检查：LLVM对于转换控制流到错误恢复语句的支持</p>
+</dd>
 <dt><a class="reference internal" href="CompileCudaWithLLVM.html"><span class="doc">Compiling CUDA C/C++ with LLVM</span></a></dt>
-<dd>LLVM support for CUDA.</dd>
+<dd><p class="first last">LLVM对于CUDA的支持</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="development-process-documentation">
-<h1>Development Process Documentation<a class="headerlink" href="#development-process-documentation" title="永久链接至标题">¶</a></h1>
-<p>Information about LLVM&#8217;s development process.</p>
+<h1>开发过程文档<a class="headerlink" href="#development-process-documentation" title="永久链接至标题">¶</a></h1>
+<p>LLVM开发过程中的重要信息</p>
 <div class="toctree-wrapper compound">
 </div>
 <dl class="docutils">
 <dt><a class="reference internal" href="DeveloperPolicy.html"><span class="doc">LLVM Developer Policy</span></a></dt>
-<dd>The LLVM project&#8217;s policy towards developers and their contributions.</dd>
+<dd><p class="first last">LLVM项目对于开发者和他们贡献的政策</p>
+</dd>
 <dt><a class="reference internal" href="Projects.html"><span class="doc">Creating an LLVM Project</span></a></dt>
 <dd>How-to guide and templates for new projects that <em>use</em> the LLVM
 infrastructure.  The templates (directory organization, Makefiles, and test
 tree) allow the project code to be located outside (or inside) the <code class="docutils literal"><span class="pre">llvm/</span></code>
 tree, while using LLVM header files and libraries.</dd>
 <dt><a class="reference internal" href="LLVMBuild.html"><span class="doc">LLVMBuild Guide</span></a></dt>
-<dd>Describes the LLVMBuild organization and files used by LLVM to specify
-component descriptions.</dd>
+<dd><p class="first last">描述了LLVMBuild 组织和LLVM用到的文件的详细说明</p>
+</dd>
 <dt><a class="reference internal" href="MakefileGuide.html"><span class="doc">LLVM Makefile Guide</span></a></dt>
-<dd>Describes how the LLVM makefiles work and how to use them.</dd>
+<dd><p class="first last">描述了LLVM的Makefiles如何工作以及如何使用它们。</p>
+</dd>
 <dt><a class="reference internal" href="HowToReleaseLLVM.html"><span class="doc">How To Release LLVM To The Public</span></a></dt>
-<dd>This is a guide to preparing LLVM releases. Most developers can ignore it.</dd>
+<dd><p class="first last">这是一份准备LLVM发布版的指导，大多数开发者可以忽略它。</p>
+</dd>
 <dt><a class="reference internal" href="ReleaseProcess.html"><span class="doc">How To Validate a New Release</span></a></dt>
-<dd>This is a guide to validate a new release, during the release process. Most developers can ignore it.</dd>
+<dd><p class="first last">这是一个如何校验新发布版的指导，大多数开发者可以忽略它。</p>
+</dd>
 <dt><a class="reference internal" href="Packaging.html"><span class="doc">Advice on Packaging LLVM</span></a></dt>
-<dd>Advice on packaging LLVM into a distribution.</dd>
+<dd><p class="first last">打包LLVM成分发版的建议。</p>
+</dd>
 <dt><a class="reference internal" href="Phabricator.html"><span class="doc">Code Reviews with Phabricator</span></a></dt>
-<dd>Describes how to use the Phabricator code review tool hosted on
-<a class="reference external" href="http://reviews.llvm.org/">http://reviews.llvm.org/</a> and its command line interface, Arcanist.</dd>
+<dd><p class="first last">关于如何使用Phabricator代码审阅工具审阅托管在 <a class="reference external" href="http://reviews.llvm.org/">http://reviews.llvm.org/</a> 上的代码，以及相关的命令行接口。——Arcanist</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="community">
@@ -329,28 +348,27 @@ component descriptions.</dd>
 The two primary communication mechanisms in the LLVM community are mailing
 lists and IRC.</p>
 <div class="section" id="mailing-lists">
-<h2>Mailing Lists<a class="headerlink" href="#mailing-lists" title="永久链接至标题">¶</a></h2>
-<p>If you can&#8217;t find what you need in these docs, try consulting the mailing
-lists.</p>
+<h2>邮件列表<a class="headerlink" href="#mailing-lists" title="永久链接至标题">¶</a></h2>
+<p>如何你在文档中找不到你需要的内容，可以尝试查看邮件列表。</p>
 <dl class="docutils">
-<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">Developer&#8217;s List (llvm-dev)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">开发者列表 (llvm-dev)</a></dt>
 <dd>This list is for people who want to be included in technical discussions of
 LLVM. People post to this list when they have questions about writing code
 for or using the LLVM tools. It is relatively low volume.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/">Commits Archive (llvm-commits)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/">提交归档 (llvm-commits)</a></dt>
 <dd>This list contains all commit messages that are made when LLVM developers
 commit code changes to the repository. It also serves as a forum for
 patch review (i.e. send patches here). It is useful for those who want to
 stay on the bleeding edge of LLVM development. This list is very high
 volume.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-bugs/">Bugs &amp; Patches Archive (llvm-bugs)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-bugs/">Bug和补丁归档 (llvm-bugs)</a></dt>
 <dd>This list gets emailed every time a bug is opened and closed. It is
 higher volume than the LLVM-dev list.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-testresults/">Test Results Archive (llvm-testresults)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-testresults/">测试结果归档 (llvm-testresults)</a></dt>
 <dd>A message is automatically sent to this list by every active nightly tester
 when it completes.  As such, this list gets email several times each day,
 making it a high volume list.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-announce">LLVM Announcements List (llvm-announce)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-announce">LLVM公共列表 (llvm-announce)</a></dt>
 <dd>This is a low volume list that provides important announcements regarding
 LLVM.  It gets email about once a month.</dd>
 </dl>
