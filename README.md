@@ -12,7 +12,7 @@ If you instead would like to generate and view the HTML locally, install
 Sphinx <http://sphinx-doc.org/> and then do:
 
     cd docs/
-    make -f Makefile.sphinx
+    make
     $BROWSER _build/html/index.html
 
 The mapping between reStructuredText files and generated documentation is
@@ -32,7 +32,7 @@ default (which is `html`). Sphinx then produces the man pages in the
 directory `_build/man/`.
 
     cd docs/
-    make -f Makefile.sphinx man
+    make
     man -l _build/man/FileCheck.1
 
 The correspondence between .rst files and man pages is
@@ -48,4 +48,21 @@ The reachability of external links in the documentation can be checked by
 running:
 
     cd docs/
-    make -f Makefile.sphinx linkcheck
+    make linkcheck
+
+
+Contribution
+==============
+
+Thanks for your time and read the following section to learn about the translation about LLVM documentation.
+
+You can do the translation in the files located in `locale/zh_CN/LCMESSAGE` directory with the same name as English version.
+
+It will be encouraged to send PR.
+
+
+Copyright
+================
+
+English version and framework belong to <llvm.org>.  
+All rights reserved for the Chinese version.
