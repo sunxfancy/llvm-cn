@@ -1,0 +1,610 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../LibFuzzer.rst:3
+msgid "LibFuzzer -- a library for coverage-guided fuzz testing."
+msgstr ""
+
+#: ../../LibFuzzer.rst:9
+msgid "Introduction"
+msgstr ""
+
+#: ../../LibFuzzer.rst:11
+msgid ""
+"This library is intended primarily for in-process coverage-guided fuzz "
+"testing (fuzzing) of other libraries. The typical workflow looks like "
+"this:"
+msgstr ""
+
+#: ../../LibFuzzer.rst:14
+msgid ""
+"Build the Fuzzer library as a static archive (or just a set of .o files)."
+" Note that the Fuzzer contains the main() function. Preferably do *not* "
+"use sanitizers while building the Fuzzer."
+msgstr ""
+
+#: ../../LibFuzzer.rst:17
+msgid ""
+"Build the library you are going to test with `-fsanitize-"
+"coverage={bb,edge}[,indirect-calls,8bit-counters]` and one of the "
+"sanitizers. We recommend to build the library in several different modes "
+"(e.g. asan, msan, lsan, ubsan, etc) and even using different "
+"optimizations options (e.g. -O0, -O1, -O2) to diversify testing."
+msgstr ""
+
+#: ../../LibFuzzer.rst:22
+msgid ""
+"Build a test driver using the same options as the library. The test "
+"driver is a C/C++ file containing interesting calls to the library inside"
+" a single function  ``extern \"C\" int LLVMFuzzerTestOneInput(const "
+"uint8_t *Data, size_t Size);``. Currently, the only expected return value"
+" is 0, others are reserved for future."
+msgstr ""
+
+#: ../../LibFuzzer.rst:26
+msgid ""
+"Link the Fuzzer, the library and the driver together into an executable "
+"using the same sanitizer options as for the library."
+msgstr ""
+
+#: ../../LibFuzzer.rst:28
+msgid ""
+"Collect the initial corpus of inputs for the fuzzer (a directory with "
+"test inputs, one file per input). The better your inputs are the faster "
+"you will find something interesting. Also try to keep your inputs small, "
+"otherwise the Fuzzer will run too slow. By default, the Fuzzer limits the"
+" size of every input to 64 bytes (use ``-max_len=N`` to override)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:34
+msgid ""
+"Run the fuzzer with the test corpus. As new interesting test cases are "
+"discovered they will be added to the corpus. If a bug is discovered by "
+"the sanitizer (asan, etc) it will be reported as usual and the reproducer"
+" will be written to disk. Each Fuzzer process is single-threaded (unless "
+"the library starts its own threads). You can run the Fuzzer on the same "
+"corpus in multiple processes in parallel."
+msgstr ""
+
+#: ../../LibFuzzer.rst:43
+msgid ""
+"The Fuzzer is similar in concept to AFL_, but uses in-process Fuzzing, "
+"which is more fragile, more restrictive, but potentially much faster as "
+"it has no overhead for process start-up. It uses LLVM's "
+"SanitizerCoverage_ instrumentation to get in-process coverage-feedback"
+msgstr ""
+
+#: ../../LibFuzzer.rst:49
+msgid ""
+"The code resides in the LLVM repository, requires the fresh Clang "
+"compiler to build and is used to fuzz various parts of LLVM, but the "
+"Fuzzer itself does not (and should not) depend on any part of LLVM and "
+"can be used for other projects w/o requiring the rest of LLVM."
+msgstr ""
+
+#: ../../LibFuzzer.rst:55
+msgid "Flags"
+msgstr ""
+
+#: ../../LibFuzzer.rst:56
+msgid "The most important flags are::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:77
+msgid "For the full list of flags run the fuzzer binary with ``-help=1``."
+msgstr ""
+
+#: ../../LibFuzzer.rst:80
+msgid "Usage examples"
+msgstr ""
+
+#: ../../LibFuzzer.rst:83
+msgid "Toy example"
+msgstr ""
+
+#: ../../LibFuzzer.rst:85
+msgid ""
+"A simple function that does something interesting if it receives the "
+"input \"HI!\"::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:107
+msgid "You should get ``Illegal instruction (core dumped)`` pretty quickly."
+msgstr ""
+
+#: ../../LibFuzzer.rst:110
+msgid "PCRE2"
+msgstr ""
+
+#: ../../LibFuzzer.rst:112
+msgid "Here we show how to use lib/Fuzzer on something real, yet simple: pcre2_::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:146
+msgid ""
+"This will give you a binary of the fuzzer, called ``pcre_fuzzer``. Now, "
+"create a directory that will hold the test corpus::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:151
+msgid ""
+"For simple input languages like regular expressions this is all you need."
+" For more complicated inputs populate the directory with some input "
+"samples. Now run the fuzzer with the corpus dir as the only parameter::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:157
+msgid "You will see output like this::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:168
+msgid ""
+"The ``Seed:`` line shows you the current random seed (you can change it "
+"with ``-seed=N`` flag)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:169
+msgid ""
+"The ``READ``  line shows you how many input files were read (since you "
+"passed an empty dir there were inputs, but one dummy input was "
+"synthesised)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:170
+msgid "The ``INITED`` line shows you that how many inputs will be fuzzed."
+msgstr ""
+
+#: ../../LibFuzzer.rst:171
+msgid ""
+"The ``NEW`` lines appear with the fuzzer finds a new interesting input, "
+"which is saved to the CORPUS dir. If multiple corpus dirs are given, the "
+"first one is used."
+msgstr ""
+
+#: ../../LibFuzzer.rst:172
+msgid "The ``pulse`` lines appear periodically to show the current status."
+msgstr ""
+
+#: ../../LibFuzzer.rst:174
+msgid "Now, interrupt the fuzzer and run it again the same way. You will see::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:185
+msgid ""
+"This time you were running the fuzzer with a non-empty input corpus (564 "
+"items). As the first step, the fuzzer minimized the set to produce 344 "
+"interesting items (the ``INITED`` line)"
+msgstr ""
+
+#: ../../LibFuzzer.rst:188
+msgid ""
+"It is quite convenient to store test corpuses in git. As an example, here"
+" is a git repository with test inputs for the above PCRE2 fuzzer::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:194
+msgid "You may run ``N`` independent fuzzer jobs in parallel on ``M`` CPUs::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:198
+msgid ""
+"By default (``-reload=1``) the fuzzer processes will periodically scan "
+"the CORPUS directory and reload any new tests. This way the test inputs "
+"found by one process will be picked up by all others."
+msgstr ""
+
+#: ../../LibFuzzer.rst:202
+msgid ""
+"If ``-workers=$M`` is not supplied, ``min($N,NumberOfCpuCore/2)`` will be"
+" used."
+msgstr ""
+
+#: ../../LibFuzzer.rst:205
+msgid "Heartbleed"
+msgstr ""
+
+#: ../../LibFuzzer.rst:206
+msgid ""
+"Remember Heartbleed_? As it was recently `shown "
+"<https://blog.hboeck.de/archives/868-How-Heartbleed-couldve-been-"
+"found.html>`_, fuzzing with AddressSanitizer can find Heartbleed. Indeed,"
+" here are the step-by-step instructions to find Heartbleed with "
+"LibFuzzer::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:259
+msgid "Voila::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:269
+msgid ""
+"Note: a `similar fuzzer "
+"<https://boringssl.googlesource.com/boringssl/+/HEAD/FUZZING.md>`_ is now"
+" a part of the boringssl source tree."
+msgstr ""
+
+#: ../../LibFuzzer.rst:273
+msgid "Advanced features"
+msgstr ""
+
+#: ../../LibFuzzer.rst:276
+msgid "Dictionaries"
+msgstr ""
+
+#: ../../LibFuzzer.rst:277
+msgid ""
+"*EXPERIMENTAL*. LibFuzzer supports user-supplied dictionaries with input "
+"language keywords or other interesting byte sequences (e.g. multi-byte "
+"magic values). Use ``-dict=DICTIONARY_FILE``. For some input languages "
+"using a dictionary may significantly improve the search speed. The "
+"dictionary syntax is similar to that used by AFL_ for its ``-x`` option::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:296
+msgid "Data-flow-guided fuzzing"
+msgstr ""
+
+#: ../../LibFuzzer.rst:298
+msgid ""
+"*EXPERIMENTAL*. With an additional compiler flag ``-fsanitize-coverage"
+"=trace-cmp`` (see SanitizerCoverageTraceDataFlow_) and extra run-time "
+"flag ``-use_traces=1`` the fuzzer will try to apply *data-flow-guided "
+"fuzzing*. That is, the fuzzer will record the inputs to comparison "
+"instructions, switch statements, and several libc functions (``memcmp``, "
+"``strcmp``, ``strncmp``, etc). It will later use those recorded inputs "
+"during mutations."
+msgstr ""
+
+#: ../../LibFuzzer.rst:305
+msgid ""
+"This mode can be combined with DataFlowSanitizer_ to achieve better "
+"sensitivity."
+msgstr ""
+
+#: ../../LibFuzzer.rst:308
+msgid "AFL compatibility"
+msgstr ""
+
+#: ../../LibFuzzer.rst:309
+msgid ""
+"LibFuzzer can be used in parallel with AFL_ on the same test corpus. Both"
+" fuzzers expect the test corpus to reside in a directory, one file per "
+"input. You can run both fuzzers on the same corpus in parallel::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:316
+msgid ""
+"Periodically restart both fuzzers so that they can use each other's "
+"findings."
+msgstr ""
+
+#: ../../LibFuzzer.rst:319
+msgid "How good is my fuzzer?"
+msgstr ""
+
+#: ../../LibFuzzer.rst:321
+msgid ""
+"Once you implement your target function ``LLVMFuzzerTestOneInput`` and "
+"fuzz it to death, you will want to know whether the function or the "
+"corpus can be improved further. One easy to use metric is, of course, "
+"code coverage. You can get the coverage for your corpus like this::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:328
+msgid ""
+"This will run all the tests in the CORPUS_DIR but will not generate any "
+"new tests and dump covered PCs to disk before exiting. Then you can "
+"subtract the set of covered PCs from the set of all instrumented PCs in "
+"the binary, see SanitizerCoverage_ for details."
+msgstr ""
+
+#: ../../LibFuzzer.rst:334
+msgid "User-supplied mutators"
+msgstr ""
+
+#: ../../LibFuzzer.rst:336
+msgid ""
+"LibFuzzer allows to use custom (user-supplied) mutators, see "
+"FuzzerInterface.h_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:340
+msgid "Fuzzing components of LLVM"
+msgstr ""
+
+#: ../../LibFuzzer.rst:343
+msgid "clang-format-fuzzer"
+msgstr ""
+
+#: ../../LibFuzzer.rst:344
+msgid "The inputs are random pieces of C++-like text."
+msgstr ""
+
+#: ../../LibFuzzer.rst:346
+msgid "Build (make sure to use fresh clang as the host compiler)::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:353
+msgid "Optionally build other kinds of binaries (asan+Debug, msan, ubsan, etc)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:355
+msgid "Tracking bug: https://llvm.org/bugs/show_bug.cgi?id=23052"
+msgstr ""
+
+#: ../../LibFuzzer.rst:358
+msgid "clang-fuzzer"
+msgstr ""
+
+#: ../../LibFuzzer.rst:360
+msgid "The behavior is very similar to ``clang-format-fuzzer``."
+msgstr ""
+
+#: ../../LibFuzzer.rst:362
+msgid "Tracking bug: https://llvm.org/bugs/show_bug.cgi?id=23057"
+msgstr ""
+
+#: ../../LibFuzzer.rst:365
+msgid "llvm-as-fuzzer"
+msgstr ""
+
+#: ../../LibFuzzer.rst:367
+msgid "Tracking bug: https://llvm.org/bugs/show_bug.cgi?id=24639"
+msgstr ""
+
+#: ../../LibFuzzer.rst:370
+msgid "llvm-mc-fuzzer"
+msgstr ""
+
+#: ../../LibFuzzer.rst:372
+msgid ""
+"This tool fuzzes the MC layer. Currently it is only able to fuzz the "
+"disassembler but it is hoped that assembly, and round-trip verification "
+"will be added in future."
+msgstr ""
+
+#: ../../LibFuzzer.rst:376
+msgid ""
+"When run in dissassembly mode, the inputs are opcodes to be disassembled."
+" The fuzzer will consume as many instructions as possible and will stop "
+"when it finds an invalid instruction or runs out of data."
+msgstr ""
+
+#: ../../LibFuzzer.rst:380
+msgid ""
+"Please note that the command line interface differs slightly from that of"
+" other fuzzers. The fuzzer arguments should follow ``--fuzzer-args`` and "
+"should have a single dash, while other arguments control the operation "
+"mode and target in a similar manner to ``llvm-mc`` and should have two "
+"dashes. For example::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:388
+msgid "Buildbot"
+msgstr ""
+
+#: ../../LibFuzzer.rst:390
+msgid ""
+"We have a buildbot that runs the above fuzzers for LLVM components "
+"24/7/365 at http://lab.llvm.org:8011/builders/sanitizer-x86_64-linux-"
+"fuzzer ."
+msgstr ""
+
+#: ../../LibFuzzer.rst:394
+msgid "Pre-fuzzed test inputs in git"
+msgstr ""
+
+#: ../../LibFuzzer.rst:396
+msgid ""
+"The buildbot occumulates large test corpuses over time. The corpuses are "
+"stored in git on github and can be used like this::"
+msgstr ""
+
+#: ../../LibFuzzer.rst:406
+msgid "FAQ"
+msgstr ""
+
+#: ../../LibFuzzer.rst:409
+msgid "Q. Why Fuzzer does not use any of the LLVM support?"
+msgstr ""
+
+#: ../../LibFuzzer.rst:411
+msgid "There are two reasons."
+msgstr ""
+
+#: ../../LibFuzzer.rst:413
+msgid ""
+"First, we want this library to be used outside of the LLVM w/o users "
+"having to build the rest of LLVM. This may sound unconvincing for many "
+"LLVM folks, but in practice the need for building the whole LLVM "
+"frightens many potential users -- and we want more users to use this "
+"code."
+msgstr ""
+
+#: ../../LibFuzzer.rst:418
+msgid ""
+"Second, there is a subtle technical reason not to rely on the rest of "
+"LLVM, or any other large body of code (maybe not even STL). When coverage"
+" instrumentation is enabled, it will also instrument the LLVM support "
+"code which will blow up the coverage set of the process (since the fuzzer"
+" is in-process). In other words, by using more external dependencies we "
+"will slow down the fuzzer while the main reason for it to exist is "
+"extreme speed."
+msgstr ""
+
+#: ../../LibFuzzer.rst:426
+msgid ""
+"Q. What about Windows then? The Fuzzer contains code that does not build "
+"on Windows."
+msgstr ""
+
+#: ../../LibFuzzer.rst:428
+msgid ""
+"The sanitizer coverage support does not work on Windows either as of "
+"01/2015. Once it's there, we'll need to re-implement OS-specific parts "
+"(I/O, signals)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:432
+msgid "Q. When this Fuzzer is not a good solution for a problem?"
+msgstr ""
+
+#: ../../LibFuzzer.rst:434
+msgid ""
+"If the test inputs are validated by the target library and the validator "
+"asserts/crashes on invalid inputs, the in-process fuzzer is not "
+"applicable (we could use fork() w/o exec, but it comes with extra "
+"overhead)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:437
+msgid ""
+"Bugs in the target library may accumulate w/o being detected. E.g. a "
+"memory corruption that goes undetected at first and then leads to a crash"
+" while testing another input. This is why it is highly recommended to run"
+" this in-process fuzzer with all sanitizers to detect most bugs on the "
+"spot."
+msgstr ""
+
+#: ../../LibFuzzer.rst:441
+msgid ""
+"It is harder to protect the in-process fuzzer from excessive memory "
+"consumption and infinite loops in the target library (still possible)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:443
+msgid ""
+"The target library should not have significant global state that is not "
+"reset between the runs."
+msgstr ""
+
+#: ../../LibFuzzer.rst:445
+msgid ""
+"Many interesting target libs are not designed in a way that supports the "
+"in-process fuzzer interface (e.g. require a file path instead of a byte "
+"array)."
+msgstr ""
+
+#: ../../LibFuzzer.rst:448
+msgid ""
+"If a single test run takes a considerable fraction of a second (or more) "
+"the speed benefit from the in-process fuzzer is negligible."
+msgstr ""
+
+#: ../../LibFuzzer.rst:450
+msgid ""
+"If the target library runs persistent threads (that outlive execution of "
+"one test) the fuzzing results will be unreliable."
+msgstr ""
+
+#: ../../LibFuzzer.rst:454
+msgid "Q. So, what exactly this Fuzzer is good for?"
+msgstr ""
+
+#: ../../LibFuzzer.rst:456
+msgid ""
+"This Fuzzer might be a good choice for testing libraries that have "
+"relatively small inputs, each input takes < 1ms to run, and the library "
+"code is not expected to crash on invalid inputs. Examples: regular "
+"expression matchers, text or binary format parsers."
+msgstr ""
+
+#: ../../LibFuzzer.rst:462
+msgid "Trophies"
+msgstr ""
+
+#: ../../LibFuzzer.rst:463
+msgid "GLIBC: https://sourceware.org/glibc/wiki/FuzzingLibc"
+msgstr ""
+
+#: ../../LibFuzzer.rst:465
+msgid "MUSL LIBC:"
+msgstr ""
+
+#: ../../LibFuzzer.rst:467
+msgid ""
+"http://git.musl-"
+"libc.org/cgit/musl/commit/?id=39dfd58417ef642307d90306e1c7e50aaec5a35c"
+msgstr ""
+
+#: ../../LibFuzzer.rst:468
+msgid "http://www.openwall.com/lists/oss-security/2015/03/30/3"
+msgstr ""
+
+#: ../../LibFuzzer.rst:470
+msgid "`pugixml <https://github.com/zeux/pugixml/issues/39>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:472
+msgid ""
+"PCRE: Search for \"LLVM fuzzer\" in "
+"http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup; also in "
+"`bugzilla "
+"<https://bugs.exim.org/buglist.cgi?bug_status=__all__&content=libfuzzer&no_redirect=1&order=Importance&product=PCRE&query_format=specific>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:475
+msgid "`ICU <http://bugs.icu-project.org/trac/ticket/11838>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:477
+msgid ""
+"`Freetype "
+"<https://savannah.nongnu.org/search/?words=LibFuzzer&type_of_search=bugs&Search=Search&exact=1#options>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:479
+msgid "`Harfbuzz <https://github.com/behdad/harfbuzz/issues/139>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:481
+msgid "`SQLite <http://www3.sqlite.org/cgi/src/info/088009efdd56160b>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:483
+msgid "`Python <http://bugs.python.org/issue25388>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:485
+msgid ""
+"OpenSSL/BoringSSL: `[1] "
+"<https://boringssl.googlesource.com/boringssl/+/cb852981cd61733a7a1ae4fd8755b7ff950e857d>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:487
+msgid ""
+"`Libxml2 "
+"<https://bugzilla.gnome.org/buglist.cgi?bug_status=__all__&content=libFuzzer&list_id=68957&order=Importance&product=libxml2&query_format=specific>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:490
+msgid "`Linux Kernel's BPF verifier <https://github.com/iovisor/bpf-fuzzer>`_"
+msgstr ""
+
+#: ../../LibFuzzer.rst:492
+msgid ""
+"LLVM: `Clang <https://llvm.org/bugs/show_bug.cgi?id=23057>`_, `Clang-"
+"format <https://llvm.org/bugs/show_bug.cgi?id=23052>`_, `libc++ "
+"<https://llvm.org/bugs/show_bug.cgi?id=24411>`_, `llvm-as "
+"<https://llvm.org/bugs/show_bug.cgi?id=24639>`_, Disassembler: "
+"http://reviews.llvm.org/rL247405, http://reviews.llvm.org/rL247414, "
+"http://reviews.llvm.org/rL247416, http://reviews.llvm.org/rL247417, "
+"http://reviews.llvm.org/rL247420, http://reviews.llvm.org/rL247422."
+msgstr ""
+

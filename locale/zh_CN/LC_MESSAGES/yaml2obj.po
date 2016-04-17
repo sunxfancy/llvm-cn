@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../yaml2obj.rst:2
+msgid "yaml2obj"
+msgstr ""
+
+#: ../../yaml2obj.rst:4
+msgid ""
+"yaml2obj takes a YAML description of an object file and converts it to a "
+"binary file."
+msgstr ""
+
+#: ../../yaml2obj.rst:7
+msgid "$ yaml2obj input-file"
+msgstr ""
+
+#: ../../yaml2obj.rst:11
+msgid "Outputs the binary to stdout."
+msgstr ""
+
+#: ../../yaml2obj.rst:14
+msgid "COFF Syntax"
+msgstr ""
+
+#: ../../yaml2obj.rst:16
+msgid "Here's a sample COFF file."
+msgstr ""
+
+#: ../../yaml2obj.rst:51
+msgid ""
+"Here's a simplified Kwalify_ schema with an extension to allow alternate "
+"types."
+msgstr ""
+

@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../CompileCudaWithLLVM.rst:3
+msgid "Compiling CUDA C/C++ with LLVM"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:9
+msgid "Introduction"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:11
+msgid ""
+"This document contains the user guides and the internals of compiling "
+"CUDA C/C++ with LLVM. It is aimed at both users who want to compile CUDA "
+"with LLVM and developers who want to improve LLVM for GPUs. This document"
+" assumes a basic familiarity with CUDA. Information about CUDA "
+"programming can be found in the `CUDA programming guide "
+"<http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html>`_."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:19
+msgid "How to Build LLVM with CUDA Support"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:21
+msgid ""
+"Below is a quick summary of downloading and building LLVM. Consult the "
+"`Getting Started <http://llvm.org/docs/GettingStarted.html>`_ page for "
+"more details on setting up LLVM."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:25
+msgid "Checkout LLVM"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:32
+msgid "Checkout Clang"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:40
+msgid "Configure and build LLVM and Clang"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:51
+msgid "How to Compile CUDA C/C++ with LLVM"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:53
+msgid ""
+"We assume you have installed the CUDA driver and runtime. Consult the "
+"`NVIDIA CUDA installation Guide <https://docs.nvidia.com/cuda/cuda-"
+"installation-guide-linux/index.html>`_ if you have not."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:58
+msgid ""
+"Suppose you want to compile and run the following CUDA program "
+"(``axpy.cu``) which multiplies a ``float`` array by a ``float`` scalar "
+"(AXPY)."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:103
+msgid "The command line for compilation is similar to what you would use for C++."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:114
+msgid ""
+"Note that ``helper_cuda.h`` comes from the CUDA samples, so you need the "
+"samples installed for this example. ``<CUDA install path>`` is the root "
+"directory where you installed CUDA SDK, typically ``/usr/local/cuda``."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:119
+msgid "Optimizations"
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:121
+msgid ""
+"CPU and GPU have different design philosophies and architectures. For "
+"example, a typical CPU has branch prediction, out-of-order execution, and"
+" is superscalar, whereas a typical GPU has none of these. Due to such "
+"differences, an optimization pipeline well-tuned for CPUs may be not "
+"suitable for GPUs."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:126
+msgid ""
+"LLVM performs several general and CUDA-specific optimizations for GPUs. "
+"The list below shows some of the more important optimizations for GPUs. "
+"Most of them have been upstreamed to ``lib/Transforms/Scalar`` and "
+"``lib/Target/NVPTX``. A few of them have not been upstreamed due to lack "
+"of a customizable target-independent optimization pipeline."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:132
+msgid ""
+"**Straight-line scalar optimizations**. These optimizations reduce "
+"redundancy in straight-line code. Details can be found in the `design "
+"document for straight-line scalar optimizations "
+"<https://goo.gl/4Rb9As>`_."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:136
+msgid ""
+"**Inferring memory spaces**. `This optimization "
+"<http://www.llvm.org/docs/doxygen/html/NVPTXFavorNonGenericAddrSpaces_8cpp_source.html>`_"
+" infers the memory space of an address so that the backend can emit "
+"faster special loads and stores from it. Details can be found in the "
+"`design document for memory space inference <https://goo.gl/5wH2Ct>`_."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:142
+msgid ""
+"**Aggressive loop unrooling and function inlining**. Loop unrolling and "
+"function inlining need to be more aggressive for GPUs than for CPUs "
+"because control flow transfer in GPU is more expensive. They also promote"
+" other optimizations such as constant propagation and SROA which "
+"sometimes speed up code by over 10x. An empirical inline threshold for "
+"GPUs is 1100. This configuration has yet to be upstreamed with a target-"
+"specific optimization pipeline. LLVM also provides `loop unrolling "
+"pragmas <http://clang.llvm.org/docs/AttributeReference.html#pragma-"
+"unroll-pragma-nounroll>`_ and ``__attribute__((always_inline))`` for "
+"programmers to force unrolling and inling."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:153
+msgid ""
+"**Aggressive speculative execution**. `This transformation "
+"<http://llvm.org/docs/doxygen/html/SpeculativeExecution_8cpp_source.html>`_"
+" is mainly for promoting straight-line scalar optimizations which are "
+"most effective on code along dominator paths."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:158
+msgid ""
+"**Memory-space alias analysis**. `This alias analysis "
+"<http://reviews.llvm.org/D12414>`_ infers that two pointers in different "
+"special memory spaces do not alias. It has yet to be integrated to the "
+"new alias analysis infrastructure; the new infrastructure does not run "
+"target-specific alias analysis."
+msgstr ""
+
+#: ../../CompileCudaWithLLVM.rst:164
+msgid ""
+"**Bypassing 64-bit divides**. `An existing optimization "
+"<http://llvm.org/docs/doxygen/html/BypassSlowDivision_8cpp_source.html>`_"
+" enabled in the NVPTX backend. 64-bit integer divides are much slower "
+"than 32-bit ones on NVIDIA GPUs due to lack of a divide unit. Many of the"
+" 64-bit divides in our benchmarks have a divisor and dividend which fit "
+"in 32-bits at runtime. This optimization provides a fast path for this "
+"common case."
+msgstr ""
+

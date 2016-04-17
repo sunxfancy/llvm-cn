@@ -1,0 +1,45 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../CommandGuide/index.rst:2
+msgid "LLVM Command Guide"
+msgstr ""
+
+#: ../../CommandGuide/index.rst:4
+msgid ""
+"The following documents are command descriptions for all of the LLVM "
+"tools. These pages describe how to use the LLVM commands and what their "
+"options are. Note that these pages do not describe all of the options "
+"available for all tools. To get a complete listing, pass the ``--help`` "
+"(general options) or ``--help-hidden`` (general and debugging options) "
+"arguments to the tool you are interested in."
+msgstr ""
+
+#: ../../CommandGuide/index.rst:12
+msgid "Basic Commands"
+msgstr ""
+
+#: ../../CommandGuide/index.rst:35
+msgid "Debugging Tools"
+msgstr ""
+
+#: ../../CommandGuide/index.rst:45
+msgid "Developer Tools"
+msgstr ""
+

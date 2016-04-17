@@ -1,0 +1,553 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../BuildingLLVMWithAutotools.rst:3
+msgid "Building LLVM With Autotools"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:10
+msgid ""
+"Building LLVM with autoconf is deprecated as of 3.8. The autoconf build "
+"system will be removed in 3.9. Please migrate to using CMake. For more "
+"information see: `Building LLVM with CMake <CMake.html>`_"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:15
+msgid "Overview"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:17
+msgid ""
+"This document details how to use the LLVM autotools based build system to"
+" configure and build LLVM from source. The normal developer process using"
+" CMake is detailed `here <GettingStarted.html#check-here>`_."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:22
+msgid "A Quick Summary"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:24
+msgid "Configure and build LLVM and Clang:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:26
+msgid "``cd where-you-want-to-build-llvm``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:27
+msgid "``mkdir build`` (for building without polluting the source dir)"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:28
+msgid "``cd build``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:29
+msgid "``../llvm/configure [options]`` Some common options:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:32
+msgid ""
+"``--prefix=directory`` --- Specify for *directory* the full pathname of "
+"where you want the LLVM tools and libraries to be installed (default "
+"``/usr/local``)."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:36
+msgid ""
+"``--enable-optimized`` --- Compile with optimizations enabled (default is"
+" NO)."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:39
+msgid ""
+"``--enable-assertions`` --- Compile with assertion checks enabled "
+"(default is YES)."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:42
+msgid ""
+"``make [-j]`` --- The ``-j`` specifies the number of jobs (commands) to "
+"run simultaneously.  This builds both LLVM and Clang for Debug+Asserts "
+"mode. The ``--enable-optimized`` configure option is used to specify a "
+"Release build."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:47
+msgid ""
+"``make check-all`` --- This run the regression tests to ensure everything"
+" is in working order."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:50
+msgid ""
+"If you get an \"internal compiler error (ICE)\" or test failures, see "
+"`here <GettingStarted.html#check-here>`_."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:54
+msgid "Local LLVM Configuration"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:56
+msgid ""
+"Once checked out from the Subversion repository, the LLVM suite source "
+"code must be configured via the ``configure`` script.  This script sets "
+"variables in the various ``*.in`` files, most notably "
+"``llvm/Makefile.config`` and ``llvm/include/Config/config.h``.  It also "
+"populates *OBJ_ROOT* with the Makefiles needed to begin building LLVM."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:62
+msgid ""
+"The following environment variables are used by the ``configure`` script "
+"to configure the build system:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:66
+msgid "Variable"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:66
+msgid "Purpose"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:68
+msgid "CC"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:68
+msgid ""
+"Tells ``configure`` which C compiler to use.  By default, ``configure`` "
+"will check ``PATH`` for ``clang`` and GCC C compilers (in this order).  "
+"Use this variable to override ``configure``\\'s  default behavior."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:73
+msgid "CXX"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:73
+msgid ""
+"Tells ``configure`` which C++ compiler to use.  By default, ``configure``"
+" will check ``PATH`` for ``clang++`` and GCC C++ compilers (in this "
+"order).  Use this variable to override  ``configure``'s default behavior."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:80
+msgid "The following options can be used to set or enable LLVM specific options:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:82
+msgid "``--enable-optimized``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:84
+msgid ""
+"Enables optimized compilation (debugging symbols are removed and GCC "
+"optimization flags are enabled). Note that this is the default setting if"
+" you are using the LLVM distribution. The default behavior of a "
+"Subversion checkout is to use an unoptimized build (also known as a debug"
+" build)."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:89
+msgid "``--enable-debug-runtime``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:91
+msgid ""
+"Enables debug symbols in the runtime libraries. The default is to strip "
+"debug symbols from the runtime libraries."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:94
+msgid "``--enable-jit``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:96
+msgid ""
+"Compile the Just In Time (JIT) compiler functionality.  This is not "
+"available on all platforms.  The default is dependent on platform, so it "
+"is best to explicitly enable it if you want it."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:100
+msgid "``--enable-targets=target-option``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:102
+msgid ""
+"Controls which targets will be built and linked into llc. The default "
+"value for ``target_options`` is \"all\" which builds and links all "
+"available targets. The \"host\" target is selected as the target of the "
+"build host. You can also specify a comma separated list of target names "
+"that you want available in llc. The target names use all lower case. The "
+"current set of targets is:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:108
+msgid ""
+"``aarch64, arm, arm64, cpp, hexagon, mips, mipsel, mips64, mips64el, "
+"msp430, powerpc, nvptx, r600, sparc, systemz, x86, x86_64, xcore``."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:111
+msgid "``--enable-doxygen``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:113
+msgid ""
+"Look for the doxygen program and enable construction of doxygen based "
+"documentation from the source code. This is disabled by default because "
+"generating the documentation can take a long time and producess 100s of "
+"megabytes of output."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:118
+msgid "To configure LLVM, follow these steps:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:120
+msgid "Change directory into the object root directory:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:126
+msgid "Run the ``configure`` script located in the LLVM source tree:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:133
+msgid "Compiling the LLVM Suite Source Code"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:135
+msgid ""
+"Once you have configured LLVM, you can build it.  There are three types "
+"of builds:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:138
+msgid "Debug Builds"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:140
+msgid ""
+"These builds are the default when one is using a Subversion checkout and "
+"types ``gmake`` (unless the ``--enable-optimized`` option was used during"
+" configuration).  The build system will compile the tools and libraries "
+"with debugging information.  To get a Debug Build using the LLVM "
+"distribution the ``--disable-optimized`` option must be passed to "
+"``configure``."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:146
+msgid "Release (Optimized) Builds"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:148
+msgid ""
+"These builds are enabled with the ``--enable-optimized`` option to "
+"``configure`` or by specifying ``ENABLE_OPTIMIZED=1`` on the ``gmake`` "
+"command line.  For these builds, the build system will compile the tools "
+"and libraries with GCC optimizations enabled and strip debugging "
+"information from the libraries and executables it generates.  Note that "
+"Release Builds are default when using an LLVM distribution."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:155
+#: ../../BuildingLLVMWithAutotools.rst:330
+msgid "Profile Builds"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:157
+msgid ""
+"These builds are for use with profiling.  They compile profiling "
+"information into the code for use with programs like ``gprof``.  Profile "
+"builds must be started by specifying ``ENABLE_PROFILING=1`` on the "
+"``gmake`` command line."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:161
+msgid ""
+"Once you have LLVM configured, you can build it by entering the "
+"*OBJ_ROOT* directory and issuing the following command:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:168
+msgid ""
+"If the build fails, please `check here <GettingStarted.html#check-here>`_"
+" to see if you are using a version of GCC that is known not to compile "
+"LLVM."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:171
+msgid ""
+"If you have multiple processors in your machine, you may wish to use some"
+" of the parallel build options provided by GNU Make.  For example, you "
+"could use the command:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:179
+msgid ""
+"There are several special targets which are useful when working with the "
+"LLVM source code:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:182
+msgid "``gmake clean``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:184
+msgid ""
+"Removes all files generated by the build.  This includes object files, "
+"generated C/C++ files, libraries, and executables."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:187
+msgid "``gmake dist-clean``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:189
+msgid ""
+"Removes everything that ``gmake clean`` does, but also removes files "
+"generated by ``configure``.  It attempts to return the source tree to the"
+" original state in which it was shipped."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:193
+msgid "``gmake install``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:195
+msgid ""
+"Installs LLVM header files, libraries, tools, and documentation in a "
+"hierarchy under ``$PREFIX``, specified with ``$LLVM_SRC_DIR/configure "
+"--prefix=[dir]``, which defaults to ``/usr/local``."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:199
+msgid "``gmake -C runtime install-bytecode``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:201
+msgid ""
+"Assuming you built LLVM into $OBJDIR, when this command is run, it will "
+"install bitcode libraries into the GCC front end's bitcode library "
+"directory. If you need to update your bitcode libraries, this is the "
+"target to use once you've built them."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:206
+msgid ""
+"Please see the `Makefile Guide <MakefileGuide.html>`_ for further details"
+" on these ``make`` targets and descriptions of other targets available."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:209
+msgid ""
+"It is also possible to override default values from ``configure`` by "
+"declaring variables on the command line.  The following are some "
+"examples:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:212
+msgid "``gmake ENABLE_OPTIMIZED=1``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:214
+msgid "Perform a Release (Optimized) build."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:216
+msgid "``gmake ENABLE_OPTIMIZED=1 DISABLE_ASSERTIONS=1``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:218
+msgid "Perform a Release (Optimized) build without assertions enabled."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:220
+msgid "``gmake ENABLE_OPTIMIZED=0``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:222
+msgid "Perform a Debug build."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:224
+msgid "``gmake ENABLE_PROFILING=1``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:226
+msgid "Perform a Profiling build."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:228
+msgid "``gmake VERBOSE=1``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:230
+msgid "Print what ``gmake`` is doing on standard output."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:232
+msgid "``gmake TOOL_VERBOSE=1``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:234
+msgid ""
+"Ask each tool invoked by the makefiles to print out what it is doing on "
+"the standard output. This also implies ``VERBOSE=1``."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:237
+msgid ""
+"Every directory in the LLVM object tree includes a ``Makefile`` to build "
+"it and any subdirectories that it contains.  Entering any directory "
+"inside the LLVM object tree and typing ``gmake`` should rebuild anything "
+"in or below that directory that is out of date."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:242
+msgid ""
+"This does not apply to building the documentation. LLVM's (non-Doxygen) "
+"documentation is produced with the `Sphinx <http://sphinx-doc.org/>`_ "
+"documentation generation system. There are some HTML documents that have "
+"not yet been converted to the new system (which uses the easy-to-read and"
+" easy-to-write `reStructuredText <http://sphinx-doc.org/rest.html>`_ "
+"plaintext markup language). The generated documentation is built in the "
+"``$LLVM_SRC_DIR/docs`` directory using a special makefile. For "
+"instructions on how to install Sphinx, see `Sphinx Introduction for LLVM "
+"Developers <http://lld.llvm.org/sphinx_intro.html>`_. After following the"
+" instructions there for installing Sphinx, build the LLVM HTML "
+"documentation by doing the following:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:262
+msgid ""
+"This creates a ``_build/html`` sub-directory with all of the HTML files, "
+"not just the generated ones. This directory corresponds to "
+"``llvm.org/docs``. For example, "
+"``_build/html/SphinxQuickstartTemplate.html`` corresponds to "
+"``llvm.org/docs/SphinxQuickstartTemplate.html``. The "
+":doc:`SphinxQuickstartTemplate` is useful when creating a new document."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:270
+msgid "Cross-Compiling LLVM"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:272
+msgid ""
+"It is possible to cross-compile LLVM itself. That is, you can create LLVM"
+" executables and libraries to be hosted on a platform different from the "
+"platform where they are built (a Canadian Cross build). To configure a "
+"cross-compile, supply the configure script with ``--build`` and "
+"``--host`` options that are different. The values of these options must "
+"be legal target triples that your GCC compiler supports."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:279
+msgid ""
+"The result of such a build is executables that are not runnable on on the"
+" build host (--build option) but can be executed on the compile host "
+"(--host option)."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:282
+msgid ""
+"Check :doc:`HowToCrossCompileLLVM` and `Clang docs on how to cross-"
+"compile in general <http://clang.llvm.org/docs/CrossCompilation.html>`_ "
+"for more information about cross-compiling."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:287
+msgid "The Location of LLVM Object Files"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:289
+msgid ""
+"The LLVM build system is capable of sharing a single LLVM source tree "
+"among several LLVM builds.  Hence, it is possible to build LLVM for "
+"several different platforms or configurations using the same source tree."
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:293
+msgid "This is accomplished in the typical autoconf manner:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:295
+msgid "Change directory to where the LLVM object files should live:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:301
+msgid "Run the ``configure`` script found in the LLVM source directory:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:307
+msgid ""
+"The LLVM build will place files underneath *OBJ_ROOT* in directories "
+"named after the build type:"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:310
+msgid "Debug Builds with assertions enabled (the default)"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:312
+#: ../../BuildingLLVMWithAutotools.rst:322
+#: ../../BuildingLLVMWithAutotools.rst:332
+msgid "Tools"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:314
+msgid "``OBJ_ROOT/Debug+Asserts/bin``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:316
+#: ../../BuildingLLVMWithAutotools.rst:326
+#: ../../BuildingLLVMWithAutotools.rst:336
+msgid "Libraries"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:318
+msgid "``OBJ_ROOT/Debug+Asserts/lib``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:320
+msgid "Release Builds"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:324
+msgid "``OBJ_ROOT/Release/bin``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:328
+msgid "``OBJ_ROOT/Release/lib``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:334
+msgid "``OBJ_ROOT/Profile/bin``"
+msgstr ""
+
+#: ../../BuildingLLVMWithAutotools.rst:338
+msgid "``OBJ_ROOT/Profile/lib``"
+msgstr ""
+

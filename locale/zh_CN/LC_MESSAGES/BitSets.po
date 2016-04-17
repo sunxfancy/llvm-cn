@@ -1,0 +1,101 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../BitSets.rst:3
+msgid "Bitsets"
+msgstr ""
+
+#: ../../BitSets.rst:5
+msgid ""
+"This is a mechanism that allows IR modules to co-operatively build "
+"pointer sets corresponding to addresses within a given set of globals. "
+"One example of a use case for this is to allow a C++ program to "
+"efficiently verify (at each call site) that a vtable pointer is in the "
+"set of valid vtable pointers for the type of the class or its derived "
+"classes."
+msgstr ""
+
+#: ../../BitSets.rst:11
+msgid ""
+"To use the mechanism, a client creates a global metadata node named "
+"``llvm.bitsets``.  Each element is a metadata node with three elements:"
+msgstr ""
+
+#: ../../BitSets.rst:14
+msgid "a metadata object representing an identifier for the bitset"
+msgstr ""
+
+#: ../../BitSets.rst:15
+msgid "either a global variable or a function"
+msgstr ""
+
+#: ../../BitSets.rst:16
+msgid "a byte offset into the global (generally zero for functions)"
+msgstr ""
+
+#: ../../BitSets.rst:18
+msgid "Each bitset must exclusively contain either global variables or functions."
+msgstr ""
+
+#: ../../BitSets.rst:20
+msgid "Limitation"
+msgstr ""
+
+#: ../../BitSets.rst:22
+msgid ""
+"The current implementation only supports functions as members of bitsets "
+"on the x86-32 and x86-64 architectures."
+msgstr ""
+
+#: ../../BitSets.rst:25
+msgid ""
+"This will cause a link-time optimization pass to generate bitsets from "
+"the memory addresses referenced from the elements of the bitset metadata."
+" The pass will lay out referenced global variables consecutively, so "
+"their definitions must be available at LTO time."
+msgstr ""
+
+#: ../../BitSets.rst:30
+msgid ""
+"A bit set containing functions is transformed into a jump table, which is"
+" a block of code consisting of one branch instruction for each of the "
+"functions in the bit set that branches to the target function, and "
+"redirect any taken function addresses to the corresponding jump table "
+"entry. In the object file's symbol table, the jump table entries take the"
+" identities of the original functions, so that addresses taken outside "
+"the module will pass any verification done inside the module."
+msgstr ""
+
+#: ../../BitSets.rst:38
+msgid ""
+"Jump tables may call external functions, so their definitions need not be"
+" available at LTO time. Note that if an externally defined function is a "
+"member of a bitset, there is no guarantee that its identity within the "
+"module will be the same as its identity outside of the module, as the "
+"former will be the jump table entry if a jump table is necessary."
+msgstr ""
+
+#: ../../BitSets.rst:44
+msgid ""
+"The `GlobalLayoutBuilder`_ class is responsible for laying out the "
+"globals efficiently to minimize the sizes of the underlying bitsets. An "
+"intrinsic, :ref:`llvm.bitset.test <bitset.test>`, generates code to test "
+"whether a given pointer is a member of a bitset."
+msgstr ""
+

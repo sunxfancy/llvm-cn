@@ -1,0 +1,293 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../HowToCrossCompileLLVM.rst:3
+msgid "How To Cross-Compile Clang/LLVM using Clang/LLVM"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:6
+msgid "Introduction"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:8
+msgid ""
+"This document contains information about building LLVM and Clang on host "
+"machine, targeting another platform."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:11
+msgid ""
+"For more information on how to use Clang as a cross-compiler, please "
+"check http://clang.llvm.org/docs/CrossCompilation.html."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:14
+msgid "TODO: Add MIPS and other platforms to this document."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:17
+msgid "Cross-Compiling from x86_64 to ARM"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:19
+msgid ""
+"In this use case, we'll be using CMake and Ninja, on a Debian-based Linux"
+" system, cross-compiling from an x86_64 host (most Intel and AMD chips "
+"nowadays) to a hard-float ARM target (most ARM targets nowadays)."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:23
+msgid "The packages you'll need are:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:25
+msgid "``cmake``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:26
+msgid "``ninja-build`` (from backports in Ubuntu)"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:27
+msgid "``gcc-4.7-arm-linux-gnueabihf``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:28
+msgid "``gcc-4.7-multilib-arm-linux-gnueabihf``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:29
+msgid "``binutils-arm-linux-gnueabihf``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:30
+msgid "``libgcc1-armhf-cross``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:31
+msgid "``libsfgcc1-armhf-cross``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:32
+msgid "``libstdc++6-armhf-cross``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:33
+msgid "``libstdc++6-4.7-dev-armhf-cross``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:36
+msgid "Configuring CMake"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:38
+msgid ""
+"For more information on how to configure CMake for LLVM/Clang, see "
+":doc:`CMake`."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:49
+msgid "The CMake options you need to add are:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:42
+msgid "``-DCMAKE_CROSSCOMPILING=True``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:43
+msgid "``-DCMAKE_INSTALL_PREFIX=<install-dir>``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:44
+msgid "``-DLLVM_TABLEGEN=<path-to-host-bin>/llvm-tblgen``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:45
+msgid "``-DCLANG_TABLEGEN=<path-to-host-bin>/clang-tblgen``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:46
+msgid "``-DLLVM_DEFAULT_TARGET_TRIPLE=arm-linux-gnueabihf``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:47
+msgid "``-DLLVM_TARGET_ARCH=ARM``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:48
+msgid "``-DLLVM_TARGETS_TO_BUILD=ARM``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:49
+msgid ""
+"``-DCMAKE_CXX_FLAGS='-target armv7a-linux-gnueabihf -mcpu=cortex-a9 "
+"-I/usr/arm-linux-gnueabihf/include/c++/4.7.2/arm-linux-gnueabihf/ -I/usr"
+"/arm-linux-gnueabihf/include/ -mfloat-abi=hard -ccc-gcc-name arm-linux-"
+"gnueabihf-gcc'``"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:51
+msgid ""
+"The TableGen options are required to compile it with the host compiler, "
+"so you'll need to compile LLVM (or at least ``llvm-tblgen``) to your host"
+" platform before you start. The CXX flags define the target, cpu (which "
+"defaults to ``fpu=VFP3`` with NEON), and forcing the hard-float ABI. If "
+"you're using Clang as a cross-compiler, you will *also* have to set "
+"``-ccc-gcc-name``, to make sure it picks the correct linker."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:58
+msgid ""
+"Most of the time, what you want is to have a native compiler to the "
+"platform itself, but not others. It might not even be feasible to produce"
+" x86 binaries from ARM targets, so there's no point in compiling all "
+"back-ends. For that reason, you should also set the ``TARGETS_TO_BUILD`` "
+"to only build the ARM back-end."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:64
+msgid ""
+"You must set the ``CMAKE_INSTALL_PREFIX``, otherwise a ``ninja install`` "
+"will copy ARM binaries to your root filesystem, which is not what you "
+"want."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:69
+msgid "Hacks"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:71
+msgid ""
+"There are some bugs in current LLVM, which require some fiddling before "
+"running CMake:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:74
+msgid ""
+"If you're using Clang as the cross-compiler, there is a problem in the "
+"LLVM ARM back-end that is producing absolute relocations on position-"
+"independent code (``R_ARM_THM_MOVW_ABS_NC``), so for now, you should "
+"disable PIC:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:83
+msgid ""
+"This is not a problem, since Clang/LLVM libraries are statically linked "
+"anyway, it shouldn't affect much."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:86
+msgid ""
+"The ARM libraries won't be installed in your system, and possibly not "
+"easily installable anyway, so you'll have to build/download them "
+"separately. But the CMake prepare step, which checks for dependencies, "
+"will check the *host* libraries, not the *target* ones."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:92
+msgid ""
+"A quick way of getting the libraries is to download them from a "
+"distribution repository, like Debian "
+"(http://packages.debian.org/wheezy/), and download the missing libraries."
+" Note that the ``libXXX`` will have the shared objects (``.so``) and the "
+"``libXXX-dev`` will give you the headers and the static (``.a``) library."
+" Just in case, download both."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:99
+msgid ""
+"The ones you need for ARM are: ``libtinfo``, ``zlib1g``, ``libxml2`` and "
+"``liblzma``. In the Debian repository you'll find downloads for all "
+"architectures."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:103
+msgid ""
+"After you download and unpack all ``.deb`` packages, copy all ``.so`` and"
+" ``.a`` to a directory, make the appropriate symbolic links (if "
+"necessary), and add the relevant ``-L`` and ``-I`` paths to "
+"``-DCMAKE_CXX_FLAGS`` above."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:110
+msgid "Running CMake and Building"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:112
+msgid "Finally, if you're using your platform compiler, run:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:118
+msgid "If you're using Clang as the cross-compiler, run:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:124
+msgid ""
+"If you have ``clang``/``clang++`` on the path, it should just work, and "
+"special Ninja files will be created in the build directory. I strongly "
+"suggest you to run ``cmake`` on a separate build directory, *not* inside "
+"the source tree."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:129
+msgid "To build, simply type:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:135
+msgid ""
+"It should automatically find out how many cores you have, what are the "
+"rules that needs building and will build the whole thing."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:138
+msgid ""
+"You can't run ``ninja check-all`` on this tree because the created "
+"binaries are targeted to ARM, not x86_64."
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:142
+msgid "Installing and Using"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:144
+msgid "After the LLVM/Clang has built successfully, you should install it via:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:151
+msgid ""
+"which will create a sysroot on the install-dir. You can then tar that "
+"directory into a binary with the full triple name (for easy "
+"identification), like:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:160
+msgid ""
+"If you copy that tarball to your target board, you'll be able to use it "
+"for running the test-suite, for example. Follow the guidelines at "
+"http://llvm.org/docs/lnt/quickstart.html, unpack the tarball in the test "
+"directory, and use options:"
+msgstr ""
+
+#: ../../HowToCrossCompileLLVM.rst:173
+msgid ""
+"Remember to add the ``-jN`` options to ``lnt`` to the number of CPUs on "
+"your board. Also, the path to your clang has to be absolute, so you'll "
+"need the `pwd` trick above."
+msgstr ""
+

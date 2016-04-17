@@ -1,0 +1,68 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2003-2016, LLVM Project
+# This file is distributed under the same license as the LLVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LLVM 3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-17 11:36+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.3\n"
+
+#: ../../tutorial/index.rst:3
+msgid "LLVM Tutorial: Table of Contents"
+msgstr ""
+
+#: ../../tutorial/index.rst:6
+msgid "Kaleidoscope: Implementing a Language with LLVM"
+msgstr ""
+
+#: ../../tutorial/index.rst:16
+msgid "Kaleidoscope: Implementing a Language with LLVM in Objective Caml"
+msgstr ""
+
+#: ../../tutorial/index.rst:26
+msgid "External Tutorials"
+msgstr ""
+
+#: ../../tutorial/index.rst:31
+msgid ""
+"`Tutorial: Creating an LLVM Backend for the Cpu0 Architecture "
+"<http://jonathan2251.github.com/lbd/>`_"
+msgstr ""
+
+#: ../../tutorial/index.rst:29
+msgid ""
+"A step-by-step tutorial for developing an LLVM backend. Under active "
+"development at `<https://github.com/Jonathan2251/lbd>`_ (please "
+"contribute!)."
+msgstr ""
+
+#: ../../tutorial/index.rst:35
+msgid "`Howto: Implementing LLVM Integrated Assembler`_"
+msgstr ""
+
+#: ../../tutorial/index.rst:34
+msgid ""
+"A simple guide for how to implement an LLVM integrated assembler for an "
+"architecture."
+msgstr ""
+
+#: ../../tutorial/index.rst:40
+msgid "Advanced Topics"
+msgstr ""
+
+#: ../../tutorial/index.rst:42
+msgid ""
+"`Writing an Optimization for LLVM "
+"<http://llvm.org/pubs/2004-09-22-LCPCLLVMTutorial.html>`_"
+msgstr ""
+
