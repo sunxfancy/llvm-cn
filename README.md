@@ -64,5 +64,5 @@ It will be encouraged to send PR.
 Copyright
 ================
 
-English version and framework belong to <llvm.org>.  
+English version and framework belong to <http://llvm.org>.  
 All rights reserved for the Chinese version.
