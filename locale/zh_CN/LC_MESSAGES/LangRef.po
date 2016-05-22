@@ -19,11 +19,11 @@ msgstr ""
 
 #: ../../LangRef.rst:3
 msgid "LLVM Language Reference Manual"
-msgstr ""
+msgstr "LLVM 语法参考手册"
 
 #: ../../LangRef.rst:10
 msgid "Abstract"
-msgstr ""
+msgstr "摘要"
 
 #: ../../LangRef.rst:12
 msgid ""
@@ -34,10 +34,15 @@ msgid ""
 "representation used throughout all phases of the LLVM compilation "
 "strategy."
 msgstr ""
+"这份文档是LLVM汇编语言的语法参考手册，LLVM汇编语言是一种"
+" `静态单赋值（SSA）<https://www.wikiwand.com/zh/静态单赋值形式>`_ 的中间表示"
+"，提供了类型安全检查，低层次的操作符，灵活和清晰表达‘几乎所有’高级语言的能力。"
+"同时，它也是LLVM编译算法中各个阶段的一种通用代码表达形式。"
+
 
 #: ../../LangRef.rst:20
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
 
 #: ../../LangRef.rst:22
 msgid ""
@@ -51,6 +56,11 @@ msgid ""
 "all equivalent. This document describes the human readable representation"
 " and notation."
 msgstr ""
+"LLVM的中间代码表示被设计成用在以下三种不同的形式下："
+"作为一种编译器的内存中的中间代码（IR），作为一种保存在磁盘中的字节码形式（适合被JIT编译器快速装载），"
+"作为人类可读的汇编语言表示。这使得LLVM为编译器的高效转换和分析提供了一种强有力的中间表达形式，"
+"同时也提供了一种很自然的方法来调试和可视化编译后的代码。这三种不同的LLVM中间代码的形式是完全等价的，"
+"这份文档就在描述人类可读的形式和其所用到的符号。"
 
 #: ../../LangRef.rst:32
 msgid ""
@@ -64,11 +74,16 @@ msgid ""
 "that a C automatic variable is never accessed outside of the current "
 "function, allowing it to be promoted to a simple SSA value instead of a "
 "memory location."
-msgstr ""
+msgstr "LLVM中间字节码表示的目标是，成为一种轻量级和低层次的，同时有表现力的、类型化的并且可扩展的中间语言，"
+"更要成为一种 “通用中间表示（IR）”，并且是足够低层次的，这样才能让高层次的语言设计能够清晰地映射到这种中间表示上"
+"（就像微处理器指令——机器码，也可以看做是一种中间表示，允许源代码映射到它们上）"
+"通过提供类型信息，LLVM可以被用在优化目标上。例如：通过指针分析，可以证明C自动变量是从没存取过函数外的外部变量的，"
+"允许提升一个简单的SSA变量，替代一个内存地址等。"
+
 
 #: ../../LangRef.rst:46
 msgid "Well-Formedness"
-msgstr ""
+msgstr "结构良好性"
 
 #: ../../LangRef.rst:48
 msgid ""
@@ -77,6 +92,9 @@ msgid ""
 "and what is considered 'well formed'. For example, the following "
 "instruction is syntactically okay, but not well formed:"
 msgstr ""
+"要强调的一点是，这份文档描述的拥有“良好结构的”LLVM汇编语言。"
+"解析器接受的和我们认为的“良好结构”稍有不同"
+"例如，下面的指令在语法构成上是合理的，但却并不是良好结构的："
 
 #: ../../LangRef.rst:57
 #, python-format
@@ -88,10 +106,15 @@ msgid ""
 "it outputs bitcode. The violations pointed out by the verifier pass "
 "indicate bugs in transformation passes or input to the parser."
 msgstr ""
+"因为 ``%x`` 的定义并没有在其全部用到的位置，独占同一个含义。"
+"LLVM 基础设施提供了一个校验过程，可以用来检验一个LLVM模块是否是“良好结构的”。"
+"这一过程会在解析器解析输入的汇编指令后，以及优化器输出字节码前自动运行。"
+"并且被验证过程标出违反的地方会在转换过程或输入到解析器时报错。"
+
 
 #: ../../LangRef.rst:67
 msgid "Identifiers"
-msgstr ""
+msgstr "标识符"
 
 #: ../../LangRef.rst:69
 msgid ""
@@ -101,6 +124,10 @@ msgid ""
 "``'%'`` character. Additionally, there are three different formats for "
 "identifiers, for different purposes:"
 msgstr ""
+"LLVM的标识符可以分为两大类：全局标识符和局部标识符。"
+"全局标识符（例如函数、全局变量）会以``‘@’`` 开始，"
+"而本地标识符（例如寄存器名、类型名）会以 ``‘%’`` 开始。"
+"进一步说，对于不同的目标，有三种不同的标识符格式："
 
 #: ../../LangRef.rst:75
 #, python-format
@@ -199,11 +226,11 @@ msgstr ""
 
 #: ../../LangRef.rst:142
 msgid "High Level Structure"
-msgstr ""
+msgstr "高层次结构"
 
 #: ../../LangRef.rst:145
 msgid "Module Structure"
-msgstr ""
+msgstr "模块结构"
 
 #: ../../LangRef.rst:147
 msgid ""
@@ -234,13 +261,13 @@ msgstr ""
 
 #: ../../LangRef.rst:190
 msgid "Linkage Types"
-msgstr ""
+msgstr "链接类型"
 
 #: ../../LangRef.rst:192
 msgid ""
 "All Global Variables and Functions have one of the following types of "
 "linkage:"
-msgstr ""
+msgstr "全部的全局变量和函数都有下面任一链接类型："
 
 #: ../../LangRef.rst:200
 msgid "``private``"
@@ -388,7 +415,7 @@ msgstr ""
 
 #: ../../LangRef.rst:276
 msgid "Calling Conventions"
-msgstr ""
+msgstr "调用约定"
 
 #: ../../LangRef.rst:278
 msgid ""
@@ -674,17 +701,17 @@ msgstr ""
 
 #: ../../LangRef.rst:442
 msgid "Visibility Styles"
-msgstr ""
+msgstr "符号可见性"
 
 #: ../../LangRef.rst:444
 msgid ""
 "All Global Variables and Functions have one of the following visibility "
 "styles:"
-msgstr ""
+msgstr "任何全局变量和函数都有任一下面的可见性类型："
 
 #: ../../LangRef.rst:452
 msgid "\"``default``\" - Default style"
-msgstr ""
+msgstr "\"``default``\" - 默认类型"
 
 #: ../../LangRef.rst:448
 msgid ""
@@ -698,7 +725,7 @@ msgstr ""
 
 #: ../../LangRef.rst:458
 msgid "\"``hidden``\" - Hidden style"
-msgstr ""
+msgstr "\"``hidden``\" - 隐藏类型"
 
 #: ../../LangRef.rst:455
 msgid ""
@@ -711,7 +738,7 @@ msgstr ""
 
 #: ../../LangRef.rst:464
 msgid "\"``protected``\" - Protected style"
-msgstr ""
+msgstr "\"``protected``\" - 保护类型"
 
 #: ../../LangRef.rst:461
 msgid ""
@@ -729,7 +756,7 @@ msgstr ""
 
 #: ../../LangRef.rst:472
 msgid "DLL Storage Classes"
-msgstr ""
+msgstr "DLL存储类"
 
 #: ../../LangRef.rst:474
 msgid ""
@@ -766,7 +793,7 @@ msgstr ""
 
 #: ../../LangRef.rst:493
 msgid "Thread Local Storage Models"
-msgstr ""
+msgstr "本地线程存储模型"
 
 #: ../../LangRef.rst:495
 msgid ""
@@ -827,7 +854,7 @@ msgstr ""
 
 #: ../../LangRef.rst:524
 msgid "Structure Types"
-msgstr ""
+msgstr "结构类型"
 
 #: ../../LangRef.rst:526
 msgid ""
@@ -840,7 +867,7 @@ msgstr ""
 
 #: ../../LangRef.rst:531
 msgid "An example of an identified structure specification is:"
-msgstr ""
+msgstr "一个结构类型的规范示例是："
 
 #: ../../LangRef.rst:537
 msgid ""
@@ -850,17 +877,17 @@ msgstr ""
 
 #: ../../LangRef.rst:543
 msgid "Global Variables"
-msgstr ""
+msgstr "全局变量"
 
 #: ../../LangRef.rst:545
 msgid ""
 "Global variables define regions of memory allocated at compilation time "
 "instead of run-time."
-msgstr ""
+msgstr "全局变量定义了在编译时内存分配的范围，替代运行时分配。"
 
 #: ../../LangRef.rst:548
 msgid "Global variable definitions must be initialized."
-msgstr ""
+msgstr "全局变量的定义必须被初始化。"
 
 #: ../../LangRef.rst:550
 msgid ""
@@ -990,7 +1017,7 @@ msgstr ""
 
 #: ../../LangRef.rst:649
 msgid "Functions"
-msgstr ""
+msgstr "函数"
 
 #: ../../LangRef.rst:651
 msgid ""
@@ -1078,7 +1105,7 @@ msgstr ""
 
 #: ../../LangRef.rst:726
 msgid "Aliases"
-msgstr ""
+msgstr "别名"
 
 #: ../../LangRef.rst:728
 msgid ""
@@ -13348,4 +13375,3 @@ msgid ""
 "mechanisms commonly desired in dynamic language JITs. These intrinsics "
 "are described in :doc:`StackMaps`."
 msgstr ""
-
