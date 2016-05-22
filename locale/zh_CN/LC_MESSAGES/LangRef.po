@@ -35,7 +35,7 @@ msgid ""
 "strategy."
 msgstr ""
 "这份文档是LLVM汇编语言的语法参考手册，LLVM汇编语言是一种"
-" `静态单赋值（SSA）<https://www.wikiwand.com/zh/静态单赋值形式>`_ 的中间表示"
+" `静态单赋值（SSA） <https://www.wikiwand.com/zh/静态单赋值形式>`_ 的中间表示"
 "，提供了类型安全检查，低层次的操作符，灵活和清晰表达‘几乎所有’高级语言的能力。"
 "同时，它也是LLVM编译算法中各个阶段的一种通用代码表达形式。"
 
@@ -142,16 +142,24 @@ msgid ""
 "used in a name value, even quotes themselves. The ``\"\\01\"`` prefix can"
 " be used on global variables to suppress mangling."
 msgstr ""
+"带有特殊字符前缀的字符串代表了命名值。例如 ``%foo``, ``@DivisionByZero``, ``%a.really.long.identifier``。"
+"而实际的用正则表达式可表示为‘ ``[%@][-a-zA-Z$._][-a-zA-Z$._0-9]*`` ’。"
+"在标识符中需要用其他正则式中以外的字符时，可以用引号引起来表示。"
+"特殊字符可以使用转义符转义，如 ``\"\\xx\"`` ，xx是其对应的十六进制ASCII码。"
+"用这种方法，全部字符都可以被用于名称变量，即使是引号本身。"
+" ``\"\\01\"`` 前缀可以被用在全局变量上，来防止名称改写。"
+
 
 #: ../../LangRef.rst:84
 msgid ""
 "Unnamed values are represented as an unsigned numeric value with their "
 "prefix. For example, ``%12``, ``@2``, ``%44``."
 msgstr ""
+"带有特殊前缀的无符号整数表示一个未命名的变量。例如 ``%12``, ``@2``, ``%44`` 。"
 
 #: ../../LangRef.rst:86
 msgid "Constants, which are described in the section Constants_ below."
-msgstr ""
+msgstr "常量的表示，会在下面的 Constants_ 一节提到。"
 
 #: ../../LangRef.rst:88
 msgid ""
@@ -161,6 +169,10 @@ msgid ""
 "Additionally, unnamed identifiers allow a compiler to quickly come up "
 "with a temporary variable without having to avoid symbol table conflicts."
 msgstr ""
+"LLVM需要带有特殊前缀的变量有两个原因：编译器不需要担心名称和保留字冲突，并且"
+"保留字集可以在日后安全地扩展。此外，未命名的标识符允许编译器快速找到一个临时变量"
+"而无需担心去防止符号表冲突。"
+
 
 #: ../../LangRef.rst:95
 msgid ""
@@ -171,32 +183,37 @@ msgid ""
 " variable names, because none of them start with a prefix character "
 "(``'%'`` or ``'@'``)."
 msgstr ""
+"LLVM中的保留字和其他语言中保留字非常相似。"
+"有对不同的操作码的关键字 （ '``add``', '``bitcast``', '``ret``' 等 ）、"
+"基本类型名 （ '``void``', '``i32``' 等）、还有其他。"
+"这些保留字不会和变量名冲突，由于他们没有一个是以特殊字符开头的（ ``'%'`` 或 ``'@'`` ）。"
+
 
 #: ../../LangRef.rst:102
 #, python-format
 msgid ""
 "Here is an example of LLVM code to multiply the integer variable '``%X``'"
 " by 8:"
-msgstr ""
+msgstr "这里是一个LLVM字节码示例，给整数变量 '``%X``' 乘8。"
 
 #: ../../LangRef.rst:105
 msgid "The easy way:"
-msgstr ""
+msgstr "最简单的方式："
 
 #: ../../LangRef.rst:111
 msgid "After strength reduction:"
-msgstr ""
+msgstr "降低功能后"
 
 #: ../../LangRef.rst:117
 msgid "And the hard way:"
-msgstr ""
+msgstr "以及复杂的方式："
 
 #: ../../LangRef.rst:125
 #, python-format
 msgid ""
 "This last way of multiplying ``%X`` by 8 illustrates several important "
 "lexical features of LLVM:"
-msgstr ""
+msgstr "最后一种乘8的方式展示了几个重要的LLVM词法特性。"
 
 #: ../../LangRef.rst:128
 msgid "Comments are delimited with a '``;``' and go until the end of line."
