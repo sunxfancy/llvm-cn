@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting Started with the LLVM System &mdash; LLVM 3.8 文档</title>
+    <title>LLVM系统入门 &mdash; LLVM 3.8 文档</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -74,14 +74,14 @@
           <div class="body" role="main">
             
   <div class="section" id="getting-started-with-the-llvm-system">
-<h1>Getting Started with the LLVM System<a class="headerlink" href="#getting-started-with-the-llvm-system" title="永久链接至标题">¶</a></h1>
+<h1>LLVM系统入门<a class="headerlink" href="#getting-started-with-the-llvm-system" title="永久链接至标题">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#overview" id="id7">Overview</a></li>
-<li><a class="reference internal" href="#getting-started-quickly-a-summary" id="id8">Getting Started Quickly (A Summary)</a></li>
-<li><a class="reference internal" href="#requirements" id="id9">Requirements</a><ul>
-<li><a class="reference internal" href="#hardware" id="id10">Hardware</a></li>
-<li><a class="reference internal" href="#software" id="id11">Software</a></li>
+<li><a class="reference internal" href="#overview" id="id7">概述</a></li>
+<li><a class="reference internal" href="#getting-started-quickly-a-summary" id="id8">快速入门（综述）</a></li>
+<li><a class="reference internal" href="#requirements" id="id9">依赖项</a><ul>
+<li><a class="reference internal" href="#hardware" id="id10">硬件</a></li>
+<li><a class="reference internal" href="#software" id="id11">软件</a></li>
 <li><a class="reference internal" href="#host-c-toolchain-both-compiler-and-standard-library" id="id12">Host C++ Toolchain, both Compiler and Standard Library</a><ul>
 <li><a class="reference internal" href="#getting-a-modern-host-c-toolchain" id="id13">Getting a Modern Host C++ Toolchain</a></li>
 </ul>
@@ -126,63 +126,51 @@
 </ul>
 </div>
 <div class="section" id="overview">
-<h2><a class="toc-backref" href="#id7">Overview</a><a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
-<p>Welcome to LLVM! In order to get started, you first need to know some basic
-information.</p>
-<p>First, LLVM comes in three pieces. The first piece is the LLVM suite. This
-contains all of the tools, libraries, and header files needed to use LLVM.  It
-contains an assembler, disassembler, bitcode analyzer and bitcode optimizer.  It
-also contains basic regression tests that can be used to test the LLVM tools and
-the Clang front end.</p>
-<p>The second piece is the <a class="reference external" href="http://clang.llvm.org/">Clang</a> front end.  This
-component compiles C, C++, Objective C, and Objective C++ code into LLVM
-bitcode. Once compiled into LLVM bitcode, a program can be manipulated with the
-LLVM tools from the LLVM suite.</p>
-<p>There is a third, optional piece called Test Suite.  It is a suite of programs
-with a testing harness that can be used to further test LLVM&#8217;s functionality
-and performance.</p>
+<h2><a class="toc-backref" href="#id7">概述</a><a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
+<p>欢迎使用LLVM！为了您能够快速入门LLVM系统，您首先需要了解一些基本信息。</p>
+<p>首先，LLVM分为三个部分。第一部分是LLVM套件，包含了所有的工具、库、必要的头文件。它包括一个汇编器、一个反汇编器、字节码分析器和一个字节码优化器。它还包括基本的回归测试可以用来测试LLVM工具和Clang前端。</p>
+<p>第二部分是 <a class="reference external" href="http://clang.llvm.org/">Clang</a> 前端。这个组件可以将C/C++/Objective C/Objective C++代码编译成为LLVM字节码。一旦编译成为LLVM字节码，这个字节码程序就可以由LLVM套件中的工具所操作了。</p>
+<p>第三部分，可选的部分被称为测试套件。它是可用于进一步测试LLVM的功能和性能的一套程序。</p>
 </div>
 <div class="section" id="getting-started-quickly-a-summary">
-<h2><a class="toc-backref" href="#id8">Getting Started Quickly (A Summary)</a><a class="headerlink" href="#getting-started-quickly-a-summary" title="永久链接至标题">¶</a></h2>
-<p>The LLVM Getting Started documentation may be out of date.  So, the <a class="reference external" href="http://clang.llvm.org/get_started.html">Clang
-Getting Started</a> page might also be a
-good place to start.</p>
-<p>Here&#8217;s the short story for getting up and running quickly with LLVM:</p>
+<h2><a class="toc-backref" href="#id8">快速入门（综述）</a><a class="headerlink" href="#getting-started-quickly-a-summary" title="永久链接至标题">¶</a></h2>
+<p>本LLVM快速入门文档可能有点过时。所以， <a class="reference external" href="http://clang.llvm.org/get_started.html">Clang Getting Started</a> 可能是一个更好的入门文档。</p>
+<p>下面是快速开速LLVM项目开发的一个简短流程：</p>
 <ol class="arabic">
-<li><p class="first">Read the documentation.</p>
+<li><p class="first">读文档</p>
 </li>
-<li><p class="first">Read the documentation.</p>
+<li><p class="first">读文档</p>
 </li>
-<li><p class="first">Remember that you were warned twice about reading the documentation.</p>
+<li><p class="first">记住，您至少要读两遍文档（重要的话说三遍）</p>
 </li>
-<li><p class="first">Checkout LLVM:</p>
+<li><p class="first">签出LLVM：</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
 <li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></code></li>
 </ul>
 </li>
-<li><p class="first">Checkout Clang:</p>
+<li><p class="first">签出Clang</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/tools</span></code></li>
 <li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/cfe/trunk</span> <span class="pre">clang</span></code></li>
 </ul>
 </li>
-<li><p class="first">Checkout Compiler-RT (required to build the sanitizers):</p>
+<li><p class="first">签出 Compiler-RT (需要先编译sanitizers)</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></code></li>
 <li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/compiler-rt/trunk</span> <span class="pre">compiler-rt</span></code></li>
 </ul>
 </li>
-<li><p class="first">Checkout Libomp (required for OpenMP support):</p>
+<li><p class="first">签出 Libomp（为了提供OpenMP支持）：</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></code></li>
 <li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/openmp/trunk</span> <span class="pre">openmp</span></code></li>
 </ul>
 </li>
-<li><p class="first">Checkout libcxx and libcxxabi <strong>[Optional]</strong>:</p>
+<li><p class="first">签出 libcxx和libcxxabi <strong>[可选的]</strong> ：</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></code></li>
@@ -190,18 +178,15 @@ good place to start.</p>
 <li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/libcxxabi/trunk</span> <span class="pre">libcxxabi</span></code></li>
 </ul>
 </li>
-<li><p class="first">Get the Test Suite Source Code <strong>[Optional]</strong></p>
+<li><p class="first">获取测试套件源代码 <strong>[可选的]</strong> ：</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></code></li>
 <li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/test-suite/trunk</span> <span class="pre">test-suite</span></code></li>
 </ul>
 </li>
-<li><p class="first">Configure and build LLVM and Clang:</p>
-<p>The usual build uses <a class="reference external" href="CMake.html">CMake</a>. If you would rather use
-autotools, see <a class="reference external" href="BuildingLLVMWithAutotools.html">Building LLVM with autotools</a>.
-Although the build is known to work with CMake &gt;= 2.8.8, we recommend CMake
-&gt;= v3.2, especially if you&#8217;re generating Ninja build files.</p>
+<li><p class="first">配置并编译LLVM和Clang：</p>
+<p>一般使用 <a class="reference external" href="CMake.html">CMake</a> 构建项目，如果你希望使用 autotools，可以参考 <a class="reference external" href="BuildingLLVMWithAutotools.html">使用autotools构建LLVM</a> 。 尽管构建时要使用CMake &gt;= 2.8.8， 我们推荐使用 CMake &gt;= 3.2，尤其当你使用Ninja构建系统作为CMake的构建配置时。</p>
 <ul>
 <li><p class="first"><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where</span> <span class="pre">you</span> <span class="pre">want</span> <span class="pre">to</span> <span class="pre">build</span> <span class="pre">llvm</span></code></p>
 </li>
@@ -210,26 +195,26 @@ Although the build is known to work with CMake &gt;= 2.8.8, we recommend CMake
 <li><p class="first"><code class="docutils literal"><span class="pre">cd</span> <span class="pre">build</span></code></p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">cmake</span> <span class="pre">-G</span> <span class="pre">&lt;generator&gt;</span> <span class="pre">[options]</span> <span class="pre">&lt;path</span> <span class="pre">to</span> <span class="pre">llvm</span> <span class="pre">sources&gt;</span></code></p>
-<p>Some common generators are:</p>
+<p>一些常用的CMake构建目标为：</p>
 <ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">Unix</span> <span class="pre">Makefiles</span></code> &#8212; for generating make-compatible parallel makefiles.</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Unix</span> <span class="pre">Makefiles</span></code> &#8212; 生成make兼容型配置，可并行执行的makefiles</p>
 </li>
 <li><dl class="first docutils">
-<dt><code class="docutils literal"><span class="pre">Ninja</span></code> &#8212; for generating <cite>Ninja &lt;http://martine.github.io/ninja/&gt;</cite></dt>
-<dd><p class="first last">build files. Most llvm developers use Ninja.</p>
+<dt><code class="docutils literal"><span class="pre">Ninja</span></code> &#8212; 生成 <cite>Ninja &lt;http://martine.github.io/ninja/&gt;</cite> 构建系统配置</dt>
+<dd><p class="first last">大多数llvm开发者使用Ninja。</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt><code class="docutils literal"><span class="pre">Visual</span> <span class="pre">Studio</span></code> &#8212; for generating Visual Studio projects and</dt>
+<dt><cite>Visual Studio`</cite> &#8212; 生成Visual Studio项目解决方案</dt>
 <dd><p class="first last">solutions.</p>
 </dd>
 </dl>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">Xcode</span></code> &#8212; for generating Xcode projects.</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">Xcode</span></code> &#8212; 生成Xcode项目</p>
 </li>
 </ul>
-<p>Some Common options:</p>
+<p>一些常用的配置选项：</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">-DCMAKE_INSTALL_PREFIX=directory</span></code> &#8212; Specify for <em>directory</em> the full
 pathname of where you want the LLVM tools and libraries to be installed
@@ -263,13 +248,11 @@ that simplify working with the Clang front end and LLVM tools.  Go to <a class="
 Layout</a> to learn about the layout of the source code tree.</p>
 </div>
 <div class="section" id="requirements">
-<h2><a class="toc-backref" href="#id9">Requirements</a><a class="headerlink" href="#requirements" title="永久链接至标题">¶</a></h2>
-<p>Before you begin to use the LLVM system, review the requirements given below.
-This may save you some trouble by knowing ahead of time what hardware and
-software you will need.</p>
+<h2><a class="toc-backref" href="#id9">依赖项</a><a class="headerlink" href="#requirements" title="永久链接至标题">¶</a></h2>
+<p>在您开速使用LLVM之前，请先重新检查下面给出的依赖项。提前了解需要用到的硬件、软件环境可能有助于节约您宝贵的时间。</p>
 <div class="section" id="hardware">
-<h3><a class="toc-backref" href="#id10">Hardware</a><a class="headerlink" href="#hardware" title="永久链接至标题">¶</a></h3>
-<p>LLVM is known to work on the following host platforms:</p>
+<h3><a class="toc-backref" href="#id10">硬件</a><a class="headerlink" href="#hardware" title="永久链接至标题">¶</a></h3>
+<p>LLVM已知能够工作于如下的主机平台上：</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="35%" />
@@ -277,9 +260,12 @@ software you will need.</p>
 <col width="25%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">OS</th>
-<th class="head">Arch</th>
-<th class="head">Compilers</th>
+<tr class="row-odd"><th class="head"><p class="first last">操作系统</p>
+</th>
+<th class="head"><p class="first last">架构</p>
+</th>
+<th class="head"><p class="first last">编译器</p>
+</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -357,12 +343,8 @@ should work as well, although the generated native code may not work on your
 platform.</p>
 </div>
 <div class="section" id="software">
-<h3><a class="toc-backref" href="#id11">Software</a><a class="headerlink" href="#software" title="永久链接至标题">¶</a></h3>
-<p>Compiling LLVM requires that you have several software packages installed. The
-table below lists those required packages. The Package column is the usual name
-for the software package that LLVM depends on. The Version column provides
-&#8220;known to work&#8221; versions of the package. The Notes column describes how LLVM
-uses the package and provides other details.</p>
+<h3><a class="toc-backref" href="#id11">软件</a><a class="headerlink" href="#software" title="永久链接至标题">¶</a></h3>
+<p>编译LLVM需要你提前预装以下表格所示的软件包。软件包一列是LLVM依赖项的常见软件包名。版本列是这些软件包的已知可行的版本。备注列标注了LLVM为何要使用这些软件包，以及提供了其他细节信息。</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="52%" />
@@ -370,9 +352,12 @@ uses the package and provides other details.</p>
 <col width="38%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">Package</th>
-<th class="head">Version</th>
-<th class="head">Notes</th>
+<tr class="row-odd"><th class="head"><p class="first last">软件包</p>
+</th>
+<th class="head"><p class="first last">版本</p>
+</th>
+<th class="head"><p class="first last">备注</p>
+</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -1373,7 +1358,7 @@ write something up!).  For more information about LLVM, check out:</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
+      最后更新于 2016-06-06.
       由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
     </div>
   </body>
