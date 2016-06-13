@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Building LLVM with CMake &mdash; LLVM 3.8 文档</title>
+    <title>使用CMake构建LLVM &mdash; LLVM 3.8 文档</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -74,11 +74,11 @@
           <div class="body" role="main">
             
   <div class="section" id="building-llvm-with-cmake">
-<h1>Building LLVM with CMake<a class="headerlink" href="#building-llvm-with-cmake" title="永久链接至标题">¶</a></h1>
+<h1>使用CMake构建LLVM<a class="headerlink" href="#building-llvm-with-cmake" title="永久链接至标题">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id5">Introduction</a></li>
-<li><a class="reference internal" href="#quick-start" id="id6">Quick start</a></li>
+<li><a class="reference internal" href="#introduction" id="id5">简介</a></li>
+<li><a class="reference internal" href="#quick-start" id="id6">快速入门</a></li>
 <li><a class="reference internal" href="#usage" id="id7">Basic CMake usage</a></li>
 <li><a class="reference internal" href="#options-and-variables" id="id8">Options and variables</a><ul>
 <li><a class="reference internal" href="#frequently-used-cmake-variables" id="id9">Frequently-used CMake variables</a></li>
@@ -98,51 +98,30 @@
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id5">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
-<p><a class="reference external" href="http://www.cmake.org/">CMake</a> is a cross-platform build-generator tool. CMake
-does not build the project, it generates the files needed by your build tool
-(GNU make, Visual Studio, etc.) for building LLVM.</p>
-<p>If you are really anxious about getting a functional LLVM build, go to the
-<a class="reference internal" href="#quick-start">Quick start</a> section. If you are a CMake novice, start with <a class="reference internal" href="#basic-cmake-usage">Basic CMake usage</a>
-and then go back to the <a class="reference internal" href="#quick-start">Quick start</a> section once you know what you are doing. The
-<a class="reference internal" href="#options-and-variables">Options and variables</a> section is a reference for customizing your build. If
-you already have experience with CMake, this is the recommended starting point.</p>
+<h2><a class="toc-backref" href="#id5">简介</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://www.cmake.org/">CMake</a> 是一款跨平台的构建脚步生成工具。 CMake 本身并不支持构建项目，但它能生成您使用的构建系统的配置文件（例如GNU make，Visual Studio等等）来构建LLVM。</p>
+<p>如果您急于构建一个可用的LLVM，请参见 <a class="reference internal" href="#quick-start">Quick start</a> 一节。如果您是初次接触CMake，您可用从 <a class="reference internal" href="#basic-cmake-usage">Basic CMake usage</a> 开始阅读，在了解了CMake的基本用法后，再返回阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节是关于如何配置您的构建的参考资料，如果您已经有足够的CMake使用经验，推荐您直接从这一节开始阅读。</p>
 </div>
 <div class="section" id="quick-start">
-<span id="id1"></span><h2><a class="toc-backref" href="#id6">Quick start</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
-<p>We use here the command-line, non-interactive CMake interface.</p>
+<span id="id1"></span><h2><a class="toc-backref" href="#id6">快速入门</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
+<p>我们这里使用命令行工具，而不是交换式界面。</p>
 <ol class="arabic">
-<li><p class="first"><a class="reference external" href="http://www.cmake.org/cmake/resources/software.html">Download</a> and install
-CMake. Version 2.8.8 is the minimum required, but if you&#8217;re using the Ninja
-backend, CMake v3.2 or newer is required to <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20141117/244797.html">get interactive output</a>
-when running <a class="reference internal" href="CommandGuide/lit.html"><span class="doc">Lit</span></a>.</p>
+<li><p class="first"><a class="reference external" href="http://www.cmake.org/cmake/resources/software.html">下载</a> 并且安装CMake。 2.8.8 版是所支持的最早版本，但如果您还使用Ninja的后端，CMake需要使用3.2版或更高。 用来运行 <a class="reference internal" href="CommandGuide/lit.html"><span class="doc">Lit</span></a> 工具，并 <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20141117/244797.html">得到交互输出</a> 。</p>
 </li>
-<li><p class="first">Open a shell. Your development tools must be reachable from this shell
-through the PATH environment variable.</p>
+<li><p class="first">打开一个Shell命令行，您的开发工具必须是可用的，能通过PATH环境变量找到的。</p>
 </li>
-<li><p class="first">Create a build directory. Building LLVM in the source
-directory is not supported. cd to this directory:</p>
+<li><p class="first">创建一个构建目录，再源文件夹中构建LLVM是不推荐的，‘cd’ 转移到构建目录中：</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mkdir mybuilddir
 <span class="gp">$</span> <span class="nb">cd</span> mybuilddir
 </pre></div>
 </div>
 </li>
-<li><p class="first">Execute this command in the shell replacing <cite>path/to/llvm/source/root</cite> with
-the path to the root of your LLVM source tree:</p>
+<li><p class="first">中Shell命令行下，执行如下命令，并将 <cite>path/to/llvm/source/root</cite> 替换成您的LLVM源代码根目录。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake path/to/llvm/source/root
 </pre></div>
 </div>
-<p>CMake will detect your development environment, perform a series of tests, and
-generate the files required for building LLVM. CMake will use default values
-for all build parameters. See the <a class="reference internal" href="#options-and-variables">Options and variables</a> section for
-a list of build parameters that you can modify.</p>
-<p>This can fail if CMake can&#8217;t detect your toolset, or if it thinks that the
-environment is not sane enough. In this case, make sure that the toolset that
-you intend to use is the only one reachable from the shell, and that the shell
-itself is the correct one for your development environment. CMake will refuse
-to build MinGW makefiles if you have a POSIX shell reachable through the PATH
-environment variable, for instance. You can force CMake to use a given build
-tool; for instructions, see the <a class="reference internal" href="#usage">Usage</a> section, below.</p>
+<p>CMake 会自动检测您的开发环境，执行一系列的测试，并生成可用构建LLVM的配置文件。 不配置参数时，CMake 会对于所有的构建参数使用默认值。详情请看 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节列出的您可以修改的构建参数。</p>
+<p>这一步可能在CMake没有找到的你的编译工具链时失败，或者它认为你的环境变量没有配置正确时。在这一步，请确保您打算使用的工具集时可用的且是唯一的，还有Shell控制台本身在您的开发环境下能正常工作。例如：CMake 在您的环境变量中发现了一个可用的POSIX Shell程序时，会拒绝生成一个 MinGW makefiles。您也可用强制指定CMake使用的构建工具，如下面 <a class="reference internal" href="#usage">Usage</a> 一节中所写的。</p>
 </li>
 <li><p class="first">After CMake has finished running, proceed to use IDE project files, or start
 the build from the build directory:</p>
@@ -662,7 +641,7 @@ Studio 2010 CMake generator. 0 means use all processors. Default is 0.</dd>
     </div>
     <div class="footer" role="contentinfo">
         &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
+      最后更新于 2016-06-13.
       由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
     </div>
   </body>

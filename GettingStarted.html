@@ -216,18 +216,18 @@
 </ul>
 <p>一些常用的配置选项：</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">-DCMAKE_INSTALL_PREFIX=directory</span></code> &#8212; Specify for <em>directory</em> the full
-pathname of where you want the LLVM tools and libraries to be installed
-(default <code class="docutils literal"><span class="pre">/usr/local</span></code>).</li>
-<li><code class="docutils literal"><span class="pre">-DCMAKE_BUILD_TYPE=type</span></code> &#8212; Valid options for <em>type</em> are Debug,
-Release, RelWithDebInfo, and MinSizeRel. Default is Debug.</li>
-<li><code class="docutils literal"><span class="pre">-DLLVM_ENABLE_ASSERTIONS=On</span></code> &#8212; Compile with assertion checks enabled
-(default is Yes for Debug builds, No for all other build types).</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">-DCMAKE_INSTALL_PREFIX=directory</span></code> &#8212; 指定 <em>安装目录</em>，你希望LLVM工具和库安装到的完整路径（默认为 <code class="docutils literal"><span class="pre">/usr/local</span></code>）。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">-DCMAKE_BUILD_TYPE=type</span></code> &#8212; 可选的参数 <em>类型</em> 为 Debug，Release，RelWithDebInfo，MinSizeRel，默认是Debug。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">-DLLVM_ENABLE_ASSERTIONS=On</span></code> &#8212; 断言检查的启用 (默认对于Debug类型是启用的，但并不是所有类型都启用).</p>
+</li>
 </ul>
 </li>
-<li><p class="first">Run your build tool of choice!</p>
+<li><p class="first">运行新选择的构建工具！</p>
 <ul class="simple">
-<li>The default target (i.e. <code class="docutils literal"><span class="pre">make</span></code>) will build all of LLVM</li>
+<li><p class="first">默认的构建目标（例如： <code class="docutils literal"><span class="pre">make</span></code> ）会构建LLVM全部内容。</p>
+</li>
 <li>The <code class="docutils literal"><span class="pre">check-all</span></code> target (i.e. <code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code>) will run the
 regression tests to ensure everything is in working order.</li>
 <li>CMake will generate build targets for each tool and library, and most
@@ -322,20 +322,17 @@ Layout</a> to learn about the layout of the source code tree.</p>
 <div class="admonition note">
 <p class="first admonition-title">注解</p>
 <ol class="last arabic simple">
-<li>Code generation supported for Pentium processors and up</li>
-<li>Code generation supported for 32-bit ABI only</li>
-<li>To use LLVM modules on Win32-based system, you may configure LLVM
-with <code class="docutils literal"><span class="pre">-DBUILD_SHARED_LIBS=On</span></code> for CMake builds or <code class="docutils literal"><span class="pre">--enable-shared</span></code>
-for configure builds.</li>
-<li>MCJIT not working well pre-v7, old JIT engine not supported any more.</li>
+<li><p class="first">代码生成支持Pentium处理器及以上型号</p>
+</li>
+<li><p class="first">代码生成仅支持32位ABI</p>
+</li>
+<li><p class="first">为了在32位windows系统下使用LLVM模块，您需要按以下参数配置LLVM： <code class="docutils literal"><span class="pre">-DBUILD_SHARED_LIBS=On</span></code> 对于CMake 或者 <code class="docutils literal"><span class="pre">--enable-shared</span></code> 对于configure构建系统。</p>
+</li>
+<li><p class="first">MCJIT不能在pre-v7平台下很好地工作，老的JIT引擎也同样不支持。</p>
+</li>
 </ol>
 </div>
-<p>Note that you will need about 1-3 GB of space for a full LLVM build in Debug
-mode, depending on the system (it is so large because of all the debugging
-information and the fact that the libraries are statically linked into multiple
-tools).  If you do not need many of the tools and you are space-conscious, you
-can pass <code class="docutils literal"><span class="pre">ONLY_TOOLS=&quot;tools</span> <span class="pre">you</span> <span class="pre">need&quot;</span></code> to make.  The Release build requires
-considerably less space.</p>
+<p>需要注意的是您需要 1-3 GB 的磁盘空间对于在Debug模式下完整地构建LLVM，取决于系统（LLVM大的原因是Debug模式下，debug信息都被静态地链接到了很多的工具和库中）。如果您不需要很多的工具或者想节约磁盘空间您可以在构建时传入 <code class="docutils literal"><span class="pre">ONLY_TOOLS=&quot;tools</span> <span class="pre">you</span> <span class="pre">need&quot;</span></code> 参数给make。或者构建Release版也会节约很多空间。</p>
 <p>The LLVM suite <em>may</em> compile on other platforms, but it is not guaranteed to do
 so.  If compilation is successful, the LLVM utilities should be able to
 assemble, disassemble, analyze, and optimize LLVM bitcode.  Code generation
@@ -398,20 +395,17 @@ platform.</p>
 <div class="admonition note">
 <p class="first admonition-title">注解</p>
 <ol class="last arabic simple">
-<li>Only the C and C++ languages are needed so there&#8217;s no need to build the
-other languages for LLVM&#8217;s purposes. See <cite>below</cite> for specific version
-info.</li>
-<li>Only needed if you want to run the automated test suite in the
-<code class="docutils literal"><span class="pre">llvm/test</span></code> directory.</li>
-<li>If you want to make changes to the configure scripts, you will need GNU
-autoconf (2.60), and consequently, GNU M4 (version 1.4 or higher). You
-will also need automake (1.9.6). We only use aclocal from that package.</li>
-<li>Optional, adds compression / uncompression capabilities to selected LLVM
-tools.</li>
+<li><p class="first">只有C和C++是必要的，您无需为了使用LLVM而构建其他语言。注意以下特殊版本信息。</p>
+</li>
+<li><p class="first">只在您希望运行 <code class="docutils literal"><span class="pre">llvm/test</span></code> 目录下的自动测试用例时需要。</p>
+</li>
+<li><p class="first">如果您希望改变配置脚本，您需要使用 autoconf (2.60) 工具及 GNU M4 (1.4版或更高)。您也会用到automake (1.9.6)中的aclocal工具。</p>
+</li>
+<li><p class="first">可选的，为选定的LLVM工具添加压缩/解压缩功能。</p>
+</li>
 </ol>
 </div>
-<p>Additionally, your compilation host is expected to have the usual plethora of
-Unix utilities. Specifically:</p>
+<p>此外，您的编译主机预计需要大量的Unix实用工具，尤其是如下的：</p>
 <ul class="simple">
 <li><strong>ar</strong> &#8212; archive library builder</li>
 <li><strong>bzip2</strong> &#8212; bzip2 command for distribution generation</li>
@@ -1358,7 +1352,7 @@ write something up!).  For more information about LLVM, check out:</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-06-06.
+      最后更新于 2016-06-13.
       由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
     </div>
   </body>
