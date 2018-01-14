@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>TableGen &mdash; LLVM 3.8 文档</title>
-    
+    <title>TableGen &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="TableGen BackEnds" href="BackEnds.html" />
     <link rel="prev" title="TableGen Fundamentals" href="../TableGenFundamentals.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -75,27 +74,27 @@
             
   <div class="section" id="tablegen">
 <h1>TableGen<a class="headerlink" href="#tablegen" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id3">Introduction</a></li>
-<li><a class="reference internal" href="#the-tablegen-program" id="id4">The TableGen program</a><ul>
-<li><a class="reference internal" href="#running-tablegen" id="id5">Running TableGen</a></li>
-<li><a class="reference internal" href="#example" id="id6">Example</a></li>
+<li><a class="reference internal" href="#introduction" id="id4">Introduction</a></li>
+<li><a class="reference internal" href="#the-tablegen-program" id="id5">The TableGen program</a><ul>
+<li><a class="reference internal" href="#running-tablegen" id="id6">Running TableGen</a></li>
+<li><a class="reference internal" href="#example" id="id7">Example</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#syntax" id="id7">Syntax</a><ul>
-<li><a class="reference internal" href="#basic-concepts" id="id8">Basic concepts</a></li>
+<li><a class="reference internal" href="#syntax" id="id8">Syntax</a><ul>
+<li><a class="reference internal" href="#basic-concepts" id="id9">Basic concepts</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tablegen-backends" id="id9">TableGen backends</a></li>
-<li><a class="reference internal" href="#tablegen-deficiencies" id="id10">TableGen Deficiencies</a></li>
+<li><a class="reference internal" href="#tablegen-backends" id="id10">TableGen backends</a></li>
+<li><a class="reference internal" href="#tablegen-deficiencies" id="id11">TableGen Deficiencies</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id3">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
-<p>TableGen&#8217;s purpose is to help a human develop and maintain records of
+<h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p>TableGen’s purpose is to help a human develop and maintain records of
 domain-specific information.  Because there may be a large number of these
 records, it is specifically designed to allow writing flexible descriptions and
 for common features of these records to be factored out.  This reduces the
@@ -107,21 +106,21 @@ hands the result off to a domain-specific <a class="reference internal" href="#b
 and the
 <a class="reference external" href="http://clang.llvm.org/docs/UsersManual.html#controlling-errors-and-warnings">Clang diagnostics and attributes</a>.</p>
 <p>Note that if you work on TableGen much, and use emacs or vim, that you can find
-an emacs &#8220;TableGen mode&#8221; and a vim language file in the <code class="docutils literal"><span class="pre">llvm/utils/emacs</span></code> and
+an emacs “TableGen mode” and a vim language file in the <code class="docutils literal"><span class="pre">llvm/utils/emacs</span></code> and
 <code class="docutils literal"><span class="pre">llvm/utils/vim</span></code> directories of your LLVM distribution, respectively.</p>
 </div>
 <div class="section" id="the-tablegen-program">
-<span id="intro"></span><h2><a class="toc-backref" href="#id4">The TableGen program</a><a class="headerlink" href="#the-tablegen-program" title="永久链接至标题">¶</a></h2>
+<span id="intro"></span><h2><a class="toc-backref" href="#id5">The TableGen program</a><a class="headerlink" href="#the-tablegen-program" title="永久链接至标题">¶</a></h2>
 <p>TableGen files are interpreted by the TableGen program: <cite>llvm-tblgen</cite> available
 on your build directory under <cite>bin</cite>. It is not installed in the system (or where
-your sysroot is set to), since it has no use beyond LLVM&#8217;s build process.</p>
+your sysroot is set to), since it has no use beyond LLVM’s build process.</p>
 <div class="section" id="running-tablegen">
-<h3><a class="toc-backref" href="#id5">Running TableGen</a><a class="headerlink" href="#running-tablegen" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Running TableGen</a><a class="headerlink" href="#running-tablegen" title="永久链接至标题">¶</a></h3>
 <p>TableGen runs just like any other LLVM tool.  The first (optional) argument
 specifies the file to read.  If a filename is not specified, <code class="docutils literal"><span class="pre">llvm-tblgen</span></code>
 reads from standard input.</p>
 <p>To be useful, one of the <a class="reference internal" href="#backends">backends</a> must be used.  These backends are
-selectable on the command line (type &#8216;<code class="docutils literal"><span class="pre">llvm-tblgen</span> <span class="pre">-help</span></code>&#8216; for a list).  For
+selectable on the command line (type ‘<code class="docutils literal"><span class="pre">llvm-tblgen</span> <span class="pre">-help</span></code>’ for a list).  For
 example, to get a list of all of the definitions that subclass a particular type
 (which can be useful for building up an enum list of these records), use the
 <code class="docutils literal"><span class="pre">-print-enums</span></code> option:</p>
@@ -149,7 +148,7 @@ that extracts the information specific to what you need and formats it in the
 appropriate way.</p>
 </div>
 <div class="section" id="example">
-<h3><a class="toc-backref" href="#id6">Example</a><a class="headerlink" href="#example" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Example</a><a class="headerlink" href="#example" title="永久链接至标题">¶</a></h3>
 <p>With no other arguments, <cite>llvm-tblgen</cite> parses the specified file and prints out all
 of the classes, then all of the definitions.  This is a good way to see what the
 various definitions expand to fully.  Running this on the <code class="docutils literal"><span class="pre">X86.td</span></code> file prints
@@ -208,7 +207,7 @@ of the x86 architecture.  <code class="docutils literal"><span class="pre">def</
 <code class="docutils literal"><span class="pre">ADD32rr</span></code>, and the comment at the end of the line indicates the superclasses
 of the definition.  The body of the record contains all of the data that
 TableGen assembled for the record, indicating that the instruction is part of
-the &#8220;X86&#8221; namespace, the pattern indicating how the instruction is selected by
+the “X86” namespace, the pattern indicating how the instruction is selected by
 the code generator, that it is a two-address instruction, has a particular
 encoding, etc.  The contents and semantics of the information in the record are
 specific to the needs of the X86 backend, and are only shown as an example.</p>
@@ -230,8 +229,8 @@ class <code class="docutils literal"><span class="pre">X86Inst</span></code>), w
 factor out the common features that instructions of its class share.  A key
 feature of TableGen is that it allows the end-user to define the abstractions
 they prefer to use when describing their information.</p>
-<p>Each <code class="docutils literal"><span class="pre">def</span></code> record has a special entry called &#8220;NAME&#8221;.  This is the name of the
-record (&#8220;<code class="docutils literal"><span class="pre">ADD32rr</span></code>&#8221; above).  In the general case <code class="docutils literal"><span class="pre">def</span></code> names can be formed
+<p>Each <code class="docutils literal"><span class="pre">def</span></code> record has a special entry called “NAME”.  This is the name of the
+record (“<code class="docutils literal"><span class="pre">ADD32rr</span></code>” above).  In the general case <code class="docutils literal"><span class="pre">def</span></code> names can be formed
 from various kinds of string processing expressions and <code class="docutils literal"><span class="pre">NAME</span></code> resolves to the
 final value obtained after resolving all of those expressions.  The user may
 refer to <code class="docutils literal"><span class="pre">NAME</span></code> anywhere she desires to use the ultimate name of the <code class="docutils literal"><span class="pre">def</span></code>.
@@ -239,22 +238,22 @@ refer to <code class="docutils literal"><span class="pre">NAME</span></code> any
 </div>
 </div>
 <div class="section" id="syntax">
-<h2><a class="toc-backref" href="#id7">Syntax</a><a class="headerlink" href="#syntax" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Syntax</a><a class="headerlink" href="#syntax" title="永久链接至标题">¶</a></h2>
 <p>TableGen has a syntax that is loosely based on C++ templates, with built-in
-types and specification. In addition, TableGen&#8217;s syntax introduces some
+types and specification. In addition, TableGen’s syntax introduces some
 automation concepts like multiclass, foreach, let, etc.</p>
 <div class="section" id="basic-concepts">
-<h3><a class="toc-backref" href="#id8">Basic concepts</a><a class="headerlink" href="#basic-concepts" title="永久链接至标题">¶</a></h3>
-<p>TableGen files consist of two key parts: &#8216;classes&#8217; and &#8216;definitions&#8217;, both of
-which are considered &#8216;records&#8217;.</p>
+<h3><a class="toc-backref" href="#id9">Basic concepts</a><a class="headerlink" href="#basic-concepts" title="永久链接至标题">¶</a></h3>
+<p>TableGen files consist of two key parts: ‘classes’ and ‘definitions’, both of
+which are considered ‘records’.</p>
 <p><strong>TableGen records</strong> have a unique name, a list of values, and a list of
 superclasses.  The list of values is the main data that TableGen builds for each
 record; it is this that holds the domain specific information for the
 application.  The interpretation of this data is left to a specific <a class="reference internal" href="#backend">backend</a>,
 but the structure and format rules are taken care of and are fixed by
 TableGen.</p>
-<p><strong>TableGen definitions</strong> are the concrete form of &#8216;records&#8217;.  These generally do
-not have any undefined values, and are marked with the &#8216;<code class="docutils literal"><span class="pre">def</span></code>&#8216; keyword.</p>
+<p><strong>TableGen definitions</strong> are the concrete form of ‘records’.  These generally do
+not have any undefined values, and are marked with the ‘<code class="docutils literal"><span class="pre">def</span></code>’ keyword.</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>def FeatureFPARMv8 : SubtargetFeature&lt;&quot;fp-armv8&quot;, &quot;HasFPARMv8&quot;, &quot;true&quot;,
                                       &quot;Enable ARMv8 FP&quot;&gt;;
 </pre></div>
@@ -265,12 +264,12 @@ keyword <cite>class</cite> either on the same file or some other included. Most 
 TableGen files include the generic ones in <code class="docutils literal"><span class="pre">include/llvm/Target</span></code>.</p>
 <p><strong>TableGen classes</strong> are abstract records that are used to build and describe
 other records.  These classes allow the end-user to build abstractions for
-either the domain they are targeting (such as &#8220;Register&#8221;, &#8220;RegisterClass&#8221;, and
-&#8220;Instruction&#8221; in the LLVM code generator) or for the implementor to help factor
-out common properties of records (such as &#8220;FPInst&#8221;, which is used to represent
+either the domain they are targeting (such as “Register”, “RegisterClass”, and
+“Instruction” in the LLVM code generator) or for the implementor to help factor
+out common properties of records (such as “FPInst”, which is used to represent
 floating point instructions in the X86 backend).  TableGen keeps track of all of
 the classes that are used to build up a definition, so the backend can find all
-definitions of a particular class, such as &#8220;Instruction&#8221;.</p>
+definitions of a particular class, such as “Instruction”.</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>class ProcNoItin&lt;string Name, list&lt;SubtargetFeature&gt; Features&gt;
       : Processor&lt;Name, NoItineraries, Features&gt;;
 </pre></div>
@@ -307,14 +306,14 @@ of the formal language specification.</p>
 </div>
 </div>
 <div class="section" id="tablegen-backends">
-<span id="backends"></span><span id="backend"></span><h2><a class="toc-backref" href="#id9">TableGen backends</a><a class="headerlink" href="#tablegen-backends" title="永久链接至标题">¶</a></h2>
+<span id="backends"></span><span id="backend"></span><h2><a class="toc-backref" href="#id10">TableGen backends</a><a class="headerlink" href="#tablegen-backends" title="永久链接至标题">¶</a></h2>
 <p>TableGen files have no real meaning without a back-end. The default operation
 of running <code class="docutils literal"><span class="pre">llvm-tblgen</span></code> is to print the information in a textual format, but
-that&#8217;s only useful for debugging of the TableGen files themselves. The power
+that’s only useful for debugging of the TableGen files themselves. The power
 in TableGen is, however, to interpret the source files into an internal
 representation that can be generated into anything you want.</p>
 <p>Current usage of TableGen is to create huge include files with tables that you
-can either include directly (if the output is in the language you&#8217;re coding),
+can either include directly (if the output is in the language you’re coding),
 or be used in pre-processing via macros surrounding the include of the file.</p>
 <p>Direct output can be used if the back-end already prints a table in C format
 or if the output is just a list of strings (for error and warning messages).
@@ -324,7 +323,7 @@ a meta-information list that can be shaped into different compile-time formats.<
 <p>See the <a class="reference external" href="BackEnds.html">TableGen BackEnds</a> for more information.</p>
 </div>
 <div class="section" id="tablegen-deficiencies">
-<h2><a class="toc-backref" href="#id10">TableGen Deficiencies</a><a class="headerlink" href="#tablegen-deficiencies" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">TableGen Deficiencies</a><a class="headerlink" href="#tablegen-deficiencies" title="永久链接至标题">¶</a></h2>
 <p>Despite being very generic, TableGen has some deficiencies that have been
 pointed out numerous times. The common theme is that, while TableGen allows
 you to build Domain-Specific-Languages, the final languages that you create
@@ -367,9 +366,9 @@ document.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

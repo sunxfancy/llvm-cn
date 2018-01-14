@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Atomic Instructions and Concurrency Guide &mdash; LLVM 3.8 文档</title>
-    
+    <title>LLVM Atomic Instructions and Concurrency Guide &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="LLVM Coding Standards" href="CodingStandards.html" />
     <link rel="prev" title="Compiling CUDA C/C++ with LLVM" href="CompileCudaWithLLVM.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,27 +74,27 @@
             
   <div class="section" id="llvm-atomic-instructions-and-concurrency-guide">
 <h1>LLVM Atomic Instructions and Concurrency Guide<a class="headerlink" href="#llvm-atomic-instructions-and-concurrency-guide" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id4">Introduction</a></li>
-<li><a class="reference internal" href="#optimization-outside-atomic" id="id5">Optimization outside atomic</a></li>
-<li><a class="reference internal" href="#atomic-instructions" id="id6">Atomic instructions</a></li>
-<li><a class="reference internal" href="#atomic-orderings" id="id7">Atomic orderings</a><ul>
-<li><a class="reference internal" href="#notatomic" id="id8">NotAtomic</a></li>
-<li><a class="reference internal" href="#unordered" id="id9">Unordered</a></li>
-<li><a class="reference internal" href="#monotonic" id="id10">Monotonic</a></li>
-<li><a class="reference internal" href="#acquire" id="id11">Acquire</a></li>
-<li><a class="reference internal" href="#release" id="id12">Release</a></li>
-<li><a class="reference internal" href="#acquirerelease" id="id13">AcquireRelease</a></li>
-<li><a class="reference internal" href="#sequentiallyconsistent" id="id14">SequentiallyConsistent</a></li>
+<li><a class="reference internal" href="#introduction" id="id5">Introduction</a></li>
+<li><a class="reference internal" href="#optimization-outside-atomic" id="id6">Optimization outside atomic</a></li>
+<li><a class="reference internal" href="#atomic-instructions" id="id7">Atomic instructions</a></li>
+<li><a class="reference internal" href="#atomic-orderings" id="id8">Atomic orderings</a><ul>
+<li><a class="reference internal" href="#notatomic" id="id9">NotAtomic</a></li>
+<li><a class="reference internal" href="#unordered" id="id10">Unordered</a></li>
+<li><a class="reference internal" href="#monotonic" id="id11">Monotonic</a></li>
+<li><a class="reference internal" href="#acquire" id="id12">Acquire</a></li>
+<li><a class="reference internal" href="#release" id="id13">Release</a></li>
+<li><a class="reference internal" href="#acquirerelease" id="id14">AcquireRelease</a></li>
+<li><a class="reference internal" href="#sequentiallyconsistent" id="id15">SequentiallyConsistent</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#atomics-and-ir-optimization" id="id15">Atomics and IR optimization</a></li>
-<li><a class="reference internal" href="#atomics-and-codegen" id="id16">Atomics and Codegen</a></li>
+<li><a class="reference internal" href="#atomics-and-ir-optimization" id="id16">Atomics and IR optimization</a></li>
+<li><a class="reference internal" href="#atomics-and-codegen" id="id17">Atomics and Codegen</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>Historically, LLVM has not had very strong support for concurrency; some minimal
 intrinsics were provided, and <code class="docutils literal"><span class="pre">volatile</span></code> was used in some cases to achieve
 rough semantics in the presence of concurrency.  However, this is changing;
@@ -112,7 +111,7 @@ shared variables. (<a class="reference external" href="http://docs.oracle.com/ja
 <li>Other scenarios with atomic semantics, including <code class="docutils literal"><span class="pre">static</span></code> variables with
 non-trivial constructors in C++.</li>
 </ul>
-<p>Atomic and volatile in the IR are orthogonal; &#8220;volatile&#8221; is the C/C++ volatile,
+<p>Atomic and volatile in the IR are orthogonal; “volatile” is the C/C++ volatile,
 which ensures that every volatile load and store happens and is performed in the
 stated order.  A couple examples: if a SequentiallyConsistent store is
 immediately followed by another SequentiallyConsistent store to the same
@@ -126,13 +125,13 @@ is not intended to be a precise guide to the semantics; the details can get
 extremely complicated and unreadable, and are not usually necessary.</p>
 </div>
 <div class="section" id="optimization-outside-atomic">
-<span id="id1"></span><h2><a class="toc-backref" href="#id5">Optimization outside atomic</a><a class="headerlink" href="#optimization-outside-atomic" title="永久链接至标题">¶</a></h2>
+<span id="id2"></span><h2><a class="toc-backref" href="#id6">Optimization outside atomic</a><a class="headerlink" href="#optimization-outside-atomic" title="永久链接至标题">¶</a></h2>
 <p>The basic <code class="docutils literal"><span class="pre">'load'</span></code> and <code class="docutils literal"><span class="pre">'store'</span></code> allow a variety of optimizations, but can
 lead to undefined results in a concurrent environment; see <a class="reference internal" href="#notatomic">NotAtomic</a>. This
 section specifically goes into the one optimizer restriction which applies in
 concurrent environments, which gets a bit more of an extended description
 because any optimization dealing with stores needs to be aware of it.</p>
-<p>From the optimizer&#8217;s point of view, the rule is that if there are not any
+<p>From the optimizer’s point of view, the rule is that if there are not any
 instructions with atomic ordering involved, concurrency does not matter, with
 one exception: if a variable might be visible to another thread or signal
 handler, a store cannot be inserted along a path where it might not execute
@@ -168,7 +167,7 @@ concurrency model was implemented, LLVM would perform this transformation.)</p>
 <code class="docutils literal"><span class="pre">undef</span></code>, but does not have undefined behavior.</p>
 </div>
 <div class="section" id="atomic-instructions">
-<h2><a class="toc-backref" href="#id6">Atomic instructions</a><a class="headerlink" href="#atomic-instructions" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Atomic instructions</a><a class="headerlink" href="#atomic-instructions" title="永久链接至标题">¶</a></h2>
 <p>For cases where simple loads and stores are not sufficient, LLVM provides
 various atomic instructions. The exact guarantees provided depend on the
 ordering; see <a class="reference internal" href="#atomic-orderings">Atomic orderings</a>.</p>
@@ -191,14 +190,14 @@ therefore an instruction which is wider than the target natively supports can be
 impossible to generate.</p>
 </div>
 <div class="section" id="atomic-orderings">
-<span id="id2"></span><h2><a class="toc-backref" href="#id7">Atomic orderings</a><a class="headerlink" href="#atomic-orderings" title="永久链接至标题">¶</a></h2>
+<span id="id3"></span><h2><a class="toc-backref" href="#id8">Atomic orderings</a><a class="headerlink" href="#atomic-orderings" title="永久链接至标题">¶</a></h2>
 <p>In order to achieve a balance between performance and necessary guarantees,
 there are six levels of atomicity. They are listed in order of strength; each
 level includes all the guarantees of the previous level except for
 Acquire/Release. (See also <a class="reference external" href="LangRef.html#ordering">LangRef Ordering</a>.)</p>
 <div class="section" id="notatomic">
-<span id="id3"></span><h3><a class="toc-backref" href="#id8">NotAtomic</a><a class="headerlink" href="#notatomic" title="永久链接至标题">¶</a></h3>
-<p>NotAtomic is the obvious, a load or store which is not atomic. (This isn&#8217;t
+<span id="id4"></span><h3><a class="toc-backref" href="#id9">NotAtomic</a><a class="headerlink" href="#notatomic" title="永久链接至标题">¶</a></h3>
+<p>NotAtomic is the obvious, a load or store which is not atomic. (This isn’t
 really a level of atomicity, but is listed here for comparison.) This is
 essentially a regular load or store. If there is a race on a given memory
 location, loads from that location return undef.</p>
@@ -211,7 +210,7 @@ precise definition is in <a class="reference external" href="LangRef.html#memmod
 <dd>The rule is essentially that all memory accessed with basic loads and stores
 by multiple threads should be protected by a lock or other synchronization;
 otherwise, you are likely to run into undefined behavior. If your frontend is
-for a &#8220;safe&#8221; language like Java, use Unordered to load and store any shared
+for a “safe” language like Java, use Unordered to load and store any shared
 variable.  Note that NotAtomic volatile loads and stores are not properly
 atomic; do not try to use them as a substitute. (Per the C/C++ standards,
 volatile does provide some limited guarantees around asynchronous signals, but
@@ -232,7 +231,7 @@ concurrency, please send an email to llvm-dev.)</dd>
 </dl>
 </div>
 <div class="section" id="unordered">
-<h3><a class="toc-backref" href="#id9">Unordered</a><a class="headerlink" href="#unordered" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Unordered</a><a class="headerlink" href="#unordered" title="永久链接至标题">¶</a></h3>
 <p>Unordered is the lowest level of atomicity. It essentially guarantees that races
 produce somewhat sane results instead of having undefined behavior.  It also
 guarantees the operation to be lock-free, so it does not depend on the data
@@ -244,10 +243,10 @@ operations; if you need such an operation, use explicit locking.</p>
 <dd>This is intended to match the Java memory model for shared variables.</dd>
 <dt>Notes for frontends</dt>
 <dd>This cannot be used for synchronization, but is useful for Java and other
-&#8220;safe&#8221; languages which need to guarantee that the generated code never
+“safe” languages which need to guarantee that the generated code never
 exhibits undefined behavior. Note that this guarantee is cheap on common
 platforms for loads of a native width, but can be expensive or unavailable for
-wider loads, like a 64-bit store on ARM. (A frontend for Java or other &#8220;safe&#8221;
+wider loads, like a 64-bit store on ARM. (A frontend for Java or other “safe”
 languages would normally split a 64-bit store on ARM into two 32-bit unordered
 stores.)</dd>
 <dt>Notes for optimizers</dt>
@@ -269,7 +268,7 @@ instructions (or an instruction which does multiple memory operations, like
 </dl>
 </div>
 <div class="section" id="monotonic">
-<h3><a class="toc-backref" href="#id10">Monotonic</a><a class="headerlink" href="#monotonic" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">Monotonic</a><a class="headerlink" href="#monotonic" title="永久链接至标题">¶</a></h3>
 <p>Monotonic is the weakest level of atomicity that can be used in synchronization
 primitives, although it does not provide any general synchronization. It
 essentially guarantees that if you take all the operations affecting a specific
@@ -298,7 +297,7 @@ to appear as a single operation.</dd>
 </dl>
 </div>
 <div class="section" id="acquire">
-<h3><a class="toc-backref" href="#id11">Acquire</a><a class="headerlink" href="#acquire" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">Acquire</a><a class="headerlink" href="#acquire" title="永久链接至标题">¶</a></h3>
 <p>Acquire provides a barrier of the sort necessary to acquire a lock to access
 other memory with normal loads and stores.</p>
 <dl class="docutils">
@@ -325,7 +324,7 @@ maintain Acquire semantics for a memory operation.</dd>
 </dl>
 </div>
 <div class="section" id="release">
-<h3><a class="toc-backref" href="#id12">Release</a><a class="headerlink" href="#release" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id13">Release</a><a class="headerlink" href="#release" title="永久链接至标题">¶</a></h3>
 <p>Release is similar to Acquire, but with a barrier of the sort necessary to
 release a lock.</p>
 <dl class="docutils">
@@ -348,7 +347,7 @@ IR because they are extremely difficult to use correctly.</dd>
 </dl>
 </div>
 <div class="section" id="acquirerelease">
-<h3><a class="toc-backref" href="#id13">AcquireRelease</a><a class="headerlink" href="#acquirerelease" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">AcquireRelease</a><a class="headerlink" href="#acquirerelease" title="永久链接至标题">¶</a></h3>
 <p>AcquireRelease (<code class="docutils literal"><span class="pre">acq_rel</span></code> in IR) provides both an Acquire and a Release
 barrier (for fences and operations which both read and write memory).</p>
 <dl class="docutils">
@@ -367,7 +366,7 @@ and Release.</dd>
 </dl>
 </div>
 <div class="section" id="sequentiallyconsistent">
-<h3><a class="toc-backref" href="#id14">SequentiallyConsistent</a><a class="headerlink" href="#sequentiallyconsistent" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">SequentiallyConsistent</a><a class="headerlink" href="#sequentiallyconsistent" title="永久链接至标题">¶</a></h3>
 <p>SequentiallyConsistent (<code class="docutils literal"><span class="pre">seq_cst</span></code> in IR) provides Acquire semantics for loads
 and Release semantics for stores. Additionally, it guarantees that a total
 ordering exists between all SequentiallyConsistent operations.</p>
@@ -395,7 +394,7 @@ fence after the stores; which is preferred varies by architecture.</dd>
 </div>
 </div>
 <div class="section" id="atomics-and-ir-optimization">
-<h2><a class="toc-backref" href="#id15">Atomics and IR optimization</a><a class="headerlink" href="#atomics-and-ir-optimization" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">Atomics and IR optimization</a><a class="headerlink" href="#atomics-and-ir-optimization" title="永久链接至标题">¶</a></h2>
 <p>Predicates for optimizer writers to query:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">isSimple()</span></code>: A load or store which is not volatile or atomic.  This is
@@ -416,7 +415,7 @@ Release, and for the address accessed by any Monotonic operation.</li>
 <p>To support optimizing around atomic operations, make sure you are using the
 right predicates; everything should work if that is done.  If your pass should
 optimize some atomic operations (Unordered operations in particular), make sure
-it doesn&#8217;t replace an atomic load or store with a non-atomic operation.</p>
+it doesn’t replace an atomic load or store with a non-atomic operation.</p>
 <p>Some examples of how optimizations interact with various kinds of atomic
 operations:</p>
 <ul class="simple">
@@ -426,8 +425,8 @@ across some atomic operations.</li>
 <li>LICM: Unordered loads/stores can be moved out of a loop.  It just treats
 monotonic operations like a read+write to a memory location, and anything
 stricter than that like a nothrow call.</li>
-<li>DSE: Unordered stores can be DSE&#8217;ed like normal stores.  Monotonic stores can
-be DSE&#8217;ed in some cases, but it&#8217;s tricky to reason about, and not especially
+<li>DSE: Unordered stores can be DSE’ed like normal stores.  Monotonic stores can
+be DSE’ed in some cases, but it’s tricky to reason about, and not especially
 important. It is possible in some case for DSE to operate across a stronger
 atomic operation, but it is fairly tricky. DSE delegates this reasoning to
 MemoryDependencyAnalysis (which is also used by other passes like GVN).</li>
@@ -437,7 +436,7 @@ atomic loads and stores.</li>
 </ul>
 </div>
 <div class="section" id="atomics-and-codegen">
-<h2><a class="toc-backref" href="#id16">Atomics and Codegen</a><a class="headerlink" href="#atomics-and-codegen" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id17">Atomics and Codegen</a><a class="headerlink" href="#atomics-and-codegen" title="永久链接至标题">¶</a></h2>
 <p>Atomic operations are represented in the SelectionDAG with <code class="docutils literal"><span class="pre">ATOMIC_*</span></code> opcodes.
 On architectures which use barrier instructions for all atomic ordering (like
 ARM), appropriate fences can be emitted by the AtomicExpand Codegen pass if
@@ -508,9 +507,9 @@ by overriding <code class="docutils literal"><span class="pre">expandAtomicRMWIn
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

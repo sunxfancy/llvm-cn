@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-nm - list LLVM bitcode and object file’s symbol table &mdash; LLVM 3.8 文档</title>
-    
+    <title>llvm-nm - list LLVM bitcode and object file’s symbol table &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="llvm-config - Print LLVM compilation options" href="llvm-config.html" />
     <link rel="prev" title="llvm-lib - LLVM lib.exe compatible library tool" href="llvm-lib.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -76,10 +74,10 @@
           <div class="body" role="main">
             
   <div class="section" id="llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table">
-<h1>llvm-nm - list LLVM bitcode and object file&#8217;s symbol table<a class="headerlink" href="#llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table" title="永久链接至标题">¶</a></h1>
+<h1>llvm-nm - list LLVM bitcode and object file’s symbol table<a class="headerlink" href="#llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table" title="永久链接至标题">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="永久链接至标题">¶</a></h2>
-<p><strong class="program">llvm-nm</strong> [<em>options</em>] [<em>filenames...</em>]</p>
+<p><strong class="program">llvm-nm</strong> [<em>options</em>] [<em>filenames…</em>]</p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
@@ -88,7 +86,7 @@ files, object files, or <strong class="program">ar</strong> archives containing 
 command line.  Each symbol is listed along with some simple information about
 its provenance.  If no file name is specified, or <em>-</em> is used as a file name,
 <strong class="program">llvm-nm</strong> will process a file on its standard input stream.</p>
-<p><strong class="program">llvm-nm</strong>&#8216;s default output format is the traditional BSD <strong class="program">nm</strong>
+<p><strong class="program">llvm-nm</strong>’s default output format is the traditional BSD <strong class="program">nm</strong>
 output format.  Each such output record consists of an (optional) 8-digit
 hexadecimal address, followed by a type code character, followed by a name, for
 each symbol.  One record is printed per line; fields are separated by spaces.
@@ -120,54 +118,54 @@ When the address is omitted, it is replaced by 8 spaces.</p>
 <div>Something unrecognizable</div></blockquote>
 <p>Because LLVM bitcode files typically contain objects that are not considered to
 have addresses until they are linked into an executable image or dynamically
-compiled &#8220;just-in-time&#8221;, <strong class="program">llvm-nm</strong> does not print an address for any
+compiled “just-in-time”, <strong class="program">llvm-nm</strong> does not print an address for any
 symbol in an LLVM bitcode file, even symbols which are defined in the bitcode
 file.</p>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption-llvm-nm-B">
-<code class="descname">-B</code><code class="descclassname">    (default)</code><a class="headerlink" href="#cmdoption-llvm-nm-B" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-b">
+<code class="descname">-B</code><code class="descclassname">    (default)</code><a class="headerlink" href="#cmdoption-llvm-nm-b" title="永久链接至目标">¶</a></dt>
 <dd><p>Use BSD output format.  Alias for <code class="xref std std-option docutils literal"><span class="pre">--format=bsd</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm-P">
-<code class="descname">-P</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-P" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-p">
+<code class="descname">-P</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-p" title="永久链接至目标">¶</a></dt>
 <dd><p>Use POSIX.2 output format.  Alias for <code class="xref std std-option docutils literal"><span class="pre">--format=posix</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--debug-syms">
-<span id="cmdoption-llvm-nm-a"></span><code class="descname">--debug-syms</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--debug-syms" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-debug-syms">
+<code class="descname">--debug-syms</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-debug-syms" title="永久链接至目标">¶</a></dt>
 <dd><p>Show all symbols, even debugger only.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--defined-only">
-<code class="descname">--defined-only</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--defined-only" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-defined-only">
+<code class="descname">--defined-only</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-defined-only" title="永久链接至目标">¶</a></dt>
 <dd><p>Print only symbols defined in this file (as opposed to
 symbols which may be referenced by objects in this file, but not
 defined in this file.)</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--dynamic">
-<span id="cmdoption-llvm-nm-D"></span><code class="descname">--dynamic</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--dynamic" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-dynamic">
+<code class="descname">--dynamic</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-dynamic" title="永久链接至目标">¶</a></dt>
 <dd><p>Display dynamic symbols instead of normal symbols.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--extern-only">
-<span id="cmdoption-llvm-nm-g"></span><code class="descname">--extern-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-g</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--extern-only" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-extern-only">
+<code class="descname">--extern-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-g</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-extern-only" title="永久链接至目标">¶</a></dt>
 <dd><p>Print only symbols whose definitions are external; that is, accessible
 from other files.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--format">
-<span id="cmdoption-llvm-nm-f"></span><code class="descname">--format</code><code class="descclassname">=format</code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"> format</code><a class="headerlink" href="#cmdoption-llvm-nm--format" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-format">
+<code class="descname">--format</code><code class="descclassname">=format</code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"> format</code><a class="headerlink" href="#cmdoption-llvm-nm-format" title="永久链接至目标">¶</a></dt>
 <dd><p>Select an output format; <em>format</em> may be <em>sysv</em>, <em>posix</em>, or <em>bsd</em>.  The default
 is <em>bsd</em>.</p>
 </dd></dl>
@@ -179,38 +177,38 @@ is <em>bsd</em>.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--no-sort">
-<span id="cmdoption-llvm-nm-p"></span><code class="descname">--no-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--no-sort" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-no-sort">
+<code class="descname">--no-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-no-sort" title="永久链接至目标">¶</a></dt>
 <dd><p>Shows symbols in order encountered.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--numeric-sort">
-<span id="cmdoption-llvm-nm-n"></span><span id="cmdoption-llvm-nm-v"></span><code class="descname">--numeric-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--numeric-sort" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-numeric-sort">
+<code class="descname">--numeric-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-numeric-sort" title="永久链接至目标">¶</a></dt>
 <dd><p>Sort symbols by address.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--print-file-name">
-<span id="cmdoption-llvm-nm-A"></span><span id="cmdoption-llvm-nm-o"></span><code class="descname">--print-file-name</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-A</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-o</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--print-file-name" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-print-file-name">
+<code class="descname">--print-file-name</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-A</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-o</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-print-file-name" title="永久链接至目标">¶</a></dt>
 <dd><p>Precede each symbol with the file it came from.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--print-size">
-<span id="cmdoption-llvm-nm-S"></span><code class="descname">--print-size</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--print-size" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-print-size">
+<code class="descname">--print-size</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-print-size" title="永久链接至目标">¶</a></dt>
 <dd><p>Show symbol size instead of address.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--size-sort">
-<code class="descname">--size-sort</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--size-sort" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-size-sort">
+<code class="descname">--size-sort</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-size-sort" title="永久链接至目标">¶</a></dt>
 <dd><p>Sort symbols by size.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--undefined-only">
-<span id="cmdoption-llvm-nm-u"></span><code class="descname">--undefined-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-u</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--undefined-only" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-llvm-nm-undefined-only">
+<code class="descname">--undefined-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-u</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-undefined-only" title="永久链接至目标">¶</a></dt>
 <dd><p>Print only symbols referenced but not defined in this file.</p>
 </dd></dl>
 
@@ -256,13 +254,13 @@ can.</li>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

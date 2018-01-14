@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVMBuild Guide &mdash; LLVM 3.8 文档</title>
-    
+    <title>LLVMBuild Guide &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How To Release LLVM To The Public" href="HowToReleaseLLVM.html" />
     <link rel="prev" title="Creating an LLVM Project" href="Projects.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,17 +74,17 @@
             
   <div class="section" id="llvmbuild-guide">
 <h1>LLVMBuild Guide<a class="headerlink" href="#llvmbuild-guide" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
-<li><a class="reference internal" href="#project-organization" id="id2">Project Organization</a></li>
-<li><a class="reference internal" href="#build-integration" id="id3">Build Integration</a></li>
-<li><a class="reference internal" href="#component-overview" id="id4">Component Overview</a></li>
-<li><a class="reference internal" href="#llvmbuild-format-reference" id="id5">LLVMBuild Format Reference</a></li>
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#project-organization" id="id3">Project Organization</a></li>
+<li><a class="reference internal" href="#build-integration" id="id4">Build Integration</a></li>
+<li><a class="reference internal" href="#component-overview" id="id5">Component Overview</a></li>
+<li><a class="reference internal" href="#llvmbuild-format-reference" id="id6">LLVMBuild Format Reference</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>This document describes the <code class="docutils literal"><span class="pre">LLVMBuild</span></code> organization and files which
 we use to describe parts of the LLVM ecosystem. For description of
 specific LLVMBuild related tools, please see the command guide.</p>
@@ -101,7 +100,7 @@ structure, and are used by the build systems and other tools in order to
 develop the LLVM project.</p>
 </div>
 <div class="section" id="project-organization">
-<h2><a class="toc-backref" href="#id2">Project Organization</a><a class="headerlink" href="#project-organization" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Project Organization</a><a class="headerlink" href="#project-organization" title="永久链接至标题">¶</a></h2>
 <p>The source code for LLVM projects using the LLVMBuild system (LLVM,
 Clang, and LLDB) is organized into <em>components</em>, which define the
 separate pieces of functionality that make up the project. These
@@ -118,7 +117,7 @@ subdirectories when the parent itself contains an <code class="docutils literal"
 description file.</p>
 </div>
 <div class="section" id="build-integration">
-<h2><a class="toc-backref" href="#id3">Build Integration</a><a class="headerlink" href="#build-integration" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Build Integration</a><a class="headerlink" href="#build-integration" title="永久链接至标题">¶</a></h2>
 <p>The LLVMBuild files themselves are just a declarative way to describe
 the project structure. The actual building of the LLVM project is
 handled by another build system (currently we support both
@@ -126,7 +125,7 @@ handled by another build system (currently we support both
 <p>The build system implementation will load the relevant contents of the
 LLVMBuild files and use that to drive the actual project build.
 Typically, the build system will only need to load this information at
-&#8220;configure&#8221; time, and use it to generative native information. Build
+“configure” time, and use it to generative native information. Build
 systems will also handle automatically reconfiguring their information
 when the contents of the <code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code> files change.</p>
 <p>Developers generally are not expected to need to be aware of the details
@@ -138,7 +137,7 @@ need to modify the contents of the <code class="docutils literal"><span class="p
 with the build system, please see the <a class="reference internal" href="CommandGuide/llvm-build.html"><span class="doc">llvm-build</span></a> documentation.</p>
 </div>
 <div class="section" id="component-overview">
-<h2><a class="toc-backref" href="#id4">Component Overview</a><a class="headerlink" href="#component-overview" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Component Overview</a><a class="headerlink" href="#component-overview" title="永久链接至标题">¶</a></h2>
 <p>As mentioned earlier, LLVM projects are organized into logical
 <em>components</em>. Every component is typically grouped into its own
 subdirectory. Generally, a component is organized around a coherent
@@ -163,7 +162,7 @@ that define the component. See the <a class="reference internal" href="#llvmbuil
 for information on the exact format of these files.</p>
 </div>
 <div class="section" id="llvmbuild-format-reference">
-<h2><a class="toc-backref" href="#id5">LLVMBuild Format Reference</a><a class="headerlink" href="#llvmbuild-format-reference" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">LLVMBuild Format Reference</a><a class="headerlink" href="#llvmbuild-format-reference" title="永久链接至标题">¶</a></h2>
 <p>LLVMBuild files are written in a simple variant of the INI or configuration
 file format (<a class="reference external" href="http://en.wikipedia.org/wiki/INI_file">Wikipedia entry</a>). The format defines a list of sections
 each of which may contain some number of properties. A simple example of
@@ -293,7 +292,7 @@ development directory.</p>
 <li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">LibraryGroup</span></code></p>
 <p><code class="docutils literal"><span class="pre">LibraryGroup</span></code> components are a mechanism to allow easy definition of
 useful sets of related components. In particular, we use them to easily
-specify things like &#8220;all targets&#8221;, or &#8220;all assembly printers&#8221;.</p>
+specify things like “all targets”, or “all assembly printers”.</p>
 <p>Components with this type use the following properties:</p>
 <ul>
 <li><p class="first"><code class="docutils literal"><span class="pre">required_libraries</span></code> <strong>[optional]</strong></p>
@@ -343,7 +342,7 @@ match up with the actual library names on disk.</p>
 required by the linked components (i.e., the transitive closure of
 <code class="docutils literal"><span class="pre">required_libraries</span></code>).</p>
 <p>Build systems are also expected to understand that those library
-components must be built prior to linking &#8211; they do not also need
+components must be built prior to linking – they do not also need
 to be listed under <code class="docutils literal"><span class="pre">dependencies</span></code>.</p>
 </li>
 </ul>
@@ -385,9 +384,9 @@ what the tool is built for.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

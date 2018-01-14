@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Writing an LLVM Backend &mdash; LLVM 3.8 文档</title>
-    
+    <title>Writing an LLVM Backend &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How To Use Instruction Mappings" href="HowToUseInstrMappings.html" />
     <link rel="prev" title="Auto-Vectorization in LLVM" href="Vectorizers.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -77,63 +76,63 @@
 <h1>Writing an LLVM Backend<a class="headerlink" href="#writing-an-llvm-backend" title="永久链接至标题">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id3">Introduction</a><ul>
-<li><a class="reference internal" href="#audience" id="id4">Audience</a></li>
-<li><a class="reference internal" href="#prerequisite-reading" id="id5">Prerequisite Reading</a></li>
-<li><a class="reference internal" href="#basic-steps" id="id6">Basic Steps</a></li>
-<li><a class="reference internal" href="#preliminaries" id="id7">Preliminaries</a></li>
+<li><a class="reference internal" href="#introduction" id="id4">Introduction</a><ul>
+<li><a class="reference internal" href="#audience" id="id5">Audience</a></li>
+<li><a class="reference internal" href="#prerequisite-reading" id="id6">Prerequisite Reading</a></li>
+<li><a class="reference internal" href="#basic-steps" id="id7">Basic Steps</a></li>
+<li><a class="reference internal" href="#preliminaries" id="id8">Preliminaries</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#target-machine" id="id8">Target Machine</a></li>
-<li><a class="reference internal" href="#target-registration" id="id9">Target Registration</a></li>
-<li><a class="reference internal" href="#register-set-and-register-classes" id="id10">Register Set and Register Classes</a><ul>
-<li><a class="reference internal" href="#defining-a-register" id="id11">Defining a Register</a></li>
-<li><a class="reference internal" href="#defining-a-register-class" id="id12">Defining a Register Class</a></li>
-<li><a class="reference internal" href="#implement-a-subclass-of-targetregisterinfo" id="id13">Implement a subclass of <code class="docutils literal"><span class="pre">TargetRegisterInfo</span></code></a></li>
+<li><a class="reference internal" href="#target-machine" id="id9">Target Machine</a></li>
+<li><a class="reference internal" href="#target-registration" id="id10">Target Registration</a></li>
+<li><a class="reference internal" href="#register-set-and-register-classes" id="id11">Register Set and Register Classes</a><ul>
+<li><a class="reference internal" href="#defining-a-register" id="id12">Defining a Register</a></li>
+<li><a class="reference internal" href="#defining-a-register-class" id="id13">Defining a Register Class</a></li>
+<li><a class="reference internal" href="#implement-a-subclass-of-targetregisterinfo" id="id14">Implement a subclass of <code class="docutils literal"><span class="pre">TargetRegisterInfo</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#instruction-set" id="id14">Instruction Set</a><ul>
-<li><a class="reference internal" href="#instruction-operand-mapping" id="id15">Instruction Operand Mapping</a><ul>
-<li><a class="reference internal" href="#instruction-operand-name-mapping" id="id16">Instruction Operand Name Mapping</a></li>
-<li><a class="reference internal" href="#instruction-operand-types" id="id17">Instruction Operand Types</a></li>
+<li><a class="reference internal" href="#instruction-set" id="id15">Instruction Set</a><ul>
+<li><a class="reference internal" href="#instruction-operand-mapping" id="id16">Instruction Operand Mapping</a><ul>
+<li><a class="reference internal" href="#instruction-operand-name-mapping" id="id17">Instruction Operand Name Mapping</a></li>
+<li><a class="reference internal" href="#instruction-operand-types" id="id18">Instruction Operand Types</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#instruction-scheduling" id="id18">Instruction Scheduling</a></li>
-<li><a class="reference internal" href="#instruction-relation-mapping" id="id19">Instruction Relation Mapping</a></li>
-<li><a class="reference internal" href="#implement-a-subclass-of-targetinstrinfo" id="id20">Implement a subclass of <code class="docutils literal"><span class="pre">TargetInstrInfo</span></code></a></li>
-<li><a class="reference internal" href="#branch-folding-and-if-conversion" id="id21">Branch Folding and If Conversion</a></li>
+<li><a class="reference internal" href="#instruction-scheduling" id="id19">Instruction Scheduling</a></li>
+<li><a class="reference internal" href="#instruction-relation-mapping" id="id20">Instruction Relation Mapping</a></li>
+<li><a class="reference internal" href="#implement-a-subclass-of-targetinstrinfo" id="id21">Implement a subclass of <code class="docutils literal"><span class="pre">TargetInstrInfo</span></code></a></li>
+<li><a class="reference internal" href="#branch-folding-and-if-conversion" id="id22">Branch Folding and If Conversion</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#instruction-selector" id="id22">Instruction Selector</a><ul>
-<li><a class="reference internal" href="#the-selectiondag-legalize-phase" id="id23">The SelectionDAG Legalize Phase</a><ul>
-<li><a class="reference internal" href="#promote" id="id24">Promote</a></li>
-<li><a class="reference internal" href="#expand" id="id25">Expand</a></li>
-<li><a class="reference internal" href="#custom" id="id26">Custom</a></li>
-<li><a class="reference internal" href="#legal" id="id27">Legal</a></li>
+<li><a class="reference internal" href="#instruction-selector" id="id23">Instruction Selector</a><ul>
+<li><a class="reference internal" href="#the-selectiondag-legalize-phase" id="id24">The SelectionDAG Legalize Phase</a><ul>
+<li><a class="reference internal" href="#promote" id="id25">Promote</a></li>
+<li><a class="reference internal" href="#expand" id="id26">Expand</a></li>
+<li><a class="reference internal" href="#custom" id="id27">Custom</a></li>
+<li><a class="reference internal" href="#legal" id="id28">Legal</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#calling-conventions" id="id28">Calling Conventions</a></li>
+<li><a class="reference internal" href="#calling-conventions" id="id29">Calling Conventions</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#assembly-printer" id="id29">Assembly Printer</a></li>
-<li><a class="reference internal" href="#subtarget-support" id="id30">Subtarget Support</a></li>
-<li><a class="reference internal" href="#jit-support" id="id31">JIT Support</a><ul>
-<li><a class="reference internal" href="#machine-code-emitter" id="id32">Machine Code Emitter</a></li>
-<li><a class="reference internal" href="#target-jit-info" id="id33">Target JIT Info</a></li>
+<li><a class="reference internal" href="#assembly-printer" id="id30">Assembly Printer</a></li>
+<li><a class="reference internal" href="#subtarget-support" id="id31">Subtarget Support</a></li>
+<li><a class="reference internal" href="#jit-support" id="id32">JIT Support</a><ul>
+<li><a class="reference internal" href="#machine-code-emitter" id="id33">Machine Code Emitter</a></li>
+<li><a class="reference internal" href="#target-jit-info" id="id34">Target JIT Info</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id3">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>This document describes techniques for writing compiler backends that convert
 the LLVM Intermediate Representation (IR) to code for a specified machine or
 other languages.  Code intended for a specific machine can take the form of
 either assembly code or binary code (usable for a JIT compiler).</p>
 <p>The backend of LLVM features a target-independent code generator that may
-create output for several types of target CPUs &#8212; including X86, PowerPC,
+create output for several types of target CPUs — including X86, PowerPC,
 ARM, and SPARC.  The backend may also be used to generate code targeted at SPUs
 of the Cell processor or GPUs to support the execution of compute kernels.</p>
 <p>The document focuses on existing examples found in subdirectories of
@@ -143,28 +142,28 @@ assembly) for a SPARC target, because SPARC has fairly standard
 characteristics, such as a RISC instruction set and straightforward calling
 conventions.</p>
 <div class="section" id="audience">
-<h3><a class="toc-backref" href="#id4">Audience</a><a class="headerlink" href="#audience" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">Audience</a><a class="headerlink" href="#audience" title="永久链接至标题">¶</a></h3>
 <p>The audience for this document is anyone who needs to write an LLVM backend to
 generate code for a specific hardware or software target.</p>
 </div>
 <div class="section" id="prerequisite-reading">
-<h3><a class="toc-backref" href="#id5">Prerequisite Reading</a><a class="headerlink" href="#prerequisite-reading" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Prerequisite Reading</a><a class="headerlink" href="#prerequisite-reading" title="永久链接至标题">¶</a></h3>
 <p>These essential documents must be read before reading this document:</p>
 <ul class="simple">
-<li><a class="reference external" href="LangRef.html">LLVM Language Reference Manual</a> &#8212; a reference manual for
+<li><a class="reference external" href="LangRef.html">LLVM Language Reference Manual</a> — a reference manual for
 the LLVM assembly language.</li>
-<li><a class="reference internal" href="CodeGenerator.html"><span class="doc">The LLVM Target-Independent Code Generator</span></a> &#8212; a guide to the components (classes and code
+<li><a class="reference internal" href="CodeGenerator.html"><span class="doc">The LLVM Target-Independent Code Generator</span></a> — a guide to the components (classes and code
 generation algorithms) for translating the LLVM internal representation into
 machine code for a specified target.  Pay particular attention to the
 descriptions of code generation stages: Instruction Selection, Scheduling and
 Formation, SSA-based Optimization, Register Allocation, Prolog/Epilog Code
 Insertion, Late Machine Code Optimizations, and Code Emission.</li>
-<li><a class="reference internal" href="TableGen/index.html"><span class="doc">TableGen</span></a> &#8212; a document that describes the TableGen
+<li><a class="reference internal" href="TableGen/index.html"><span class="doc">TableGen</span></a> — a document that describes the TableGen
 (<code class="docutils literal"><span class="pre">tblgen</span></code>) application that manages domain-specific information to support
 LLVM code generation.  TableGen processes input from a target description
 file (<code class="docutils literal"><span class="pre">.td</span></code> suffix) and generates C++ code that can be used for code
 generation.</li>
-<li><a class="reference internal" href="WritingAnLLVMPass.html"><span class="doc">Writing an LLVM Pass</span></a> &#8212; The assembly printer is a <code class="docutils literal"><span class="pre">FunctionPass</span></code>, as
+<li><a class="reference internal" href="WritingAnLLVMPass.html"><span class="doc">Writing an LLVM Pass</span></a> — The assembly printer is a <code class="docutils literal"><span class="pre">FunctionPass</span></code>, as
 are several <code class="docutils literal"><span class="pre">SelectionDAG</span></code> processing steps.</li>
 </ul>
 <p>To follow the SPARC examples in this document, have a copy of <a class="reference external" href="http://www.sparc.org/standards/V8.pdf">The SPARC
@@ -172,11 +171,11 @@ Architecture Manual, Version 8</a> for
 reference.  For details about the ARM instruction set, refer to the <a class="reference external" href="http://infocenter.arm.com/">ARM
 Architecture Reference Manual</a>.  For more about
 the GNU Assembler format (<code class="docutils literal"><span class="pre">GAS</span></code>), see <a class="reference external" href="http://sourceware.org/binutils/docs/as/index.html">Using As</a>, especially for the
-assembly printer.  &#8220;Using As&#8221; contains a list of target machine dependent
+assembly printer.  “Using As” contains a list of target machine dependent
 features.</p>
 </div>
 <div class="section" id="basic-steps">
-<h3><a class="toc-backref" href="#id6">Basic Steps</a><a class="headerlink" href="#basic-steps" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Basic Steps</a><a class="headerlink" href="#basic-steps" title="永久链接至标题">¶</a></h3>
 <p>To write a compiler backend for LLVM that converts the LLVM IR to code for a
 specified target (machine or other language), follow these steps:</p>
 <ul class="simple">
@@ -184,7 +183,7 @@ specified target (machine or other language), follow these steps:</p>
 characteristics of your target machine.  Copy existing examples of specific
 <code class="docutils literal"><span class="pre">TargetMachine</span></code> class and header files; for example, start with
 <code class="docutils literal"><span class="pre">SparcTargetMachine.cpp</span></code> and <code class="docutils literal"><span class="pre">SparcTargetMachine.h</span></code>, but change the file
-names for your target.  Similarly, change code that references &#8220;<code class="docutils literal"><span class="pre">Sparc</span></code>&#8221; to
+names for your target.  Similarly, change code that references “<code class="docutils literal"><span class="pre">Sparc</span></code>” to
 reference your target.</li>
 <li>Describe the register set of the target.  Use TableGen to generate code for
 register definition, register aliases, and register classes from a
@@ -223,13 +222,13 @@ implement them later.  Initially, you may not know which private members that
 the class will need and which components will need to be subclassed.</p>
 </div>
 <div class="section" id="preliminaries">
-<h3><a class="toc-backref" href="#id7">Preliminaries</a><a class="headerlink" href="#preliminaries" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Preliminaries</a><a class="headerlink" href="#preliminaries" title="永久链接至标题">¶</a></h3>
 <p>To actually create your compiler backend, you need to create and modify a few
 files.  The absolute minimum is discussed here.  But to actually use the LLVM
 target-independent code generator, you must perform the steps described in the
 <a class="reference internal" href="CodeGenerator.html"><span class="doc">LLVM Target-Independent Code Generator</span></a> document.</p>
 <p>First, you should create a subdirectory under <code class="docutils literal"><span class="pre">lib/Target</span></code> to hold all the
-files related to your target.  If your target is called &#8220;Dummy&#8221;, create the
+files related to your target.  If your target is called “Dummy”, create the
 directory <code class="docutils literal"><span class="pre">lib/Target/Dummy</span></code>.</p>
 <p>In this new directory, create a <code class="docutils literal"><span class="pre">Makefile</span></code>.  It is easiest to copy a
 <code class="docutils literal"><span class="pre">Makefile</span></code> of another target and modify it.  It should at least contain the
@@ -245,7 +244,7 @@ any other naming scheme will confuse <code class="docutils literal"><span class=
 <p>To make your target actually do something, you need to implement a subclass of
 <code class="docutils literal"><span class="pre">TargetMachine</span></code>.  This implementation should typically be in the file
 <code class="docutils literal"><span class="pre">lib/Target/DummyTargetMachine.cpp</span></code>, but any file in the <code class="docutils literal"><span class="pre">lib/Target</span></code>
-directory will be built and should work.  To use LLVM&#8217;s target independent code
+directory will be built and should work.  To use LLVM’s target independent code
 generator, you should do what all current machine backends do: create a
 subclass of <code class="docutils literal"><span class="pre">LLVMTargetMachine</span></code>.  (To create a target from scratch, create a
 subclass of <code class="docutils literal"><span class="pre">TargetMachine</span></code>.)</p>
@@ -259,7 +258,7 @@ change <code class="docutils literal"><span class="pre">autoconf/configure.ac</s
 </div>
 </div>
 <div class="section" id="target-machine">
-<h2><a class="toc-backref" href="#id8">Target Machine</a><a class="headerlink" href="#target-machine" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Target Machine</a><a class="headerlink" href="#target-machine" title="永久链接至标题">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">LLVMTargetMachine</span></code> is designed as a base class for targets implemented with
 the LLVM target-independent code generator.  The <code class="docutils literal"><span class="pre">LLVMTargetMachine</span></code> class
 should be specialized by a concrete target class that implements the various
@@ -346,27 +345,27 @@ the following:</p>
 </div>
 <p>Hyphens separate portions of the <code class="docutils literal"><span class="pre">TargetDescription</span></code> string.</p>
 <ul class="simple">
-<li>An upper-case &#8220;<code class="docutils literal"><span class="pre">E</span></code>&#8221; in the string indicates a big-endian target data model.
-A lower-case &#8220;<code class="docutils literal"><span class="pre">e</span></code>&#8221; indicates little-endian.</li>
-<li>&#8220;<code class="docutils literal"><span class="pre">p:</span></code>&#8221; is followed by pointer information: size, ABI alignment, and
-preferred alignment.  If only two figures follow &#8220;<code class="docutils literal"><span class="pre">p:</span></code>&#8221;, then the first
+<li>An upper-case “<code class="docutils literal"><span class="pre">E</span></code>” in the string indicates a big-endian target data model.
+A lower-case “<code class="docutils literal"><span class="pre">e</span></code>” indicates little-endian.</li>
+<li>“<code class="docutils literal"><span class="pre">p:</span></code>” is followed by pointer information: size, ABI alignment, and
+preferred alignment.  If only two figures follow “<code class="docutils literal"><span class="pre">p:</span></code>”, then the first
 value is pointer size, and the second value is both ABI and preferred
 alignment.</li>
-<li>Then a letter for numeric type alignment: &#8220;<code class="docutils literal"><span class="pre">i</span></code>&#8221;, &#8220;<code class="docutils literal"><span class="pre">f</span></code>&#8221;, &#8220;<code class="docutils literal"><span class="pre">v</span></code>&#8221;, or
-&#8220;<code class="docutils literal"><span class="pre">a</span></code>&#8221; (corresponding to integer, floating point, vector, or aggregate).
-&#8220;<code class="docutils literal"><span class="pre">i</span></code>&#8221;, &#8220;<code class="docutils literal"><span class="pre">v</span></code>&#8221;, or &#8220;<code class="docutils literal"><span class="pre">a</span></code>&#8221; are followed by ABI alignment and preferred
-alignment. &#8220;<code class="docutils literal"><span class="pre">f</span></code>&#8221; is followed by three values: the first indicates the size
+<li>Then a letter for numeric type alignment: “<code class="docutils literal"><span class="pre">i</span></code>”, “<code class="docutils literal"><span class="pre">f</span></code>”, “<code class="docutils literal"><span class="pre">v</span></code>”, or
+“<code class="docutils literal"><span class="pre">a</span></code>” (corresponding to integer, floating point, vector, or aggregate).
+“<code class="docutils literal"><span class="pre">i</span></code>”, “<code class="docutils literal"><span class="pre">v</span></code>”, or “<code class="docutils literal"><span class="pre">a</span></code>” are followed by ABI alignment and preferred
+alignment. “<code class="docutils literal"><span class="pre">f</span></code>” is followed by three values: the first indicates the size
 of a long double, then ABI alignment, and then ABI preferred alignment.</li>
 </ul>
 </div>
 <div class="section" id="target-registration">
-<h2><a class="toc-backref" href="#id9">Target Registration</a><a class="headerlink" href="#target-registration" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Target Registration</a><a class="headerlink" href="#target-registration" title="永久链接至标题">¶</a></h2>
 <p>You must also register your target with the <code class="docutils literal"><span class="pre">TargetRegistry</span></code>, which is what
 other LLVM tools use to be able to lookup and use your target at runtime.  The
 <code class="docutils literal"><span class="pre">TargetRegistry</span></code> can be used directly, but for most targets there are helper
 templates which should take care of the work for you.</p>
 <p>All targets should declare a global <code class="docutils literal"><span class="pre">Target</span></code> object which is used to
-represent the target during registration.  Then, in the target&#8217;s <code class="docutils literal"><span class="pre">TargetInfo</span></code>
+represent the target during registration.  Then, in the target’s <code class="docutils literal"><span class="pre">TargetInfo</span></code>
 library, the target should define that object and use the <code class="docutils literal"><span class="pre">RegisterTarget</span></code>
 template to register the target.  For example, the Sparc registration code
 looks like this:</p>
@@ -381,7 +380,7 @@ looks like this:</p>
 <p>This allows the <code class="docutils literal"><span class="pre">TargetRegistry</span></code> to look up the target by name or by target
 triple.  In addition, most targets will also register additional features which
 are available in separate libraries.  These registration steps are separate,
-because some clients may wish to only link in some parts of the target &#8212; the
+because some clients may wish to only link in some parts of the target — the
 JIT code generator does not require the use of the assembler printer, for
 example.  Here is an example of registering the Sparc assembly printer:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="kt">void</span> <span class="n">LLVMInitializeSparcAsmPrinter</span><span class="p">()</span> <span class="p">{</span>
@@ -389,10 +388,10 @@ example.  Here is an example of registering the Sparc assembly printer:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>For more information, see &#8220;<a class="reference external" href="/doxygen/TargetRegistry_8h-source.html">llvm/Target/TargetRegistry.h</a>&#8221;.</p>
+<p>For more information, see “<a class="reference external" href="/doxygen/TargetRegistry_8h-source.html">llvm/Target/TargetRegistry.h</a>”.</p>
 </div>
 <div class="section" id="register-set-and-register-classes">
-<h2><a class="toc-backref" href="#id10">Register Set and Register Classes</a><a class="headerlink" href="#register-set-and-register-classes" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Register Set and Register Classes</a><a class="headerlink" href="#register-set-and-register-classes" title="永久链接至标题">¶</a></h2>
 <p>You should describe a concrete target-specific class that represents the
 register file of a target machine.  This class is called <code class="docutils literal"><span class="pre">XXXRegisterInfo</span></code>
 (where <code class="docutils literal"><span class="pre">XXX</span></code> identifies the target) and represents the class register file
@@ -413,7 +412,7 @@ aliases, and register classes, is generated by TableGen from
 and <code class="docutils literal"><span class="pre">XXXGenRegisterInfo.inc</span></code> output files.  Some of the code in the
 implementation of <code class="docutils literal"><span class="pre">XXXRegisterInfo</span></code> requires hand-coding.</p>
 <div class="section" id="defining-a-register">
-<h3><a class="toc-backref" href="#id11">Defining a Register</a><a class="headerlink" href="#defining-a-register" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">Defining a Register</a><a class="headerlink" href="#defining-a-register" title="永久链接至标题">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">XXXRegisterInfo.td</span></code> file typically starts with register definitions for
 a target machine.  The <code class="docutils literal"><span class="pre">Register</span></code> class (specified in <code class="docutils literal"><span class="pre">Target.td</span></code>) is used
 to define an object for each register.  The specified string <code class="docutils literal"><span class="pre">n</span></code> becomes the
@@ -471,7 +470,7 @@ for each register.  <code class="docutils literal"><span class="pre">TargetRegis
 names for the register (in the <code class="docutils literal"><span class="pre">AsmName</span></code> and <code class="docutils literal"><span class="pre">Name</span></code> fields of
 <code class="docutils literal"><span class="pre">TargetRegisterDesc</span></code>) and the relationships of other registers to the defined
 register (in the other <code class="docutils literal"><span class="pre">TargetRegisterDesc</span></code> fields).  In this example, other
-definitions establish the registers &#8220;<code class="docutils literal"><span class="pre">AX</span></code>&#8221;, &#8220;<code class="docutils literal"><span class="pre">EAX</span></code>&#8221;, and &#8220;<code class="docutils literal"><span class="pre">RAX</span></code>&#8221; as
+definitions establish the registers “<code class="docutils literal"><span class="pre">AX</span></code>”, “<code class="docutils literal"><span class="pre">EAX</span></code>”, and “<code class="docutils literal"><span class="pre">RAX</span></code>” as
 aliases for one another, so TableGen generates a null-terminated array
 (<code class="docutils literal"><span class="pre">AL_AliasSet</span></code>) for this register alias set.</p>
 <p>The <code class="docutils literal"><span class="pre">Register</span></code> class is commonly used as a base class for more complex
@@ -486,7 +485,7 @@ specify subregisters in the <code class="docutils literal"><span class="pre">Sub
 <p>In <code class="docutils literal"><span class="pre">SparcRegisterInfo.td</span></code>, additional register classes are defined for SPARC:
 a <code class="docutils literal"><span class="pre">Register</span></code> subclass, <code class="docutils literal"><span class="pre">SparcReg</span></code>, and further subclasses: <code class="docutils literal"><span class="pre">Ri</span></code>, <code class="docutils literal"><span class="pre">Rf</span></code>,
 and <code class="docutils literal"><span class="pre">Rd</span></code>.  SPARC registers are identified by 5-bit ID numbers, which is a
-feature common to these subclasses.  Note the use of &#8220;<code class="docutils literal"><span class="pre">let</span></code>&#8221; expressions to
+feature common to these subclasses.  Note the use of “<code class="docutils literal"><span class="pre">let</span></code>” expressions to
 override values that are initially defined in a superclass (such as <code class="docutils literal"><span class="pre">SubRegs</span></code>
 field in the <code class="docutils literal"><span class="pre">Rd</span></code> class).</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>class SparcReg&lt;string n&gt; : Register&lt;n&gt; {
@@ -526,10 +525,10 @@ def D1 : Rd&lt; 2, &quot;F2&quot;, [F2, F3]&gt;, DwarfRegNum&lt;[34]&gt;;
 floating-point registers that are aliases for pairs of single-precision
 floating-point sub-registers.  In addition to aliases, the sub-register and
 super-register relationships of the defined register are in fields of a
-register&#8217;s <code class="docutils literal"><span class="pre">TargetRegisterDesc</span></code>.</p>
+register’s <code class="docutils literal"><span class="pre">TargetRegisterDesc</span></code>.</p>
 </div>
 <div class="section" id="defining-a-register-class">
-<h3><a class="toc-backref" href="#id12">Defining a Register Class</a><a class="headerlink" href="#defining-a-register-class" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id13">Defining a Register Class</a><a class="headerlink" href="#defining-a-register-class" title="永久链接至标题">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">RegisterClass</span></code> class (specified in <code class="docutils literal"><span class="pre">Target.td</span></code>) is used to define an
 object that represents a group of related registers and also defines the
 default allocation order of the registers.  A target description file
@@ -580,7 +579,7 @@ information.</li>
 </ul>
 <p>In <code class="docutils literal"><span class="pre">SparcRegisterInfo.td</span></code>, three <code class="docutils literal"><span class="pre">RegisterClass</span></code> objects are defined:
 <code class="docutils literal"><span class="pre">FPRegs</span></code>, <code class="docutils literal"><span class="pre">DFPRegs</span></code>, and <code class="docutils literal"><span class="pre">IntRegs</span></code>.  For all three register classes, the
-first argument defines the namespace with the string &#8220;<code class="docutils literal"><span class="pre">SP</span></code>&#8221;.  <code class="docutils literal"><span class="pre">FPRegs</span></code>
+first argument defines the namespace with the string “<code class="docutils literal"><span class="pre">SP</span></code>”.  <code class="docutils literal"><span class="pre">FPRegs</span></code>
 defines a group of 32 single-precision floating-point registers (<code class="docutils literal"><span class="pre">F0</span></code> to
 <code class="docutils literal"><span class="pre">F31</span></code>); <code class="docutils literal"><span class="pre">DFPRegs</span></code> defines a group of 16 double-precision registers
 (<code class="docutils literal"><span class="pre">D0-D15</span></code>).</p>
@@ -672,30 +671,30 @@ is usually good enough, but in some cases it may be necessary to provide custom
 allocation orders.</p>
 </div>
 <div class="section" id="implement-a-subclass-of-targetregisterinfo">
-<h3><a class="toc-backref" href="#id13">Implement a subclass of <code class="docutils literal"><span class="pre">TargetRegisterInfo</span></code></a><a class="headerlink" href="#implement-a-subclass-of-targetregisterinfo" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Implement a subclass of <code class="docutils literal"><span class="pre">TargetRegisterInfo</span></code></a><a class="headerlink" href="#implement-a-subclass-of-targetregisterinfo" title="永久链接至标题">¶</a></h3>
 <p>The final step is to hand code portions of <code class="docutils literal"><span class="pre">XXXRegisterInfo</span></code>, which
 implements the interface described in <code class="docutils literal"><span class="pre">TargetRegisterInfo.h</span></code> (see
 <a class="reference internal" href="CodeGenerator.html#targetregisterinfo"><span class="std std-ref">The TargetRegisterInfo class</span></a>).  These functions return <code class="docutils literal"><span class="pre">0</span></code>, <code class="docutils literal"><span class="pre">NULL</span></code>, or
 <code class="docutils literal"><span class="pre">false</span></code>, unless overridden.  Here is a list of functions that are overridden
 for the SPARC implementation in <code class="docutils literal"><span class="pre">SparcRegisterInfo.cpp</span></code>:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">getCalleeSavedRegs</span></code> &#8212; Returns a list of callee-saved registers in the
+<li><code class="docutils literal"><span class="pre">getCalleeSavedRegs</span></code> — Returns a list of callee-saved registers in the
 order of the desired callee-save stack frame offset.</li>
-<li><code class="docutils literal"><span class="pre">getReservedRegs</span></code> &#8212; Returns a bitset indexed by physical register
+<li><code class="docutils literal"><span class="pre">getReservedRegs</span></code> — Returns a bitset indexed by physical register
 numbers, indicating if a particular register is unavailable.</li>
-<li><code class="docutils literal"><span class="pre">hasFP</span></code> &#8212; Return a Boolean indicating if a function should have a
+<li><code class="docutils literal"><span class="pre">hasFP</span></code> — Return a Boolean indicating if a function should have a
 dedicated frame pointer register.</li>
-<li><code class="docutils literal"><span class="pre">eliminateCallFramePseudoInstr</span></code> &#8212; If call frame setup or destroy pseudo
+<li><code class="docutils literal"><span class="pre">eliminateCallFramePseudoInstr</span></code> — If call frame setup or destroy pseudo
 instructions are used, this can be called to eliminate them.</li>
-<li><code class="docutils literal"><span class="pre">eliminateFrameIndex</span></code> &#8212; Eliminate abstract frame indices from
+<li><code class="docutils literal"><span class="pre">eliminateFrameIndex</span></code> — Eliminate abstract frame indices from
 instructions that may use them.</li>
-<li><code class="docutils literal"><span class="pre">emitPrologue</span></code> &#8212; Insert prologue code into the function.</li>
-<li><code class="docutils literal"><span class="pre">emitEpilogue</span></code> &#8212; Insert epilogue code into the function.</li>
+<li><code class="docutils literal"><span class="pre">emitPrologue</span></code> — Insert prologue code into the function.</li>
+<li><code class="docutils literal"><span class="pre">emitEpilogue</span></code> — Insert epilogue code into the function.</li>
 </ul>
 </div>
 </div>
 <div class="section" id="instruction-set">
-<span id="id1"></span><h2><a class="toc-backref" href="#id14">Instruction Set</a><a class="headerlink" href="#instruction-set" title="永久链接至标题">¶</a></h2>
+<span id="id2"></span><h2><a class="toc-backref" href="#id15">Instruction Set</a><a class="headerlink" href="#instruction-set" title="永久链接至标题">¶</a></h2>
 <p>During the early stages of code generation, the LLVM IR code is converted to a
 <code class="docutils literal"><span class="pre">SelectionDAG</span></code> with nodes that are instances of the <code class="docutils literal"><span class="pre">SDNode</span></code> class
 containing target instructions.  An <code class="docutils literal"><span class="pre">SDNode</span></code> has an opcode, operands, type
@@ -706,16 +705,16 @@ types are described in the <code class="docutils literal"><span class="pre">incl
 <p>TableGen uses the following target description (<code class="docutils literal"><span class="pre">.td</span></code>) input files to
 generate much of the code for instruction definition:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">Target.td</span></code> &#8212; Where the <code class="docutils literal"><span class="pre">Instruction</span></code>, <code class="docutils literal"><span class="pre">Operand</span></code>, <code class="docutils literal"><span class="pre">InstrInfo</span></code>, and
+<li><code class="docutils literal"><span class="pre">Target.td</span></code> — Where the <code class="docutils literal"><span class="pre">Instruction</span></code>, <code class="docutils literal"><span class="pre">Operand</span></code>, <code class="docutils literal"><span class="pre">InstrInfo</span></code>, and
 other fundamental classes are defined.</li>
-<li><code class="docutils literal"><span class="pre">TargetSelectionDAG.td</span></code> &#8212; Used by <code class="docutils literal"><span class="pre">SelectionDAG</span></code> instruction selection
+<li><code class="docutils literal"><span class="pre">TargetSelectionDAG.td</span></code> — Used by <code class="docutils literal"><span class="pre">SelectionDAG</span></code> instruction selection
 generators, contains <code class="docutils literal"><span class="pre">SDTC*</span></code> classes (selection DAG type constraint),
 definitions of <code class="docutils literal"><span class="pre">SelectionDAG</span></code> nodes (such as <code class="docutils literal"><span class="pre">imm</span></code>, <code class="docutils literal"><span class="pre">cond</span></code>, <code class="docutils literal"><span class="pre">bb</span></code>,
 <code class="docutils literal"><span class="pre">add</span></code>, <code class="docutils literal"><span class="pre">fadd</span></code>, <code class="docutils literal"><span class="pre">sub</span></code>), and pattern support (<code class="docutils literal"><span class="pre">Pattern</span></code>, <code class="docutils literal"><span class="pre">Pat</span></code>,
 <code class="docutils literal"><span class="pre">PatFrag</span></code>, <code class="docutils literal"><span class="pre">PatLeaf</span></code>, <code class="docutils literal"><span class="pre">ComplexPattern</span></code>.</li>
-<li><code class="docutils literal"><span class="pre">XXXInstrFormats.td</span></code> &#8212; Patterns for definitions of target-specific
+<li><code class="docutils literal"><span class="pre">XXXInstrFormats.td</span></code> — Patterns for definitions of target-specific
 instructions.</li>
-<li><code class="docutils literal"><span class="pre">XXXInstrInfo.td</span></code> &#8212; Target-specific definitions of instruction templates,
+<li><code class="docutils literal"><span class="pre">XXXInstrInfo.td</span></code> — Target-specific definitions of instruction templates,
 condition codes, and instructions of an instruction set.  For architecture
 modifications, a different file name may be used.  For example, for Pentium
 with SSE instruction, this file is <code class="docutils literal"><span class="pre">X86InstrSSE.td</span></code>, and for Pentium with
@@ -843,8 +842,8 @@ defm ADD   : F3_12&lt;&quot;add&quot;, 0b000000, add&gt;;
 <p><code class="docutils literal"><span class="pre">SparcInstrInfo.td</span></code> also includes definitions for condition codes that are
 referenced by branch instructions.  The following definitions in
 <code class="docutils literal"><span class="pre">SparcInstrInfo.td</span></code> indicate the bit location of the SPARC condition code.
-For example, the 10<sup>th</sup> bit represents the &#8220;greater than&#8221; condition for
-integers, and the 22<sup>nd</sup> bit represents the &#8220;greater than&#8221; condition for
+For example, the 10<sup>th</sup> bit represents the “greater than” condition for
+integers, and the 22<sup>nd</sup> bit represents the “greater than” condition for
 floats.</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>def ICC_NE  : ICC_VAL&lt; 9&gt;;  // Not Equal
 def ICC_E   : ICC_VAL&lt; 1&gt;;  // Equal
@@ -861,7 +860,7 @@ condition codes.  Care must be taken to ensure the values in <code class="docuti
 correspond to the values in <code class="docutils literal"><span class="pre">SparcInstrInfo.td</span></code>.  I.e., <code class="docutils literal"><span class="pre">SPCC::ICC_NE</span> <span class="pre">=</span> <span class="pre">9</span></code>,
 <code class="docutils literal"><span class="pre">SPCC::FCC_U</span> <span class="pre">=</span> <span class="pre">23</span></code> and so on.)</p>
 <div class="section" id="instruction-operand-mapping">
-<h3><a class="toc-backref" href="#id15">Instruction Operand Mapping</a><a class="headerlink" href="#instruction-operand-mapping" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">Instruction Operand Mapping</a><a class="headerlink" href="#instruction-operand-mapping" title="永久链接至标题">¶</a></h3>
 <p>The code generator backend maps instruction operands to fields in the
 instruction.  Operands are assigned to unbound fields in the instruction in the
 order they are defined.  Fields are bound when they are assigned a value.  For
@@ -920,10 +919,10 @@ format instructions will bind the operands to the <code class="docutils literal"
 fields.  This results in the <code class="docutils literal"><span class="pre">XNORrr</span></code> instruction binding <code class="docutils literal"><span class="pre">$dst</span></code>, <code class="docutils literal"><span class="pre">$b</span></code>,
 and <code class="docutils literal"><span class="pre">$c</span></code> operands to the <code class="docutils literal"><span class="pre">rd</span></code>, <code class="docutils literal"><span class="pre">rs1</span></code>, and <code class="docutils literal"><span class="pre">rs2</span></code> fields respectively.</p>
 <div class="section" id="instruction-operand-name-mapping">
-<h4><a class="toc-backref" href="#id16">Instruction Operand Name Mapping</a><a class="headerlink" href="#instruction-operand-name-mapping" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id17">Instruction Operand Name Mapping</a><a class="headerlink" href="#instruction-operand-name-mapping" title="永久链接至标题">¶</a></h4>
 <p>TableGen will also generate a function called getNamedOperandIdx() which
-can be used to look up an operand&#8217;s index in a MachineInstr based on its
-TableGen name.  Setting the UseNamedOperandTable bit in an instruction&#8217;s
+can be used to look up an operand’s index in a MachineInstr based on its
+TableGen name.  Setting the UseNamedOperandTable bit in an instruction’s
 TableGen definition will add all of its operands to an enumeration in the
 llvm::XXX:OpName namespace and also add an entry for it into the OperandMap
 table, which can be queried using getNamedOperandIdx()</p>
@@ -956,12 +955,12 @@ For example:</p>
 </div>
 </div>
 <div class="section" id="instruction-operand-types">
-<h4><a class="toc-backref" href="#id17">Instruction Operand Types</a><a class="headerlink" href="#instruction-operand-types" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id18">Instruction Operand Types</a><a class="headerlink" href="#instruction-operand-types" title="永久链接至标题">¶</a></h4>
 <p>TableGen will also generate an enumeration consisting of all named Operand
 types defined in the backend, in the llvm::XXX::OpTypes namespace.
 Some common immediate Operand types (for instance i8, i32, i64, f32, f64)
 are defined for all targets in <code class="docutils literal"><span class="pre">include/llvm/Target/Target.td</span></code>, and are
-available in each Target&#8217;s OpTypes enum.  Also, only named Operand types appear
+available in each Target’s OpTypes enum.  Also, only named Operand types appear
 in the enumeration: anonymous types are ignored.
 For example, the X86 backend defines <code class="docutils literal"><span class="pre">brtarget</span></code> and <code class="docutils literal"><span class="pre">brtarget8</span></code>, both
 instances of the TableGen <code class="docutils literal"><span class="pre">Operand</span></code> class, which represent branch target
@@ -995,14 +994,14 @@ preprocessor macro:</p>
 </div>
 </div>
 <div class="section" id="instruction-scheduling">
-<h3><a class="toc-backref" href="#id18">Instruction Scheduling</a><a class="headerlink" href="#instruction-scheduling" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id19">Instruction Scheduling</a><a class="headerlink" href="#instruction-scheduling" title="永久链接至标题">¶</a></h3>
 <p>Instruction itineraries can be queried using MCDesc::getSchedClass(). The
 value can be named by an enumemation in llvm::XXX::Sched namespace generated
 by TableGen in XXXGenInstrInfo.inc. The name of the schedule classes are
 the same as provided in XXXSchedule.td plus a default NoItinerary class.</p>
 </div>
 <div class="section" id="instruction-relation-mapping">
-<h3><a class="toc-backref" href="#id19">Instruction Relation Mapping</a><a class="headerlink" href="#instruction-relation-mapping" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id20">Instruction Relation Mapping</a><a class="headerlink" href="#instruction-relation-mapping" title="永久链接至标题">¶</a></h3>
 <p>This TableGen feature is used to relate instructions with each other.  It is
 particularly useful when you have multiple instruction formats and need to
 switch between them after instruction selection.  This entire feature is driven
@@ -1015,30 +1014,30 @@ along with the functions to query them.  For the detailed information on how to
 use this feature, please refer to <a class="reference internal" href="HowToUseInstrMappings.html"><span class="doc">How To Use Instruction Mappings</span></a>.</p>
 </div>
 <div class="section" id="implement-a-subclass-of-targetinstrinfo">
-<h3><a class="toc-backref" href="#id20">Implement a subclass of <code class="docutils literal"><span class="pre">TargetInstrInfo</span></code></a><a class="headerlink" href="#implement-a-subclass-of-targetinstrinfo" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id21">Implement a subclass of <code class="docutils literal"><span class="pre">TargetInstrInfo</span></code></a><a class="headerlink" href="#implement-a-subclass-of-targetinstrinfo" title="永久链接至标题">¶</a></h3>
 <p>The final step is to hand code portions of <code class="docutils literal"><span class="pre">XXXInstrInfo</span></code>, which implements
 the interface described in <code class="docutils literal"><span class="pre">TargetInstrInfo.h</span></code> (see <a class="reference internal" href="CodeGenerator.html#targetinstrinfo"><span class="std std-ref">The TargetInstrInfo class</span></a>).
 These functions return <code class="docutils literal"><span class="pre">0</span></code> or a Boolean or they assert, unless overridden.
-Here&#8217;s a list of functions that are overridden for the SPARC implementation in
+Here’s a list of functions that are overridden for the SPARC implementation in
 <code class="docutils literal"><span class="pre">SparcInstrInfo.cpp</span></code>:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">isLoadFromStackSlot</span></code> &#8212; If the specified machine instruction is a direct
+<li><code class="docutils literal"><span class="pre">isLoadFromStackSlot</span></code> — If the specified machine instruction is a direct
 load from a stack slot, return the register number of the destination and the
 <code class="docutils literal"><span class="pre">FrameIndex</span></code> of the stack slot.</li>
-<li><code class="docutils literal"><span class="pre">isStoreToStackSlot</span></code> &#8212; If the specified machine instruction is a direct
+<li><code class="docutils literal"><span class="pre">isStoreToStackSlot</span></code> — If the specified machine instruction is a direct
 store to a stack slot, return the register number of the destination and the
 <code class="docutils literal"><span class="pre">FrameIndex</span></code> of the stack slot.</li>
-<li><code class="docutils literal"><span class="pre">copyPhysReg</span></code> &#8212; Copy values between a pair of physical registers.</li>
-<li><code class="docutils literal"><span class="pre">storeRegToStackSlot</span></code> &#8212; Store a register value to a stack slot.</li>
-<li><code class="docutils literal"><span class="pre">loadRegFromStackSlot</span></code> &#8212; Load a register value from a stack slot.</li>
-<li><code class="docutils literal"><span class="pre">storeRegToAddr</span></code> &#8212; Store a register value to memory.</li>
-<li><code class="docutils literal"><span class="pre">loadRegFromAddr</span></code> &#8212; Load a register value from memory.</li>
-<li><code class="docutils literal"><span class="pre">foldMemoryOperand</span></code> &#8212; Attempt to combine instructions of any load or
+<li><code class="docutils literal"><span class="pre">copyPhysReg</span></code> — Copy values between a pair of physical registers.</li>
+<li><code class="docutils literal"><span class="pre">storeRegToStackSlot</span></code> — Store a register value to a stack slot.</li>
+<li><code class="docutils literal"><span class="pre">loadRegFromStackSlot</span></code> — Load a register value from a stack slot.</li>
+<li><code class="docutils literal"><span class="pre">storeRegToAddr</span></code> — Store a register value to memory.</li>
+<li><code class="docutils literal"><span class="pre">loadRegFromAddr</span></code> — Load a register value from memory.</li>
+<li><code class="docutils literal"><span class="pre">foldMemoryOperand</span></code> — Attempt to combine instructions of any load or
 store instruction for the specified operand(s).</li>
 </ul>
 </div>
 <div class="section" id="branch-folding-and-if-conversion">
-<h3><a class="toc-backref" href="#id21">Branch Folding and If Conversion</a><a class="headerlink" href="#branch-folding-and-if-conversion" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id22">Branch Folding and If Conversion</a><a class="headerlink" href="#branch-folding-and-if-conversion" title="永久链接至标题">¶</a></h3>
 <p>Performance can be improved by combining instructions or by eliminating
 instructions that are never reached.  The <code class="docutils literal"><span class="pre">AnalyzeBranch</span></code> method in
 <code class="docutils literal"><span class="pre">XXXInstrInfo</span></code> may be implemented to examine conditional instructions and
@@ -1054,12 +1053,12 @@ does not implement a useful <code class="docutils literal"><span class="pre">Ana
 shown below.</p>
 <p><code class="docutils literal"><span class="pre">AnalyzeBranch</span></code> returns a Boolean value and takes four parameters:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">MachineBasicBlock</span> <span class="pre">&amp;MBB</span></code> &#8212; The incoming block to be examined.</li>
-<li><code class="docutils literal"><span class="pre">MachineBasicBlock</span> <span class="pre">*&amp;TBB</span></code> &#8212; A destination block that is returned.  For a
+<li><code class="docutils literal"><span class="pre">MachineBasicBlock</span> <span class="pre">&amp;MBB</span></code> — The incoming block to be examined.</li>
+<li><code class="docutils literal"><span class="pre">MachineBasicBlock</span> <span class="pre">*&amp;TBB</span></code> — A destination block that is returned.  For a
 conditional branch that evaluates to true, <code class="docutils literal"><span class="pre">TBB</span></code> is the destination.</li>
-<li><code class="docutils literal"><span class="pre">MachineBasicBlock</span> <span class="pre">*&amp;FBB</span></code> &#8212; For a conditional branch that evaluates to
+<li><code class="docutils literal"><span class="pre">MachineBasicBlock</span> <span class="pre">*&amp;FBB</span></code> — For a conditional branch that evaluates to
 false, <code class="docutils literal"><span class="pre">FBB</span></code> is returned as the destination.</li>
-<li><code class="docutils literal"><span class="pre">std::vector&lt;MachineOperand&gt;</span> <span class="pre">&amp;Cond</span></code> &#8212; List of operands to evaluate a
+<li><code class="docutils literal"><span class="pre">std::vector&lt;MachineOperand&gt;</span> <span class="pre">&amp;Cond</span></code> — List of operands to evaluate a
 condition for a conditional branch.</li>
 </ul>
 <p>In the simplest case, if a block ends without a branch, then it falls through
@@ -1115,8 +1114,8 @@ conditional branch in the <code class="docutils literal"><span class="pre">TBB</
 <p>If a block ends with both a conditional branch and an ensuing unconditional
 branch, then <code class="docutils literal"><span class="pre">AnalyzeBranch</span></code> (shown below) should return the conditional
 branch destination (assuming it corresponds to a conditional evaluation of
-&#8220;<code class="docutils literal"><span class="pre">true</span></code>&#8221;) in the <code class="docutils literal"><span class="pre">TBB</span></code> parameter and the unconditional branch destination
-in the <code class="docutils literal"><span class="pre">FBB</span></code> (corresponding to a conditional evaluation of &#8220;<code class="docutils literal"><span class="pre">false</span></code>&#8221;).  A
+“<code class="docutils literal"><span class="pre">true</span></code>”) in the <code class="docutils literal"><span class="pre">TBB</span></code> parameter and the unconditional branch destination
+in the <code class="docutils literal"><span class="pre">FBB</span></code> (corresponding to a conditional evaluation of “<code class="docutils literal"><span class="pre">false</span></code>”).  A
 list of operands to evaluate the condition should be returned in the <code class="docutils literal"><span class="pre">Cond</span></code>
 parameter.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">unsigned</span> <span class="n">SecondLastOpc</span> <span class="o">=</span> <span class="n">SecondLastInst</span><span class="o">-&gt;</span><span class="n">getOpcode</span><span class="p">();</span>
@@ -1145,7 +1144,7 @@ handle, such as an indirect branch.</p>
 </div>
 </div>
 <div class="section" id="instruction-selector">
-<span id="id2"></span><h2><a class="toc-backref" href="#id22">Instruction Selector</a><a class="headerlink" href="#instruction-selector" title="永久链接至标题">¶</a></h2>
+<span id="id3"></span><h2><a class="toc-backref" href="#id23">Instruction Selector</a><a class="headerlink" href="#instruction-selector" title="永久链接至标题">¶</a></h2>
 <p>LLVM uses a <code class="docutils literal"><span class="pre">SelectionDAG</span></code> to represent LLVM IR instructions, and nodes of
 the <code class="docutils literal"><span class="pre">SelectionDAG</span></code> ideally represent native target instructions.  During code
 generation, instruction selection passes are performed to convert non-native
@@ -1159,10 +1158,10 @@ operations and data types not supported natively (legalizes) in a
 <p>TableGen generates code for instruction selection using the following target
 description input files:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">XXXInstrInfo.td</span></code> &#8212; Contains definitions of instructions in a
+<li><code class="docutils literal"><span class="pre">XXXInstrInfo.td</span></code> — Contains definitions of instructions in a
 target-specific instruction set, generates <code class="docutils literal"><span class="pre">XXXGenDAGISel.inc</span></code>, which is
 included in <code class="docutils literal"><span class="pre">XXXISelDAGToDAG.cpp</span></code>.</li>
-<li><code class="docutils literal"><span class="pre">XXXCallingConv.td</span></code> &#8212; Contains the calling and return value conventions
+<li><code class="docutils literal"><span class="pre">XXXCallingConv.td</span></code> — Contains the calling and return value conventions
 for the target architecture, and it generates <code class="docutils literal"><span class="pre">XXXGenCallingConv.inc</span></code>,
 which is included in <code class="docutils literal"><span class="pre">XXXISelLowering.cpp</span></code>.</li>
 </ul>
@@ -1245,7 +1244,7 @@ instruction.</p>
 </pre></div>
 </div>
 <div class="section" id="the-selectiondag-legalize-phase">
-<h3><a class="toc-backref" href="#id23">The SelectionDAG Legalize Phase</a><a class="headerlink" href="#the-selectiondag-legalize-phase" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id24">The SelectionDAG Legalize Phase</a><a class="headerlink" href="#the-selectiondag-legalize-phase" title="永久链接至标题">¶</a></h3>
 <p>The Legalize phase converts a DAG to use types and operations that are natively
 supported by the target.  For natively unsupported types and operations, you
 need to add code to the target-specific <code class="docutils literal"><span class="pre">XXXTargetLowering</span></code> implementation to
@@ -1269,13 +1268,13 @@ support, add a callback to the constructor for the <code class="docutils literal
 so the instruction selection process knows what to do.  The <code class="docutils literal"><span class="pre">TargetLowering</span></code>
 class callback methods (declared in <code class="docutils literal"><span class="pre">llvm/Target/TargetLowering.h</span></code>) are:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">setOperationAction</span></code> &#8212; General operation.</li>
-<li><code class="docutils literal"><span class="pre">setLoadExtAction</span></code> &#8212; Load with extension.</li>
-<li><code class="docutils literal"><span class="pre">setTruncStoreAction</span></code> &#8212; Truncating store.</li>
-<li><code class="docutils literal"><span class="pre">setIndexedLoadAction</span></code> &#8212; Indexed load.</li>
-<li><code class="docutils literal"><span class="pre">setIndexedStoreAction</span></code> &#8212; Indexed store.</li>
-<li><code class="docutils literal"><span class="pre">setConvertAction</span></code> &#8212; Type conversion.</li>
-<li><code class="docutils literal"><span class="pre">setCondCodeAction</span></code> &#8212; Support for a given condition code.</li>
+<li><code class="docutils literal"><span class="pre">setOperationAction</span></code> — General operation.</li>
+<li><code class="docutils literal"><span class="pre">setLoadExtAction</span></code> — Load with extension.</li>
+<li><code class="docutils literal"><span class="pre">setTruncStoreAction</span></code> — Truncating store.</li>
+<li><code class="docutils literal"><span class="pre">setIndexedLoadAction</span></code> — Indexed load.</li>
+<li><code class="docutils literal"><span class="pre">setIndexedStoreAction</span></code> — Indexed store.</li>
+<li><code class="docutils literal"><span class="pre">setConvertAction</span></code> — Type conversion.</li>
+<li><code class="docutils literal"><span class="pre">setCondCodeAction</span></code> — Support for a given condition code.</li>
 </ul>
 <p>Note: on older releases, <code class="docutils literal"><span class="pre">setLoadXAction</span></code> is used instead of
 <code class="docutils literal"><span class="pre">setLoadExtAction</span></code>.  Also, on older releases, <code class="docutils literal"><span class="pre">setCondCodeAction</span></code> may not
@@ -1287,7 +1286,7 @@ with a specified type (or types).  And in all cases, the third parameter is a
 <code class="docutils literal"><span class="pre">Legal</span></code>.  <code class="docutils literal"><span class="pre">SparcISelLowering.cpp</span></code> contains examples of all four
 <code class="docutils literal"><span class="pre">LegalAction</span></code> values.</p>
 <div class="section" id="promote">
-<h4><a class="toc-backref" href="#id24">Promote</a><a class="headerlink" href="#promote" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id25">Promote</a><a class="headerlink" href="#promote" title="永久链接至标题">¶</a></h4>
 <p>For an operation without native support for a given type, the specified type
 may be promoted to a larger type that is supported.  For example, SPARC does
 not support a sign-extending load for Boolean values (<code class="docutils literal"><span class="pre">i1</span></code> type), so in
@@ -1298,7 +1297,7 @@ not support a sign-extending load for Boolean values (<code class="docutils lite
 </div>
 </div>
 <div class="section" id="expand">
-<h4><a class="toc-backref" href="#id25">Expand</a><a class="headerlink" href="#expand" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id26">Expand</a><a class="headerlink" href="#expand" title="永久链接至标题">¶</a></h4>
 <p>For a type without native support, a value may need to be broken down further,
 rather than promoted.  For an operation without native support, a combination
 of other operations may be used to similar effect.  In SPARC, the
@@ -1311,7 +1310,7 @@ other operations, as indicated by the third parameter, <code class="docutils lit
 </div>
 </div>
 <div class="section" id="custom">
-<h4><a class="toc-backref" href="#id26">Custom</a><a class="headerlink" href="#custom" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id27">Custom</a><a class="headerlink" href="#custom" title="永久链接至标题">¶</a></h4>
 <p>For some operations, simple type promotion or operation expansion may be
 insufficient.  In some cases, a special intrinsic function must be implemented.</p>
 <p>For example, a constant value may require special treatment, or an operation
@@ -1345,7 +1344,7 @@ convert the floating-point value to an integer.</p>
 </div>
 </div>
 <div class="section" id="legal">
-<h4><a class="toc-backref" href="#id27">Legal</a><a class="headerlink" href="#legal" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id28">Legal</a><a class="headerlink" href="#legal" title="永久链接至标题">¶</a></h4>
 <p>The <code class="docutils literal"><span class="pre">Legal</span></code> <code class="docutils literal"><span class="pre">LegalizeAction</span></code> enum value simply indicates that an operation
 <strong>is</strong> natively supported.  <code class="docutils literal"><span class="pre">Legal</span></code> represents the default condition, so it
 is rarely used.  In <code class="docutils literal"><span class="pre">SparcISelLowering.cpp</span></code>, the action for <code class="docutils literal"><span class="pre">CTPOP</span></code> (an
@@ -1361,7 +1360,7 @@ non-v9 SPARC implementations.</p>
 </div>
 </div>
 <div class="section" id="calling-conventions">
-<h3><a class="toc-backref" href="#id28">Calling Conventions</a><a class="headerlink" href="#calling-conventions" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id29">Calling Conventions</a><a class="headerlink" href="#calling-conventions" title="永久链接至标题">¶</a></h3>
 <p>To support target-specific calling conventions, <code class="docutils literal"><span class="pre">XXXGenCallingConv.td</span></code> uses
 interfaces (such as <code class="docutils literal"><span class="pre">CCIfType</span></code> and <code class="docutils literal"><span class="pre">CCAssignToReg</span></code>) that are defined in
 <code class="docutils literal"><span class="pre">lib/Target/TargetCallingConv.td</span></code>.  TableGen can take the target descriptor
@@ -1438,26 +1437,26 @@ use, then <code class="docutils literal"><span class="pre">RetCC_X86_32_SSE</spa
 </div>
 <p>Other calling convention interfaces include:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">CCIf</span> <span class="pre">&lt;predicate,</span> <span class="pre">action&gt;</span></code> &#8212; If the predicate matches, apply the action.</li>
-<li><code class="docutils literal"><span class="pre">CCIfInReg</span> <span class="pre">&lt;action&gt;</span></code> &#8212; If the argument is marked with the &#8220;<code class="docutils literal"><span class="pre">inreg</span></code>&#8221;
+<li><code class="docutils literal"><span class="pre">CCIf</span> <span class="pre">&lt;predicate,</span> <span class="pre">action&gt;</span></code> — If the predicate matches, apply the action.</li>
+<li><code class="docutils literal"><span class="pre">CCIfInReg</span> <span class="pre">&lt;action&gt;</span></code> — If the argument is marked with the “<code class="docutils literal"><span class="pre">inreg</span></code>”
 attribute, then apply the action.</li>
-<li><code class="docutils literal"><span class="pre">CCIfNest</span> <span class="pre">&lt;action&gt;</span></code> &#8212; If the argument is marked with the &#8220;<code class="docutils literal"><span class="pre">nest</span></code>&#8221;
+<li><code class="docutils literal"><span class="pre">CCIfNest</span> <span class="pre">&lt;action&gt;</span></code> — If the argument is marked with the “<code class="docutils literal"><span class="pre">nest</span></code>”
 attribute, then apply the action.</li>
-<li><code class="docutils literal"><span class="pre">CCIfNotVarArg</span> <span class="pre">&lt;action&gt;</span></code> &#8212; If the current function does not take a
+<li><code class="docutils literal"><span class="pre">CCIfNotVarArg</span> <span class="pre">&lt;action&gt;</span></code> — If the current function does not take a
 variable number of arguments, apply the action.</li>
-<li><code class="docutils literal"><span class="pre">CCAssignToRegWithShadow</span> <span class="pre">&lt;registerList,</span> <span class="pre">shadowList&gt;</span></code> &#8212; similar to
+<li><code class="docutils literal"><span class="pre">CCAssignToRegWithShadow</span> <span class="pre">&lt;registerList,</span> <span class="pre">shadowList&gt;</span></code> — similar to
 <code class="docutils literal"><span class="pre">CCAssignToReg</span></code>, but with a shadow list of registers.</li>
-<li><code class="docutils literal"><span class="pre">CCPassByVal</span> <span class="pre">&lt;size,</span> <span class="pre">align&gt;</span></code> &#8212; Assign value to a stack slot with the
+<li><code class="docutils literal"><span class="pre">CCPassByVal</span> <span class="pre">&lt;size,</span> <span class="pre">align&gt;</span></code> — Assign value to a stack slot with the
 minimum specified size and alignment.</li>
-<li><code class="docutils literal"><span class="pre">CCPromoteToType</span> <span class="pre">&lt;type&gt;</span></code> &#8212; Promote the current value to the specified
+<li><code class="docutils literal"><span class="pre">CCPromoteToType</span> <span class="pre">&lt;type&gt;</span></code> — Promote the current value to the specified
 type.</li>
-<li><code class="docutils literal"><span class="pre">CallingConv</span> <span class="pre">&lt;[actions]&gt;</span></code> &#8212; Define each calling convention that is
+<li><code class="docutils literal"><span class="pre">CallingConv</span> <span class="pre">&lt;[actions]&gt;</span></code> — Define each calling convention that is
 supported.</li>
 </ul>
 </div>
 </div>
 <div class="section" id="assembly-printer">
-<h2><a class="toc-backref" href="#id29">Assembly Printer</a><a class="headerlink" href="#assembly-printer" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id30">Assembly Printer</a><a class="headerlink" href="#assembly-printer" title="永久链接至标题">¶</a></h2>
 <p>During the code emission stage, the code generator may utilize an LLVM pass to
 produce assembly output.  To do this, you want to implement the code for a
 printer that converts LLVM IR to a GAS-format assembly language for your target
@@ -1549,7 +1548,7 @@ called to shut down the assembly printer.  During <code class="docutils literal"
 variables and constants are printed to output.</p>
 </div>
 <div class="section" id="subtarget-support">
-<h2><a class="toc-backref" href="#id30">Subtarget Support</a><a class="headerlink" href="#subtarget-support" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id31">Subtarget Support</a><a class="headerlink" href="#subtarget-support" title="永久链接至标题">¶</a></h2>
 <p>Subtarget support is used to inform the code generation process of instruction
 set variations for a given chip set.  For example, the LLVM SPARC
 implementation provided covers three major versions of the SPARC microprocessor
@@ -1630,7 +1629,7 @@ implementation of the <code class="docutils literal"><span class="pre">XXXSubtar
 </div>
 </div>
 <div class="section" id="jit-support">
-<h2><a class="toc-backref" href="#id31">JIT Support</a><a class="headerlink" href="#jit-support" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id32">JIT Support</a><a class="headerlink" href="#jit-support" title="永久链接至标题">¶</a></h2>
 <p>The implementation of a target machine optionally includes a Just-In-Time (JIT)
 code generator that emits machine code and auxiliary structures as binary
 output that can be written directly to memory.  To do this, implement JIT code
@@ -1657,7 +1656,7 @@ implementations do not.</p>
 <code class="docutils literal"><span class="pre">MachineCodeEmitter</span></code> class containing code for several callback functions
 that write data (in bytes, words, strings, etc.) to the output stream.</p>
 <div class="section" id="machine-code-emitter">
-<h3><a class="toc-backref" href="#id32">Machine Code Emitter</a><a class="headerlink" href="#machine-code-emitter" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id33">Machine Code Emitter</a><a class="headerlink" href="#machine-code-emitter" title="永久链接至标题">¶</a></h3>
 <p>In <code class="docutils literal"><span class="pre">XXXCodeEmitter.cpp</span></code>, a target-specific of the <code class="docutils literal"><span class="pre">Emitter</span></code> class is
 implemented as a function pass (subclass of <code class="docutils literal"><span class="pre">MachineFunctionPass</span></code>).  The
 target-specific implementation of <code class="docutils literal"><span class="pre">runOnMachineFunction</span></code> (invoked by
@@ -1767,16 +1766,16 @@ there is an additional initial adjustment.</p>
 </div>
 </div>
 <div class="section" id="target-jit-info">
-<h3><a class="toc-backref" href="#id33">Target JIT Info</a><a class="headerlink" href="#target-jit-info" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id34">Target JIT Info</a><a class="headerlink" href="#target-jit-info" title="永久链接至标题">¶</a></h3>
 <p><code class="docutils literal"><span class="pre">XXXJITInfo.cpp</span></code> implements the JIT interfaces for target-specific
 code-generation activities, such as emitting machine code and stubs.  At
 minimum, a target-specific version of <code class="docutils literal"><span class="pre">XXXJITInfo</span></code> implements the following:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">getLazyResolverFunction</span></code> &#8212; Initializes the JIT, gives the target a
+<li><code class="docutils literal"><span class="pre">getLazyResolverFunction</span></code> — Initializes the JIT, gives the target a
 function that is used for compilation.</li>
-<li><code class="docutils literal"><span class="pre">emitFunctionStub</span></code> &#8212; Returns a native function with a specified address
+<li><code class="docutils literal"><span class="pre">emitFunctionStub</span></code> — Returns a native function with a specified address
 for a callback function.</li>
-<li><code class="docutils literal"><span class="pre">relocate</span></code> &#8212; Changes the addresses of referenced globals, based on
+<li><code class="docutils literal"><span class="pre">relocate</span></code> — Changes the addresses of referenced globals, based on
 relocation types.</li>
 <li>Callback function that are wrappers to a function stub that is used when the
 real target is not initially known.</li>
@@ -1827,9 +1826,9 @@ implemented with assembler.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

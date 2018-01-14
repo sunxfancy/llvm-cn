@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>MergeFunctions pass, how it works &mdash; LLVM 3.8 文档</title>
-    
+    <title>MergeFunctions pass, how it works &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Bitsets" href="BitSets.html" />
     <link rel="prev" title="Garbage Collection Safepoints in LLVM" href="Statepoints.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,71 +74,71 @@
             
   <div class="section" id="mergefunctions-pass-how-it-works">
 <h1>MergeFunctions pass, how it works<a class="headerlink" href="#mergefunctions-pass-how-it-works" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id1">Introduction</a><ul>
-<li><a class="reference internal" href="#why-would-i-want-to-read-this-document" id="id2">Why would I want to read this document?</a></li>
-<li><a class="reference internal" href="#what-should-i-know-to-be-able-to-follow-along-with-this-document" id="id3">What should I know to be able to follow along with this document?</a></li>
-<li><a class="reference internal" href="#what-i-gain-by-reading-this-document" id="id4">What I gain by reading this document?</a></li>
-<li><a class="reference internal" href="#narrative-structure" id="id5">Narrative structure</a></li>
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a><ul>
+<li><a class="reference internal" href="#why-would-i-want-to-read-this-document" id="id3">Why would I want to read this document?</a></li>
+<li><a class="reference internal" href="#what-should-i-know-to-be-able-to-follow-along-with-this-document" id="id4">What should I know to be able to follow along with this document?</a></li>
+<li><a class="reference internal" href="#what-i-gain-by-reading-this-document" id="id5">What I gain by reading this document?</a></li>
+<li><a class="reference internal" href="#narrative-structure" id="id6">Narrative structure</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#basics" id="id6">Basics</a><ul>
-<li><a class="reference internal" href="#how-to-do-it" id="id7">How to do it?</a><ul>
-<li><a class="reference internal" href="#possible-solutions" id="id8">Possible solutions</a><ul>
-<li><a class="reference internal" href="#random-access" id="id9">Random-access</a></li>
-<li><a class="reference internal" href="#logarithmical-search" id="id10">Logarithmical search</a></li>
-<li><a class="reference internal" href="#present-state" id="id11">Present state</a></li>
+<li><a class="reference internal" href="#basics" id="id7">Basics</a><ul>
+<li><a class="reference internal" href="#how-to-do-it" id="id8">How to do it?</a><ul>
+<li><a class="reference internal" href="#possible-solutions" id="id9">Possible solutions</a><ul>
+<li><a class="reference internal" href="#random-access" id="id10">Random-access</a></li>
+<li><a class="reference internal" href="#logarithmical-search" id="id11">Logarithmical search</a></li>
+<li><a class="reference internal" href="#present-state" id="id12">Present state</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#mergefunctions-main-fields-and-runonmodule" id="id12">MergeFunctions, main fields and runOnModule</a><ul>
-<li><a class="reference internal" href="#runonmodule" id="id13">runOnModule</a></li>
-<li><a class="reference internal" href="#comparison-and-logarithmical-search" id="id14">Comparison and logarithmical search</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#functions-comparison" id="id15">Functions comparison</a><ul>
-<li><a class="reference internal" href="#functioncomparator-compare-void" id="id16">FunctionComparator::compare(void)</a></li>
-<li><a class="reference internal" href="#functioncomparator-cmptype" id="id17">FunctionComparator::cmpType</a></li>
-<li><a class="reference internal" href="#cmpvalues-const-value-const-value" id="id18">cmpValues(const Value*, const Value*)</a><ul>
-<li><a class="reference internal" href="#what-we-assiciate-in-cmpvalues" id="id19">What we assiciate in cmpValues?</a></li>
-<li><a class="reference internal" href="#how-to-implement-cmpvalues" id="id20">How to implement cmpValues?</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#cmpconstants" id="id21">cmpConstants</a></li>
-<li><a class="reference internal" href="#compare-const-basicblock-const-basicblock" id="id22">compare(const BasicBlock*, const BasicBlock*)</a></li>
-<li><a class="reference internal" href="#cmpgep" id="id23">cmpGEP</a></li>
-<li><a class="reference internal" href="#cmpoperation" id="id24">cmpOperation</a></li>
-<li><a class="reference internal" href="#o-log-n" id="id25">O(log(N))</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#merging-process-mergetwofunctions" id="id26">Merging process, mergeTwoFunctions</a><ul>
-<li><a class="reference internal" href="#if-f-may-be-overridden" id="id27">If “F” may be overridden</a><ul>
-<li><a class="reference internal" href="#hasglobalaliases-removeusers" id="id28">HasGlobalAliases, removeUsers</a></li>
-<li><a class="reference internal" href="#no-global-aliases-replacedirectcallers" id="id29">No global aliases, replaceDirectCallers</a><ul>
-<li><a class="reference internal" href="#if-f-could-not-be-overridden-fix-it" id="id30">If “F” could not be overridden, fix it!</a></li>
+<li><a class="reference internal" href="#mergefunctions-main-fields-and-runonmodule" id="id13">MergeFunctions, main fields and runOnModule</a><ul>
+<li><a class="reference internal" href="#runonmodule" id="id14">runOnModule</a></li>
+<li><a class="reference internal" href="#comparison-and-logarithmical-search" id="id15">Comparison and logarithmical search</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#that-s-it" id="id31">That&#8217;s it.</a></li>
+<li><a class="reference internal" href="#functions-comparison" id="id16">Functions comparison</a><ul>
+<li><a class="reference internal" href="#functioncomparator-compare-void" id="id17">FunctionComparator::compare(void)</a></li>
+<li><a class="reference internal" href="#functioncomparator-cmptype" id="id18">FunctionComparator::cmpType</a></li>
+<li><a class="reference internal" href="#cmpvalues-const-value-const-value" id="id19">cmpValues(const Value*, const Value*)</a><ul>
+<li><a class="reference internal" href="#what-we-assiciate-in-cmpvalues" id="id20">What we assiciate in cmpValues?</a></li>
+<li><a class="reference internal" href="#how-to-implement-cmpvalues" id="id21">How to implement cmpValues?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cmpconstants" id="id22">cmpConstants</a></li>
+<li><a class="reference internal" href="#compare-const-basicblock-const-basicblock" id="id23">compare(const BasicBlock*, const BasicBlock*)</a></li>
+<li><a class="reference internal" href="#cmpgep" id="id24">cmpGEP</a></li>
+<li><a class="reference internal" href="#cmpoperation" id="id25">cmpOperation</a></li>
+<li><a class="reference internal" href="#o-log-n" id="id26">O(log(N))</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#merging-process-mergetwofunctions" id="id27">Merging process, mergeTwoFunctions</a><ul>
+<li><a class="reference internal" href="#if-f-may-be-overridden" id="id28">If “F” may be overridden</a><ul>
+<li><a class="reference internal" href="#hasglobalaliases-removeusers" id="id29">HasGlobalAliases, removeUsers</a></li>
+<li><a class="reference internal" href="#no-global-aliases-replacedirectcallers" id="id30">No global aliases, replaceDirectCallers</a><ul>
+<li><a class="reference internal" href="#if-f-could-not-be-overridden-fix-it" id="id31">If “F” could not be overridden, fix it!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#that-s-it" id="id32">That’s it.</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>Sometimes code contains equal functions, or functions that does exactly the same
 thing even though they are non-equal on the IR level (e.g.: multiplication on 2
-and &#8216;shl 1&#8217;). It could happen due to several reasons: mainly, the usage of
+and ‘shl 1’). It could happen due to several reasons: mainly, the usage of
 templates and automatic code generators. Though, sometimes user itself could
 write the same thing twice :-)</p>
 <p>The main purpose of this pass is to recognize such functions and merge them.</p>
 <div class="section" id="why-would-i-want-to-read-this-document">
-<h3><a class="toc-backref" href="#id2">Why would I want to read this document?</a><a class="headerlink" href="#why-would-i-want-to-read-this-document" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id3">Why would I want to read this document?</a><a class="headerlink" href="#why-would-i-want-to-read-this-document" title="永久链接至标题">¶</a></h3>
 <p>Document is the extension to pass comments and describes the pass logic. It
 describes algorithm that is used in order to compare functions, it also
 explains how we could combine equal functions correctly, keeping module valid.</p>
@@ -147,13 +146,13 @@ explains how we could combine equal functions correctly, keeping module valid.</
 ideas and end up with low-level algorithm details, thus preparing him for
 reading the sources.</p>
 <p>So main goal is do describe algorithm and logic here; the concept. This document
-is good for you, if you <em>don&#8217;t want</em> to read the source code, but want to
+is good for you, if you <em>don’t want</em> to read the source code, but want to
 understand pass algorithms. Author tried not to repeat the source-code and
 cover only common cases, and thus avoid cases when after minor code changes we
 need to update this document.</p>
 </div>
 <div class="section" id="what-should-i-know-to-be-able-to-follow-along-with-this-document">
-<h3><a class="toc-backref" href="#id3">What should I know to be able to follow along with this document?</a><a class="headerlink" href="#what-should-i-know-to-be-able-to-follow-along-with-this-document" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id4">What should I know to be able to follow along with this document?</a><a class="headerlink" href="#what-should-i-know-to-be-able-to-follow-along-with-this-document" title="永久链接至标题">¶</a></h3>
 <p>Reader should be familiar with common compile-engineering principles and LLVM
 code fundamentals. In this article we suppose reader is familiar with
 <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">Single Static Assingment</a>
@@ -161,15 +160,15 @@ concepts. Understanding of
 <a class="reference external" href="http://llvm.org/docs/LangRef.html#high-level-structure">IR structure</a> is
 also important.</p>
 <p>We will use such terms as
-&#8220;<a class="reference external" href="http://llvm.org/docs/LangRef.html#high-level-structure">module</a>&#8221;,
-&#8220;<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-function-class">function</a>&#8221;,
-&#8220;<a class="reference external" href="http://en.wikipedia.org/wiki/Basic_block">basic block</a>&#8221;,
-&#8220;<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-user-class">user</a>&#8221;,
-&#8220;<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-value-class">value</a>&#8221;,
-&#8220;<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-instruction-class">instruction</a>&#8221;.</p>
+“<a class="reference external" href="http://llvm.org/docs/LangRef.html#high-level-structure">module</a>”,
+“<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-function-class">function</a>”,
+“<a class="reference external" href="http://en.wikipedia.org/wiki/Basic_block">basic block</a>”,
+“<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-user-class">user</a>”,
+“<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-value-class">value</a>”,
+“<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#the-instruction-class">instruction</a>”.</p>
 <p>As a good start point, Kaleidoscope tutorial could be used:</p>
 <p><a class="reference internal" href="tutorial/index.html"><span class="doc">LLVM Tutorial: Table of Contents</span></a></p>
-<p>Especially it&#8217;s important to understand chapter 3 of tutorial:</p>
+<p>Especially it’s important to understand chapter 3 of tutorial:</p>
 <p><a class="reference internal" href="tutorial/LangImpl3.html"><span class="doc">Kaleidoscope: Code generation to LLVM IR</span></a></p>
 <p>Reader also should know how passes work in LLVM, they could use next article as
 a reference and start point here:</p>
@@ -178,39 +177,39 @@ a reference and start point here:</p>
 debugging and bug-fixing.</p>
 </div>
 <div class="section" id="what-i-gain-by-reading-this-document">
-<h3><a class="toc-backref" href="#id4">What I gain by reading this document?</a><a class="headerlink" href="#what-i-gain-by-reading-this-document" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">What I gain by reading this document?</a><a class="headerlink" href="#what-i-gain-by-reading-this-document" title="永久链接至标题">¶</a></h3>
 <p>Main purpose is to provide reader with comfortable form of algorithms
 description, namely the human reading text. Since it could be hard to
 understand algorithm straight from the source code: pass uses some principles
 that have to be explained first.</p>
 <p>Author wishes to everybody to avoid case, when you read code from top to bottom
-again and again, and yet you don&#8217;t understand why we implemented it that way.</p>
+again and again, and yet you don’t understand why we implemented it that way.</p>
 <p>We hope that after this article reader could easily debug and improve
 MergeFunctions pass and thus help LLVM project.</p>
 </div>
 <div class="section" id="narrative-structure">
-<h3><a class="toc-backref" href="#id5">Narrative structure</a><a class="headerlink" href="#narrative-structure" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Narrative structure</a><a class="headerlink" href="#narrative-structure" title="永久链接至标题">¶</a></h3>
 <p>Article consists of three parts. First part explains pass functionality on the
 top-level. Second part describes the comparison procedure itself. The third
 part describes the merging process.</p>
 <p>In every part author also tried to put the contents into the top-down form.
 First, the top-level methods will be described, while the terminal ones will be
 at the end, in the tail of each part. If reader will see the reference to the
-method that wasn&#8217;t described yet, they will find its description a bit below.</p>
+method that wasn’t described yet, they will find its description a bit below.</p>
 </div>
 </div>
 <div class="section" id="basics">
-<h2><a class="toc-backref" href="#id6">Basics</a><a class="headerlink" href="#basics" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Basics</a><a class="headerlink" href="#basics" title="永久链接至标题">¶</a></h2>
 <div class="section" id="how-to-do-it">
-<h3><a class="toc-backref" href="#id7">How to do it?</a><a class="headerlink" href="#how-to-do-it" title="永久链接至标题">¶</a></h3>
-<p>Do we need to merge functions? Obvious thing is: yes that&#8217;s a quite possible
+<h3><a class="toc-backref" href="#id8">How to do it?</a><a class="headerlink" href="#how-to-do-it" title="永久链接至标题">¶</a></h3>
+<p>Do we need to merge functions? Obvious thing is: yes that’s a quite possible
 case, since usually we <em>do</em> have duplicates. And it would be good to get rid of
 them. But how to detect such a duplicates? The idea is next: we split functions
-onto small bricks (parts), then we compare &#8220;bricks&#8221; amount, and if it equal,
-compare &#8220;bricks&#8221; themselves, and then do our conclusions about functions
+onto small bricks (parts), then we compare “bricks” amount, and if it equal,
+compare “bricks” themselves, and then do our conclusions about functions
 themselves.</p>
 <p>What the difference it could be? For example, on machine with 64-bit pointers
-(let&#8217;s assume we have only one address space),  one function stores 64-bit
+(let’s assume we have only one address space),  one function stores 64-bit
 integer, while another one stores a pointer. So if the target is a machine
 mentioned above, and if functions are identical, except the parameter type (we
 could consider it as a part of function type), then we can treat <code class="docutils literal"><span class="pre">uint64_t</span></code>
@@ -220,16 +219,16 @@ and``void*`` as equal.</p>
 performs multiplication on 2, while the second one performs arithmetic right
 shift on 1.</p>
 <div class="section" id="possible-solutions">
-<h4><a class="toc-backref" href="#id8">Possible solutions</a><a class="headerlink" href="#possible-solutions" title="永久链接至标题">¶</a></h4>
-<p>Let&#8217;s briefly consider possible options about how and what we have to implement
+<h4><a class="toc-backref" href="#id9">Possible solutions</a><a class="headerlink" href="#possible-solutions" title="永久链接至标题">¶</a></h4>
+<p>Let’s briefly consider possible options about how and what we have to implement
 in order to create full-featured functions merging, and also what it would
 meant for us.</p>
-<p>Equal functions detection, obviously supposes &#8220;detector&#8221; method to be
-implemented, latter should answer the question &#8220;whether functions are equal&#8221;.
-This &#8220;detector&#8221; method consists of tiny &#8220;sub-detectors&#8221;, each of them answers
+<p>Equal functions detection, obviously supposes “detector” method to be
+implemented, latter should answer the question “whether functions are equal”.
+This “detector” method consists of tiny “sub-detectors”, each of them answers
 exactly the same question, but for function parts.</p>
-<p>As the second step, we should merge equal functions. So it should be a &#8220;merger&#8221;
-method. &#8220;Merger&#8221; accepts two functions <em>F1</em> and <em>F2</em>, and produces <em>F1F2</em>
+<p>As the second step, we should merge equal functions. So it should be a “merger”
+method. “Merger” accepts two functions <em>F1</em> and <em>F2</em>, and produces <em>F1F2</em>
 function, the result of merging.</p>
 <p>Having such a routines in our hands, we can process whole module, and merge all
 equal functions.</p>
@@ -238,9 +237,9 @@ reader could notice, this way seems to be quite expensive. Of course we could
 introduce hashing and other helpers, but it is still just an optimization, and
 thus the level of O(N*N) complexity.</p>
 <p>Can we reach another level? Could we introduce logarithmical search, or random
-access lookup? The answer is: &#8220;yes&#8221;.</p>
+access lookup? The answer is: “yes”.</p>
 <div class="section" id="random-access">
-<h5><a class="toc-backref" href="#id9">Random-access</a><a class="headerlink" href="#random-access" title="永久链接至标题">¶</a></h5>
+<h5><a class="toc-backref" href="#id10">Random-access</a><a class="headerlink" href="#random-access" title="永久链接至标题">¶</a></h5>
 <p>How it could be done? Just convert each function to number, and gather all of
 them in special hash-table. Functions with equal hash are equal. Good hashing
 means, that every function part must be taken into account. That means we have
@@ -249,35 +248,35 @@ Lookup-up time would be small, but such approach adds some delay due to hashing
 routine.</p>
 </div>
 <div class="section" id="logarithmical-search">
-<h5><a class="toc-backref" href="#id10">Logarithmical search</a><a class="headerlink" href="#logarithmical-search" title="永久链接至标题">¶</a></h5>
+<h5><a class="toc-backref" href="#id11">Logarithmical search</a><a class="headerlink" href="#logarithmical-search" title="永久链接至标题">¶</a></h5>
 <p>We could introduce total ordering among the functions set, once we had it we
 could then implement a logarithmical search. Lookup time still depends on N,
 but adds a little of delay (<em>log(N)</em>).</p>
 </div>
 <div class="section" id="present-state">
-<h5><a class="toc-backref" href="#id11">Present state</a><a class="headerlink" href="#present-state" title="永久链接至标题">¶</a></h5>
+<h5><a class="toc-backref" href="#id12">Present state</a><a class="headerlink" href="#present-state" title="永久链接至标题">¶</a></h5>
 <p>Both of approaches (random-access and logarithmical) has been implemented and
 tested. And both of them gave a very good improvement. And what was most
 surprising, logarithmical search was faster; sometimes up to 15%. Hashing needs
 some extra CPU time, and it is the main reason why it works slower; in most of
-cases total &#8220;hashing&#8221; time was greater than total &#8220;logarithmical-search&#8221; time.</p>
-<p>So, preference has been granted to the &#8220;logarithmical search&#8221;.</p>
-<p>Though in the case of need, <em>logarithmical-search</em> (read &#8220;total-ordering&#8221;) could
+cases total “hashing” time was greater than total “logarithmical-search” time.</p>
+<p>So, preference has been granted to the “logarithmical search”.</p>
+<p>Though in the case of need, <em>logarithmical-search</em> (read “total-ordering”) could
 be used as a milestone on our way to the <em>random-access</em> implementation.</p>
 <p>Every comparison is based either on the numbers or on flags comparison. In
 <em>random-access</em> approach we could use the same comparison algorithm. During
 comparison we exit once we find the difference, but here we might have to scan
 whole function body every time (note, it could be slower). Like in
-&#8220;total-ordering&#8221;, we will track every numbers and flags, but instead of
+“total-ordering”, we will track every numbers and flags, but instead of
 comparison, we should get numbers sequence and then create the hash number. So,
 once again, <em>total-ordering</em> could be considered as a milestone for even faster
 (in theory) random-access approach.</p>
 </div>
 </div>
 <div class="section" id="mergefunctions-main-fields-and-runonmodule">
-<h4><a class="toc-backref" href="#id12">MergeFunctions, main fields and runOnModule</a><a class="headerlink" href="#mergefunctions-main-fields-and-runonmodule" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id13">MergeFunctions, main fields and runOnModule</a><a class="headerlink" href="#mergefunctions-main-fields-and-runonmodule" title="永久链接至标题">¶</a></h4>
 <p>There are two most important fields in class:</p>
-<p><code class="docutils literal"><span class="pre">FnTree</span></code>  – the set of all unique functions. It keeps items that couldn&#8217;t be
+<p><code class="docutils literal"><span class="pre">FnTree</span></code>  – the set of all unique functions. It keeps items that couldn’t be
 merged with each other. It is defined as:</p>
 <p><code class="docutils literal"><span class="pre">std::set&lt;FunctionNode&gt;</span> <span class="pre">FnTree;</span></code></p>
 <p>Here <code class="docutils literal"><span class="pre">FunctionNode</span></code> is a wrapper for <code class="docutils literal"><span class="pre">llvm::Function</span></code> class, with
@@ -288,12 +287,12 @@ exactly; this is a key point in fast functions comparison).</p>
 case we remove them from <code class="docutils literal"><span class="pre">FnTree</span></code>, and mark them as to be rescanned, namely
 put them into <code class="docutils literal"><span class="pre">Deferred</span></code> list.</p>
 <div class="section" id="runonmodule">
-<h5><a class="toc-backref" href="#id13">runOnModule</a><a class="headerlink" href="#runonmodule" title="永久链接至标题">¶</a></h5>
+<h5><a class="toc-backref" href="#id14">runOnModule</a><a class="headerlink" href="#runonmodule" title="永久链接至标题">¶</a></h5>
 <p>The algorithm is pretty simple:</p>
 <ol class="arabic simple">
-<li>Put all module&#8217;s functions into the <em>worklist</em>.</li>
+<li>Put all module’s functions into the <em>worklist</em>.</li>
 </ol>
-<p>2. Scan <em>worklist</em>&#8216;s functions twice: first enumerate only strong functions and
+<p>2. Scan <em>worklist</em>’s functions twice: first enumerate only strong functions and
 then only weak ones:</p>
 <blockquote>
 <div>2.1. Loop body: take function from <em>worklist</em>  (call it <em>FCur</em>) and try to
@@ -306,15 +305,15 @@ list. If it is not empty: refill <em>worklist</em> contents with <em>Deferred</e
 do step 2 again, if <em>Deferred</em> is empty, then exit from method.</p>
 </div>
 <div class="section" id="comparison-and-logarithmical-search">
-<h5><a class="toc-backref" href="#id14">Comparison and logarithmical search</a><a class="headerlink" href="#comparison-and-logarithmical-search" title="永久链接至标题">¶</a></h5>
-<p>Let&#8217;s recall our task: for every function <em>F</em> from module <em>M</em>, we have to find
+<h5><a class="toc-backref" href="#id15">Comparison and logarithmical search</a><a class="headerlink" href="#comparison-and-logarithmical-search" title="永久链接至标题">¶</a></h5>
+<p>Let’s recall our task: for every function <em>F</em> from module <em>M</em>, we have to find
 equal functions <em>F`</em> in shortest time, and merge them into the single function.</p>
 <p>Defining total ordering among the functions set allows to organize functions
 into the binary tree. The lookup procedure complexity would be estimated as
 O(log(N)) in this case. But how to define <em>total-ordering</em>?</p>
 <p>We have to introduce a single rule applicable to every pair of functions, and
 following this rule then evaluate which of them is greater. What kind of rule
-it could be? Let&#8217;s declare it as &#8220;compare&#8221; method, that returns one of 3
+it could be? Let’s declare it as “compare” method, that returns one of 3
 possible values:</p>
 <p>-1, left is <em>less</em> than right,</p>
 <p>0, left and right are <em>equal</em>,</p>
@@ -328,8 +327,8 @@ possible values:</p>
 <li>asymmetry (if <code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></code>, then <code class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">b</span></code> or <code class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></code>).</li>
 </ul>
 <p>As it was mentioned before, comparison routine consists of
-&#8220;sub-comparison-routines&#8221;, each of them also consists
-&#8220;sub-comparison-routines&#8221;, and so on, finally it ends up with a primitives
+“sub-comparison-routines”, each of them also consists
+“sub-comparison-routines”, and so on, finally it ends up with a primitives
 comparison.</p>
 <p>Below, we will use the next operations:</p>
 <ol class="arabic simple">
@@ -343,33 +342,33 @@ The logic is the same as in <code class="docutils literal"><span class="pre">cmp
 (<em>&lt;llvm_dir&gt;/lib/Transforms/IPO/MergeFunctions.cpp</em>). We would like to ask
 reader to keep this file open nearby, so we could use it as a reference for
 further explanations.</p>
-<p>Now we&#8217;re ready to proceed to the next chapter and see how it works.</p>
+<p>Now we’re ready to proceed to the next chapter and see how it works.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="functions-comparison">
-<h2><a class="toc-backref" href="#id15">Functions comparison</a><a class="headerlink" href="#functions-comparison" title="永久链接至标题">¶</a></h2>
-<p>At first, let&#8217;s define how exactly we compare complex objects.</p>
+<h2><a class="toc-backref" href="#id16">Functions comparison</a><a class="headerlink" href="#functions-comparison" title="永久链接至标题">¶</a></h2>
+<p>At first, let’s define how exactly we compare complex objects.</p>
 <p>Complex objects comparison (function, basic-block, etc) is mostly based on its
-sub-objects comparison results. So it is similar to the next &#8220;tree&#8221; objects
+sub-objects comparison results. So it is similar to the next “tree” objects
 comparison:</p>
 <ol class="arabic simple">
 <li>For two trees <em>T1</em> and <em>T2</em> we perform <em>depth-first-traversal</em> and have
-two sequences as a product: &#8220;<em>T1Items</em>&#8221; and &#8220;<em>T2Items</em>&#8221;.</li>
-<li>Then compare chains &#8220;<em>T1Items</em>&#8221; and &#8220;<em>T2Items</em>&#8221; in
+two sequences as a product: “<em>T1Items</em>” and “<em>T2Items</em>”.</li>
+<li>Then compare chains “<em>T1Items</em>” and “<em>T2Items</em>” in
 most-significant-item-first order. Result of items comparison would be the
 result of <em>T1</em> and <em>T2</em> comparison itself.</li>
 </ol>
 <div class="section" id="functioncomparator-compare-void">
-<h3><a class="toc-backref" href="#id16">FunctionComparator::compare(void)</a><a class="headerlink" href="#functioncomparator-compare-void" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id17">FunctionComparator::compare(void)</a><a class="headerlink" href="#functioncomparator-compare-void" title="永久链接至标题">¶</a></h3>
 <p>Brief look at the source code tells us, that comparison starts in
 “<code class="docutils literal"><span class="pre">int</span> <span class="pre">FunctionComparator::compare(void)</span></code>” method.</p>
-<p>1. First parts to be compared are function&#8217;s attributes and some properties that
+<p>1. First parts to be compared are function’s attributes and some properties that
 outsides “attributes” term, but still could make function different without
 changing its body. This part of comparison is usually done within simple
 <em>cmpNumbers</em> or <em>cmpFlags</em> operations (e.g.
-<code class="docutils literal"><span class="pre">cmpFlags(F1-&gt;hasGC(),</span> <span class="pre">F2-&gt;hasGC())</span></code>). Below is full list of function&#8217;s
+<code class="docutils literal"><span class="pre">cmpFlags(F1-&gt;hasGC(),</span> <span class="pre">F2-&gt;hasGC())</span></code>). Below is full list of function’s
 properties to be compared on this stage:</p>
 <blockquote>
 <div><ul class="simple">
@@ -388,8 +387,8 @@ without <em>var-args</em>.</li>
 method. It checks return type and parameters type; the method itself will be
 described later.</p>
 <p>3. Associate function formal parameters with each other. Then comparing function
-bodies, if we see the usage of <em>LHS</em>&#8216;s <em>i</em>-th argument in <em>LHS</em>&#8216;s body, then,
-we want to see usage of <em>RHS</em>&#8216;s <em>i</em>-th argument at the same place in <em>RHS</em>&#8216;s
+bodies, if we see the usage of <em>LHS</em>’s <em>i</em>-th argument in <em>LHS</em>’s body, then,
+we want to see usage of <em>RHS</em>’s <em>i</em>-th argument at the same place in <em>RHS</em>’s
 body, otherwise functions are different. On this stage we grant the preference
 to those we met later in function body (value we met first would be <em>less</em>).
 This is done by “<code class="docutils literal"><span class="pre">FunctionComparator::cmpValues(const</span> <span class="pre">Value*,</span> <span class="pre">const</span> <span class="pre">Value*)</span></code>”
@@ -408,7 +407,7 @@ compare them by “<code class="docutils literal"><span class="pre">FunctionComp
 arguments (see <code class="docutils literal"><span class="pre">cmpValues</span></code> method below).</p>
 </div>
 <div class="section" id="functioncomparator-cmptype">
-<h3><a class="toc-backref" href="#id17">FunctionComparator::cmpType</a><a class="headerlink" href="#functioncomparator-cmptype" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id18">FunctionComparator::cmpType</a><a class="headerlink" href="#functioncomparator-cmptype" title="永久链接至标题">¶</a></h3>
 <p>Consider how types comparison works.</p>
 <p>1. Coerce pointer to integer. If left type is a pointer, try to coerce it to the
 integer type. It could be done if its address space is 0, or if address spaces
@@ -431,7 +430,7 @@ comparing them as numbers.</p>
 <li>Label</li>
 <li>Metadata.</li>
 </ul>
-<p>If ID belongs to group above, return 0. Since it&#8217;s enough to see that
+<p>If ID belongs to group above, return 0. Since it’s enough to see that
 types has the same <code class="docutils literal"><span class="pre">TypeID</span></code>. No additional information is required.</p>
 </li>
 </ol>
@@ -441,18 +440,18 @@ types has the same <code class="docutils literal"><span class="pre">TypeID</span
 technique (see the very first paragraph of this chapter). Both <em>left</em> and
 <em>right</em> are to be expanded and their element types will be checked the same
 way. If we get -1 or 1 on some stage, return it. Otherwise return 0.</p>
-<p>8. Steps 1-6 describe all the possible cases, if we passed steps 1-6 and didn&#8217;t
-get any conclusions, then invoke <code class="docutils literal"><span class="pre">llvm_unreachable</span></code>, since it&#8217;s quite
+<p>8. Steps 1-6 describe all the possible cases, if we passed steps 1-6 and didn’t
+get any conclusions, then invoke <code class="docutils literal"><span class="pre">llvm_unreachable</span></code>, since it’s quite
 unexpectable case.</p>
 </div>
 <div class="section" id="cmpvalues-const-value-const-value">
-<h3><a class="toc-backref" href="#id18">cmpValues(const Value*, const Value*)</a><a class="headerlink" href="#cmpvalues-const-value-const-value" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id19">cmpValues(const Value*, const Value*)</a><a class="headerlink" href="#cmpvalues-const-value-const-value" title="永久链接至标题">¶</a></h3>
 <p>Method that compares local values.</p>
 <p>This method gives us an answer on a very curious quesion: whether we could treat
-local values as equal, and which value is greater otherwise. It&#8217;s better to
+local values as equal, and which value is greater otherwise. It’s better to
 start from example:</p>
-<p>Consider situation when we&#8217;re looking at the same place in left function &#8220;<em>FL</em>&#8221;
-and in right function &#8220;<em>FR</em>&#8221;. And every part of <em>left</em> place is equal to the
+<p>Consider situation when we’re looking at the same place in left function “<em>FL</em>”
+and in right function “<em>FR</em>”. And every part of <em>left</em> place is equal to the
 corresponding part of <em>right</em> place, and (!) both parts use <em>Value</em> instances,
 for example:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>instr0 i32 %LV   ; left side, function FL
@@ -461,9 +460,9 @@ instr0 i32 %RV   ; right side, function FR
 </div>
 <p>So, now our conclusion depends on <em>Value</em> instances comparison.</p>
 <p>Main purpose of this method is to determine relation between such values.</p>
-<p>What we expect from equal functions? At the same place, in functions &#8220;<em>FL</em>&#8221; and
-&#8220;<em>FR</em>&#8221; we expect to see <em>equal</em> values, or values <em>defined</em> at the same place
-in &#8220;<em>FL</em>&#8221; and &#8220;<em>FR</em>&#8221;.</p>
+<p>What we expect from equal functions? At the same place, in functions “<em>FL</em>” and
+“<em>FR</em>” we expect to see <em>equal</em> values, or values <em>defined</em> at the same place
+in “<em>FL</em>” and “<em>FR</em>”.</p>
 <p>Consider small example here:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>define void %f(i32 %pf0, i32 %pf1) {
   instr0 i32 %pf0 instr1 i32 %pf1 instr2 i32 123
@@ -477,15 +476,15 @@ in &#8220;<em>FL</em>&#8221; and &#8220;<em>FR</em>&#8221;.</p>
 </div>
 <p>In this example, <em>pf0</em> is associated with <em>pg0</em>, <em>pf1</em> is associated with <em>pg1</em>,
 and we also declare that <em>pf0</em> &lt; <em>pf1</em>, and thus <em>pg0</em> &lt; <em>pf1</em>.</p>
-<p>Instructions with opcode &#8220;<em>instr0</em>&#8221; would be <em>equal</em>, since their types and
+<p>Instructions with opcode “<em>instr0</em>” would be <em>equal</em>, since their types and
 opcodes are equal, and values are <em>associated</em>.</p>
-<p>Instruction with opcode &#8220;<em>instr1</em>&#8221; from <em>f</em> is <em>greater</em> than instruction with
-opcode &#8220;<em>instr1</em>&#8221; from <em>g</em>; here we have equal types and opcodes, but &#8220;<em>pf1</em> is
-greater than &#8220;<em>pg0</em>&#8221;.</p>
-<p>And instructions with opcode &#8220;<em>instr2</em>&#8221; are equal, because their opcodes and
+<p>Instruction with opcode “<em>instr1</em>” from <em>f</em> is <em>greater</em> than instruction with
+opcode “<em>instr1</em>” from <em>g</em>; here we have equal types and opcodes, but “<em>pf1</em> is
+greater than “<em>pg0</em>”.</p>
+<p>And instructions with opcode “<em>instr2</em>” are equal, because their opcodes and
 types are equal, and the same constant is used as a value.</p>
 <div class="section" id="what-we-assiciate-in-cmpvalues">
-<h4><a class="toc-backref" href="#id19">What we assiciate in cmpValues?</a><a class="headerlink" href="#what-we-assiciate-in-cmpvalues" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id20">What we assiciate in cmpValues?</a><a class="headerlink" href="#what-we-assiciate-in-cmpvalues" title="永久链接至标题">¶</a></h4>
 <ul class="simple">
 <li>Function arguments. <em>i</em>-th argument from left function associated with
 <em>i</em>-th argument from right function.</li>
@@ -503,7 +502,7 @@ also compare them.</li>
 </ul>
 </div>
 <div class="section" id="how-to-implement-cmpvalues">
-<h4><a class="toc-backref" href="#id20">How to implement cmpValues?</a><a class="headerlink" href="#how-to-implement-cmpvalues" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id21">How to implement cmpValues?</a><a class="headerlink" href="#how-to-implement-cmpvalues" title="永久链接至标题">¶</a></h4>
 <p><em>Association</em> is a case of equality for us. We just treat such values as equal.
 But, in general, we need to implement antisymmetric relation. As it was
 mentioned above, to understand what is <em>less</em>, we can use order in which we
@@ -529,7 +528,7 @@ comparison:</p>
 <span class="k">return</span> <span class="nf">cmpNumbers</span><span class="p">(</span><span class="n">LeftRes</span><span class="p">.</span><span class="n">first</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">,</span> <span class="n">RightRes</span><span class="p">.</span><span class="n">first</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Let&#8217;s look, how whole method could be implemented.</p>
+<p>Let’s look, how whole method could be implemented.</p>
 <p>1. we have to start from the bad news. Consider function self and
 cross-referencing cases:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// self-reference unsigned fact0(unsigned n) { return n &gt; 1 ? n</span>
@@ -543,7 +542,7 @@ cross-referencing cases:</p>
 <blockquote>
 <div>This comparison has been implemented in initial <em>MergeFunctions</em> pass
 version. But, unfortunately, it is not transitive. And this is the only case
-we can&#8217;t convert to less-equal-greater comparison. It is a seldom case, 4-5
+we can’t convert to less-equal-greater comparison. It is a seldom case, 4-5
 functions of 10000 (checked on test-suite), and, we hope, reader would
 forgive us for such a sacrifice in order to get the O(log(N)) pass time.</div></blockquote>
 <p>2. If left/right <em>Value</em> is a constant, we have to compare them. Return 0 if it
@@ -568,7 +567,7 @@ comparison procedure.</p>
 </div>
 </div>
 <div class="section" id="cmpconstants">
-<h3><a class="toc-backref" href="#id21">cmpConstants</a><a class="headerlink" href="#cmpconstants" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id22">cmpConstants</a><a class="headerlink" href="#cmpconstants" title="永久链接至标题">¶</a></h3>
 <p>Performs constants comparison as follows:</p>
 <p>1. Compare constant types using <code class="docutils literal"><span class="pre">cmpType</span></code> method. If result is -1 or 1, goto
 step 2, otherwise proceed to step 3.</p>
@@ -597,7 +596,7 @@ result of types comparison (-1 or 1).</li>
 </div></blockquote>
 <p>Steps below are for the case when types are equal, or case when constants are
 bitcastable:</p>
-<p>3. One of constants is a &#8220;<em>null</em>&#8221; value. Return the result of
+<p>3. One of constants is a “<em>null</em>” value. Return the result of
 <code class="docutils literal"><span class="pre">cmpFlags(L-&gt;isNullValue,</span> <span class="pre">R-&gt;isNullValue)</span></code> comparison.</p>
 <ol class="arabic simple" start="4">
 <li>Compare value IDs, and return result if it is not 0:</li>
@@ -608,13 +607,13 @@ bitcastable:</p>
 </div>
 <p>5. Compare the contents of constants. The comparison depends on kind of
 constants, but on this stage it is just a lexicographical comparison. Just see
-how it was described in the beginning of &#8220;<em>Functions comparison</em>&#8221; paragraph.
+how it was described in the beginning of “<em>Functions comparison</em>” paragraph.
 Mathematically it is equal to the next case: we encode left constant and right
 constant (with similar way <em>bitcode-writer</em> does). Then compare left code
 sequence and right code sequence.</p>
 </div>
 <div class="section" id="compare-const-basicblock-const-basicblock">
-<h3><a class="toc-backref" href="#id22">compare(const BasicBlock*, const BasicBlock*)</a><a class="headerlink" href="#compare-const-basicblock-const-basicblock" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id23">compare(const BasicBlock*, const BasicBlock*)</a><a class="headerlink" href="#compare-const-basicblock-const-basicblock" title="永久链接至标题">¶</a></h3>
 <p>Compares two <em>BasicBlock</em> instances.</p>
 <p>It enumerates instructions from left <em>BB</em> and right <em>BB</em>.</p>
 <p>1. It assigns serial numbers to the left and right instructions, using
@@ -635,7 +634,7 @@ it is -1 or 1.</p>
 </div></blockquote>
 <ol class="arabic" start="4">
 <li><p class="first">We can finish instruction enumeration in 3 cases:</p>
-<p>4.1. We reached the end of both left and right basic-blocks. We didn&#8217;t
+<p>4.1. We reached the end of both left and right basic-blocks. We didn’t
 exit on steps 1-3, so contents is equal, return 0.</p>
 <p>4.2. We have reached the end of the left basic-block. Return -1.</p>
 <p>4.3. Return 1 (the end of the right basic block).</p>
@@ -643,7 +642,7 @@ exit on steps 1-3, so contents is equal, return 0.</p>
 </ol>
 </div>
 <div class="section" id="cmpgep">
-<h3><a class="toc-backref" href="#id23">cmpGEP</a><a class="headerlink" href="#cmpgep" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id24">cmpGEP</a><a class="headerlink" href="#cmpgep" title="永久链接至标题">¶</a></h3>
 <p>Compares two GEPs (<code class="docutils literal"><span class="pre">getelementptr</span></code> instructions).</p>
 <p>It differs from regular operations comparison with the only thing: possibility
 to use <code class="docutils literal"><span class="pre">accumulateConstantOffset</span></code> method.</p>
@@ -652,7 +651,7 @@ numbers, and return comparison result.</p>
 <p>Otherwise treat it like a regular operation (see previous paragraph).</p>
 </div>
 <div class="section" id="cmpoperation">
-<h3><a class="toc-backref" href="#id24">cmpOperation</a><a class="headerlink" href="#cmpoperation" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id25">cmpOperation</a><a class="headerlink" href="#cmpoperation" title="永久链接至标题">¶</a></h3>
 <p>Compares instruction opcodes and some important operation properties.</p>
 <ol class="arabic simple">
 <li>Compare opcodes, if it differs return the result.</li>
@@ -670,7 +669,7 @@ some significant attributes. For example we have to compare alignment for
 <code class="docutils literal"><span class="pre">load</span></code> instructions.</p>
 </div>
 <div class="section" id="o-log-n">
-<h3><a class="toc-backref" href="#id25">O(log(N))</a><a class="headerlink" href="#o-log-n" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">O(log(N))</a><a class="headerlink" href="#o-log-n" title="永久链接至标题">¶</a></h3>
 <p>Methods described above implement order relationship. And latter, could be used
 for nodes comparison in a binary tree. So we can organize functions set into
 the binary tree and reduce the cost of lookup procedure from
@@ -678,7 +677,7 @@ O(N*N) to O(log(N)).</p>
 </div>
 </div>
 <div class="section" id="merging-process-mergetwofunctions">
-<h2><a class="toc-backref" href="#id26">Merging process, mergeTwoFunctions</a><a class="headerlink" href="#merging-process-mergetwofunctions" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id27">Merging process, mergeTwoFunctions</a><a class="headerlink" href="#merging-process-mergetwofunctions" title="永久链接至标题">¶</a></h2>
 <p>Once <em>MergeFunctions</em> detected that current function (<em>G</em>) is equal to one that
 were analyzed before (function <em>F</em>) it calls <code class="docutils literal"><span class="pre">mergeTwoFunctions(Function*,</span>
 <span class="pre">Function*)</span></code>.</p>
@@ -690,24 +689,24 @@ functions that calls <em>G</em> would be put into <code class="docutils literal"
 <p>The approach is next:</p>
 <p>1. Most wished case: when we can use alias and both of <em>F</em> and <em>G</em> are weak. We
 make both of them with aliases to the third strong function <em>H</em>. Actually <em>H</em>
-is <em>F</em>. See below how it&#8217;s made (but it&#8217;s better to look straight into the
+is <em>F</em>. See below how it’s made (but it’s better to look straight into the
 source code). Well, this is a case when we can just replace <em>G</em> with <em>F</em>
 everywhere, we use <code class="docutils literal"><span class="pre">replaceAllUsesWith</span></code> operation here (<em>RAUW</em>).</p>
 <p>2. <em>F</em> could not be overridden, while <em>G</em> could. It would be good to do the
 next: after merging the places where overridable function were used, still use
 overridable stub. So try to make <em>G</em> alias to <em>F</em>, or create overridable tail
 call wrapper around <em>F</em> and replace <em>G</em> with that call.</p>
-<p>3. Neither <em>F</em> nor <em>G</em> could be overridden. We can&#8217;t use <em>RAUW</em>. We can just
-change the callers: call <em>F</em> instead of <em>G</em>.  That&#8217;s what
+<p>3. Neither <em>F</em> nor <em>G</em> could be overridden. We can’t use <em>RAUW</em>. We can just
+change the callers: call <em>F</em> instead of <em>G</em>.  That’s what
 <code class="docutils literal"><span class="pre">replaceDirectCallers</span></code> does.</p>
 <p>Below is detailed body description.</p>
 <div class="section" id="if-f-may-be-overridden">
-<h3><a class="toc-backref" href="#id27">If “F” may be overridden</a><a class="headerlink" href="#if-f-may-be-overridden" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id28">If “F” may be overridden</a><a class="headerlink" href="#if-f-may-be-overridden" title="永久链接至标题">¶</a></h3>
 <p>As follows from <code class="docutils literal"><span class="pre">mayBeOverridden</span></code> comments: “whether the definition of this
 global may be replaced by something non-equivalent at link time”. If so, thats
 ok: we can use alias to <em>F</em> instead of <em>G</em> or change call instructions itself.</p>
 <div class="section" id="hasglobalaliases-removeusers">
-<h4><a class="toc-backref" href="#id28">HasGlobalAliases, removeUsers</a><a class="headerlink" href="#hasglobalaliases-removeusers" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id29">HasGlobalAliases, removeUsers</a><a class="headerlink" href="#hasglobalaliases-removeusers" title="永久链接至标题">¶</a></h4>
 <p>First consider the case when we have global aliases of one function name to
 another. Our purpose is  make both of them with aliases to the third strong
 function. Though if we keep <em>F</em> alive and without major changes we can leave it
@@ -720,7 +719,7 @@ steps procedure instead. First of all, we must take into account, all functions
 from whom <em>F</em> is called would be changed: since we change the call argument
 (from <em>F</em> to <em>H</em>). If so we must to review these caller functions again after
 this procedure. We remove callers from <code class="docutils literal"><span class="pre">FnTree</span></code>, method with name
-<code class="docutils literal"><span class="pre">removeUsers(F)</span></code> does that (don&#8217;t confuse with <code class="docutils literal"><span class="pre">replaceAllUsesWith</span></code>):</p>
+<code class="docutils literal"><span class="pre">removeUsers(F)</span></code> does that (don’t confuse with <code class="docutils literal"><span class="pre">replaceAllUsesWith</span></code>):</p>
 <blockquote>
 <div><p>2.1. <code class="docutils literal"><span class="pre">Inside</span> <span class="pre">removeUsers(Value*</span>
 <span class="pre">V)</span></code> we go through the all values that use value <em>V</em> (or <em>F</em> in our context).
@@ -729,7 +728,7 @@ mark it as to-be-analyzed-again (put to <code class="docutils literal"><span cla
 caller from <code class="docutils literal"><span class="pre">FnTree</span></code>.</p>
 <p>2.2. Now we can do the replacement: call <code class="docutils literal"><span class="pre">F-&gt;replaceAllUsesWith(H)</span></code>.</p>
 </div></blockquote>
-<p>3. <em>H</em> (that now &#8220;officially&#8221; plays <em>F</em>&#8216;s role) is replaced with alias to <em>F</em>.
+<p>3. <em>H</em> (that now “officially” plays <em>F</em>’s role) is replaced with alias to <em>F</em>.
 Do the same with <em>G</em>: replace it with alias to <em>F</em>. So finally everywhere <em>F</em>
 was used, we use <em>H</em> and it is alias to <em>F</em>, and everywhere <em>G</em> was used we
 also have alias to <em>F</em>.</p>
@@ -738,14 +737,14 @@ also have alias to <em>F</em>.</p>
 </ol>
 </div>
 <div class="section" id="no-global-aliases-replacedirectcallers">
-<h4><a class="toc-backref" href="#id29">No global aliases, replaceDirectCallers</a><a class="headerlink" href="#no-global-aliases-replacedirectcallers" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id30">No global aliases, replaceDirectCallers</a><a class="headerlink" href="#no-global-aliases-replacedirectcallers" title="永久链接至标题">¶</a></h4>
 <p>If global aliases are not supported. We call <code class="docutils literal"><span class="pre">replaceDirectCallers</span></code> then. Just
 go through all calls of <em>G</em> and replace it with calls of <em>F</em>. If you look into
 method you will see that it scans all uses of <em>G</em> too, and if use is callee (if
 user is call instruction and <em>G</em> is used as what to be called), we replace it
 with use of <em>F</em>.</p>
 <div class="section" id="if-f-could-not-be-overridden-fix-it">
-<h5><a class="toc-backref" href="#id30">If “F” could not be overridden, fix it!</a><a class="headerlink" href="#if-f-could-not-be-overridden-fix-it" title="永久链接至标题">¶</a></h5>
+<h5><a class="toc-backref" href="#id31">If “F” could not be overridden, fix it!</a><a class="headerlink" href="#if-f-could-not-be-overridden-fix-it" title="永久链接至标题">¶</a></h5>
 <p>We call <code class="docutils literal"><span class="pre">writeThunkOrAlias(Function</span> <span class="pre">*F,</span> <span class="pre">Function</span> <span class="pre">*G)</span></code>. Here we try to replace
 <em>G</em> with alias to <em>F</em> first. Next conditions are essential:</p>
 <ul class="simple">
@@ -754,7 +753,7 @@ with use of <em>F</em>.</p>
 referenced anywhere,</li>
 <li>function should come with external, local or weak linkage.</li>
 </ul>
-<p>Otherwise we write thunk: some wrapper that has <em>G&#8217;s</em> interface and calls <em>F</em>,
+<p>Otherwise we write thunk: some wrapper that has <em>G’s</em> interface and calls <em>F</em>,
 so <em>G</em> could be replaced with this wrapper.</p>
 <p><em>writeAlias</em></p>
 <p>As follows from <em>llvm</em> reference:</p>
@@ -763,7 +762,7 @@ second name for <em>F</em> and use it instead of <em>G</em>:</p>
 <ol class="arabic">
 <li><p class="first">create global alias itself (<em>GA</em>),</p>
 </li>
-<li><p class="first">adjust alignment of <em>F</em> so it must be maximum of current and <em>G&#8217;s</em> alignment;</p>
+<li><p class="first">adjust alignment of <em>F</em> so it must be maximum of current and <em>G’s</em> alignment;</p>
 </li>
 <li><p class="first">replace uses of <em>G</em>:</p>
 <p>3.1. first mark all callers of <em>G</em> as to-be-analyzed-again, using
@@ -790,7 +789,7 @@ it instead of <em>G</em>.</p>
 </div>
 </div>
 <div class="section" id="that-s-it">
-<h2><a class="toc-backref" href="#id31">That&#8217;s it.</a><a class="headerlink" href="#that-s-it" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id32">That’s it.</a><a class="headerlink" href="#that-s-it" title="永久链接至标题">¶</a></h2>
 <p>We have described how to detect equal functions, and how to merge them, and in
 first chapter we have described how it works all-together. Author hopes, reader
 have some picture from now, and it helps him improve and debug ­this pass.</p>
@@ -821,9 +820,9 @@ have some picture from now, and it helps him improve and debug ­this pass.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

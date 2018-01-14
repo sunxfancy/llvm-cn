@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Design and Usage of the InAlloca Attribute &mdash; LLVM 3.8 文档</title>
-    
+    <title>Design and Usage of the InAlloca Attribute &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Using ARM NEON instructions in big endian mode" href="BigEndianNEON.html" />
     <link rel="prev" title="Stack maps and patch points in LLVM" href="StackMaps.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -109,33 +108,33 @@ that passes two default-constructed <code class="docutils literal"><span class="
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-llvm"><div class="highlight"><pre><span></span>%struct.Foo = type { i32, i32 }
-declare void @Foo_ctor(%struct.Foo* %this)
-declare void @Foo_dtor(%struct.Foo* %this)
-declare void @g(&lt;{ %struct.Foo, %struct.Foo }&gt;* inalloca %memargs)
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nv">%struct.Foo</span> <span class="p">=</span> <span class="k">type</span> <span class="p">{</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span> <span class="p">}</span>
+<span class="k">declare</span> <span class="kt">void</span> <span class="vg">@Foo_ctor</span><span class="p">(</span><span class="nv">%struct.Foo</span><span class="p">*</span> <span class="nv">%this</span><span class="p">)</span>
+<span class="k">declare</span> <span class="kt">void</span> <span class="vg">@Foo_dtor</span><span class="p">(</span><span class="nv">%struct.Foo</span><span class="p">*</span> <span class="nv">%this</span><span class="p">)</span>
+<span class="k">declare</span> <span class="kt">void</span> <span class="vg">@g</span><span class="p">(&lt;{</span> <span class="nv">%struct.Foo</span><span class="p">,</span> <span class="nv">%struct.Foo</span> <span class="p">}&gt;*</span> <span class="k">inalloca</span> <span class="nv">%memargs</span><span class="p">)</span>
 
-define void @f() {
-entry:
-  %base = call i8* @llvm.stacksave()
-  %memargs = alloca &lt;{ %struct.Foo, %struct.Foo }&gt;
-  %b = getelementptr &lt;{ %struct.Foo, %struct.Foo }&gt;* %memargs, i32 1
-  call void @Foo_ctor(%struct.Foo* %b)
+<span class="k">define</span> <span class="kt">void</span> <span class="vg">@f</span><span class="p">()</span> <span class="p">{</span>
+<span class="nl">entry:</span>
+  <span class="nv">%base</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.stacksave</span><span class="p">()</span>
+  <span class="nv">%memargs</span> <span class="p">=</span> <span class="k">alloca</span> <span class="p">&lt;{</span> <span class="nv">%struct.Foo</span><span class="p">,</span> <span class="nv">%struct.Foo</span> <span class="p">}&gt;</span>
+  <span class="nv">%b</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">&lt;{</span> <span class="nv">%struct.Foo</span><span class="p">,</span> <span class="nv">%struct.Foo</span> <span class="p">}&gt;*</span> <span class="nv">%memargs</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@Foo_ctor</span><span class="p">(</span><span class="nv">%struct.Foo</span><span class="p">*</span> <span class="nv">%b</span><span class="p">)</span>
 
-  ; If a&#39;s ctor throws, we must destruct b.
-  %a = getelementptr &lt;{ %struct.Foo, %struct.Foo }&gt;* %memargs, i32 0
-  invoke void @Foo_ctor(%struct.Foo* %a)
-      to label %invoke.cont unwind %invoke.unwind
+  <span class="c">; If a&#39;s ctor throws, we must destruct b.</span>
+  <span class="nv">%a</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">&lt;{</span> <span class="nv">%struct.Foo</span><span class="p">,</span> <span class="nv">%struct.Foo</span> <span class="p">}&gt;*</span> <span class="nv">%memargs</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span>
+  <span class="k">invoke</span> <span class="kt">void</span> <span class="vg">@Foo_ctor</span><span class="p">(</span><span class="nv">%struct.Foo</span><span class="p">*</span> <span class="nv">%a</span><span class="p">)</span>
+      <span class="k">to</span> <span class="kt">label</span> <span class="nv">%invoke.cont</span> <span class="k">unwind</span> <span class="nv">%invoke.unwind</span>
 
-invoke.cont:
-  call void @g(&lt;{ %struct.Foo, %struct.Foo }&gt;* inalloca %memargs)
-  call void @llvm.stackrestore(i8* %base)
-  ...
+<span class="nl">invoke.cont:</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@g</span><span class="p">(&lt;{</span> <span class="nv">%struct.Foo</span><span class="p">,</span> <span class="nv">%struct.Foo</span> <span class="p">}&gt;*</span> <span class="k">inalloca</span> <span class="nv">%memargs</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.stackrestore</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%base</span><span class="p">)</span>
+  <span class="p">...</span>
 
-invoke.unwind:
-  call void @Foo_dtor(%struct.Foo* %b)
-  call void @llvm.stackrestore(i8* %base)
-  ...
-}
+<span class="nl">invoke.unwind:</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@Foo_dtor</span><span class="p">(</span><span class="nv">%struct.Foo</span><span class="p">*</span> <span class="nv">%b</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.stackrestore</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%base</span><span class="p">)</span>
+  <span class="p">...</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>To avoid stack leaks, the frontend saves the current stack pointer with
@@ -178,12 +177,12 @@ allocations.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>In this case, we want to be able to elide copies into <code class="docutils literal"><span class="pre">bar</span></code>&#8216;s argument
+<p>In this case, we want to be able to elide copies into <code class="docutils literal"><span class="pre">bar</span></code>’s argument
 slots.  That means we need to have more than one set of argument frames
 active at the same time.  First, we need to allocate the frame for the
 outer call so we can pass it in as the hidden struct return pointer to
 the middle call.  Then we do the same for the middle call, allocating a
-frame and passing its address to <code class="docutils literal"><span class="pre">Foo</span></code>&#8216;s default constructor.  By
+frame and passing its address to <code class="docutils literal"><span class="pre">Foo</span></code>’s default constructor.  By
 wrapping the evaluation of the inner <code class="docutils literal"><span class="pre">bar</span></code> with stack save and
 restore, we can have multiple overlapping active call frames.</p>
 </div>
@@ -242,9 +241,9 @@ generation recommendations may change.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

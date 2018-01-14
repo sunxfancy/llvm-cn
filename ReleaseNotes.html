@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM 3.8 Release Notes &mdash; LLVM 3.8 文档</title>
-    
+    <title>LLVM 3.8 Release Notes &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="LLVM’s Analysis and Transform Passes" href="Passes.html" />
     <link rel="prev" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits" href="tutorial/OCamlLangImpl8.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,28 +74,28 @@
             
   <div class="section" id="llvm-3-8-release-notes">
 <h1>LLVM 3.8 Release Notes<a class="headerlink" href="#llvm-3-8-release-notes" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
-<li><a class="reference internal" href="#non-comprehensive-list-of-changes-in-this-release" id="id2">Non-comprehensive list of changes in this release</a><ul>
-<li><a class="reference internal" href="#changes-to-the-arm-backends" id="id3">Changes to the ARM Backends</a></li>
-<li><a class="reference internal" href="#changes-to-the-mips-target" id="id4">Changes to the MIPS Target</a></li>
-<li><a class="reference internal" href="#changes-to-the-powerpc-target" id="id5">Changes to the PowerPC Target</a></li>
-<li><a class="reference internal" href="#changes-to-the-x86-target" id="id6">Changes to the X86 Target</a></li>
-<li><a class="reference internal" href="#changes-to-the-hexagon-target" id="id7">Changes to the Hexagon Target</a></li>
-<li><a class="reference internal" href="#changes-to-the-avr-target" id="id8">Changes to the AVR Target</a></li>
-<li><a class="reference internal" href="#changes-to-the-ocaml-bindings" id="id9">Changes to the OCaml bindings</a></li>
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#non-comprehensive-list-of-changes-in-this-release" id="id3">Non-comprehensive list of changes in this release</a><ul>
+<li><a class="reference internal" href="#changes-to-the-arm-backends" id="id4">Changes to the ARM Backends</a></li>
+<li><a class="reference internal" href="#changes-to-the-mips-target" id="id5">Changes to the MIPS Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-powerpc-target" id="id6">Changes to the PowerPC Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-x86-target" id="id7">Changes to the X86 Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-hexagon-target" id="id8">Changes to the Hexagon Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-avr-target" id="id9">Changes to the AVR Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-ocaml-bindings" id="id10">Changes to the OCaml bindings</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#external-open-source-projects-using-llvm-3-8" id="id10">External Open Source Projects Using LLVM 3.8</a><ul>
-<li><a class="reference internal" href="#ldc-the-llvm-based-d-compiler" id="id11">LDC - the LLVM-based D compiler</a></li>
+<li><a class="reference internal" href="#external-open-source-projects-using-llvm-3-8" id="id11">External Open Source Projects Using LLVM 3.8</a><ul>
+<li><a class="reference internal" href="#ldc-the-llvm-based-d-compiler" id="id12">LDC - the LLVM-based D compiler</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#additional-information" id="id12">Additional Information</a></li>
+<li><a class="reference internal" href="#additional-information" id="id13">Additional Information</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>This document contains the release notes for the LLVM Compiler Infrastructure,
 release 3.8.  Here we describe the status of LLVM, including major improvements
 from the previous release, improvements in various subprojects of LLVM, and
@@ -104,11 +103,11 @@ some of the current users of the code.  All LLVM releases may be downloaded
 from the <a class="reference external" href="http://llvm.org/releases/">LLVM releases web site</a>.</p>
 <p>For more information about LLVM, including information about the latest
 release, please check out the <a class="reference external" href="http://llvm.org/">main LLVM web site</a>.  If you
-have questions or comments, the <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">LLVM Developer&#8217;s Mailing List</a> is a good place to send
+have questions or comments, the <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">LLVM Developer’s Mailing List</a> is a good place to send
 them.</p>
 </div>
 <div class="section" id="non-comprehensive-list-of-changes-in-this-release">
-<h2><a class="toc-backref" href="#id2">Non-comprehensive list of changes in this release</a><a class="headerlink" href="#non-comprehensive-list-of-changes-in-this-release" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Non-comprehensive list of changes in this release</a><a class="headerlink" href="#non-comprehensive-list-of-changes-in-this-release" title="永久链接至标题">¶</a></h2>
 <ul>
 <li><p class="first">With this release, the minimum Windows version required for running LLVM is
 Windows 7. Earlier versions, including Windows Vista and XP are no longer
@@ -128,7 +127,7 @@ information.</p>
 new one</p>
 <blockquote>
 <div><ul class="simple">
-<li>Doesn&#8217;t take an unused parameter.</li>
+<li>Doesn’t take an unused parameter.</li>
 <li>Destroys the source instead of only damaging it.</li>
 <li>Does not record a message. Use the diagnostic handler instead.</li>
 </ul>
@@ -155,7 +154,7 @@ but transitive dependencies may be affected.</p>
 </li>
 <li><p class="first">llvm-ar now supports thin archives.</p>
 </li>
-<li><p class="first">llvm doesn&#8217;t produce <code class="docutils literal"><span class="pre">.data.rel.ro.local</span></code> or <code class="docutils literal"><span class="pre">.data.rel</span></code> sections anymore.</p>
+<li><p class="first">llvm doesn’t produce <code class="docutils literal"><span class="pre">.data.rel.ro.local</span></code> or <code class="docutils literal"><span class="pre">.data.rel</span></code> sections anymore.</p>
 </li>
 <li><p class="first">Aliases to <code class="docutils literal"><span class="pre">available_externally</span></code> globals are now rejected by the verifier.</p>
 </li>
@@ -165,9 +164,9 @@ another and Linker proper that decides what to link.</p>
 <li><p class="first">Support for dematerializing has been dropped.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">RegisterScheduler::setDefault</span></code> was removed. Targets that used to call into the
-command line parser to set the <code class="docutils literal"><span class="pre">DAGScheduler</span></code>, and that don&#8217;t have enough
+command line parser to set the <code class="docutils literal"><span class="pre">DAGScheduler</span></code>, and that don’t have enough
 control with <code class="docutils literal"><span class="pre">setSchedulingPreference</span></code>, should look into overriding the
-<code class="docutils literal"><span class="pre">SubTargetHook</span></code> &#8220;<code class="docutils literal"><span class="pre">getDAGScheduler()</span></code>&#8221;.</p>
+<code class="docutils literal"><span class="pre">SubTargetHook</span></code> “<code class="docutils literal"><span class="pre">getDAGScheduler()</span></code>”.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">ilist_iterator&lt;T&gt;</span></code> no longer has implicit conversions to and from <code class="docutils literal"><span class="pre">T*</span></code>,
 since <code class="docutils literal"><span class="pre">ilist_iterator&lt;T&gt;</span></code> may be pointing at the sentinel (which is usually
@@ -210,7 +209,7 @@ early adopters might bump into.</p>
 </li>
 </ul>
 <div class="section" id="changes-to-the-arm-backends">
-<h3><a class="toc-backref" href="#id3">Changes to the ARM Backends</a><a class="headerlink" href="#changes-to-the-arm-backends" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id4">Changes to the ARM Backends</a><a class="headerlink" href="#changes-to-the-arm-backends" title="永久链接至标题">¶</a></h3>
 <p>During this release the AArch64 target has:</p>
 <ul class="simple">
 <li>Added support for more sanitizers (MSAN, TSAN) and made them compatible with
@@ -232,14 +231,14 @@ that we already had in the previous releases with limited stride vectorization.<
 made earlier.</li>
 <li>Simplified code generation for global variable addresses in ELF, resulting in
 a significant (4% in Chromium) reduction in code size.</li>
-<li>Gained some additional code size improvements, though there&#8217;s still a long road
+<li>Gained some additional code size improvements, though there’s still a long road
 ahead, especially for older cores.</li>
 <li>Added some EABI floating point comparison functions to Compiler-RT</li>
 <li>Added support for Windows+GNU triple, <code class="docutils literal"><span class="pre">+features</span></code> in <code class="docutils literal"><span class="pre">-mcpu</span></code>/<code class="docutils literal"><span class="pre">-march</span></code> options.</li>
 </ul>
 </div>
 <div class="section" id="changes-to-the-mips-target">
-<h3><a class="toc-backref" href="#id4">Changes to the MIPS Target</a><a class="headerlink" href="#changes-to-the-mips-target" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">Changes to the MIPS Target</a><a class="headerlink" href="#changes-to-the-mips-target" title="永久链接至标题">¶</a></h3>
 <p>During this release the MIPS target has:</p>
 <ul class="simple">
 <li>Significantly extended support for the Integrated Assembler. See below for
@@ -283,16 +282,16 @@ the Integrated Assembler.</li>
 <li>Corrected debug info when dynamically re-aligning the stack.</li>
 </ul>
 <p>We have made a large number of improvements to the integrated assembler for
-MIPS. In this release, the integrated assembler isn&#8217;t quite production-ready
+MIPS. In this release, the integrated assembler isn’t quite production-ready
 since there are a few known issues related to bare-metal support, checking
-immediates on instructions, and the N32/N64 ABI&#8217;s. However, the current support
+immediates on instructions, and the N32/N64 ABI’s. However, the current support
 should be sufficient for many users of the O32 ABI, particularly those targeting
 MIPS32 on Linux or bare-metal MIPS32.</p>
 <p>If you would like to try the integrated assembler, please use
 <code class="docutils literal"><span class="pre">-fintegrated-as</span></code>.</p>
 </div>
 <div class="section" id="changes-to-the-powerpc-target">
-<h3><a class="toc-backref" href="#id5">Changes to the PowerPC Target</a><a class="headerlink" href="#changes-to-the-powerpc-target" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Changes to the PowerPC Target</a><a class="headerlink" href="#changes-to-the-powerpc-target" title="永久链接至标题">¶</a></h3>
 <p>There are numerous improvements to the PowerPC target in this release:</p>
 <ul class="simple">
 <li>Shrink wrapping optimization has been enabled for PowerPC Little Endian</li>
@@ -309,7 +308,7 @@ added to altivec.h</li>
 </ul>
 </div>
 <div class="section" id="changes-to-the-x86-target">
-<h3><a class="toc-backref" href="#id6">Changes to the X86 Target</a><a class="headerlink" href="#changes-to-the-x86-target" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Changes to the X86 Target</a><a class="headerlink" href="#changes-to-the-x86-target" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
 <li>TLS is enabled for Cygwin as emutls.</li>
 <li>Smaller code for materializing 32-bit 1 and -1 constants at <code class="docutils literal"><span class="pre">-Os</span></code>.</li>
@@ -320,32 +319,32 @@ on 32-bit targets.)</li>
 </ul>
 </div>
 <div class="section" id="changes-to-the-hexagon-target">
-<h3><a class="toc-backref" href="#id7">Changes to the Hexagon Target</a><a class="headerlink" href="#changes-to-the-hexagon-target" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Changes to the Hexagon Target</a><a class="headerlink" href="#changes-to-the-hexagon-target" title="永久链接至标题">¶</a></h3>
 <p>In addition to general code size and performance improvements, Hexagon target
 now has basic support for Hexagon V60 architecture and Hexagon Vector
 Extensions (HVX).</p>
 </div>
 <div class="section" id="changes-to-the-avr-target">
-<h3><a class="toc-backref" href="#id8">Changes to the AVR Target</a><a class="headerlink" href="#changes-to-the-avr-target" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Changes to the AVR Target</a><a class="headerlink" href="#changes-to-the-avr-target" title="永久链接至标题">¶</a></h3>
 <p>Slightly less than half of the AVR backend has been merged in at this point. It is still
 missing a number large parts which cause it to be unusable, but is well on the
 road to being completely merged and workable.</p>
 </div>
 <div class="section" id="changes-to-the-ocaml-bindings">
-<h3><a class="toc-backref" href="#id9">Changes to the OCaml bindings</a><a class="headerlink" href="#changes-to-the-ocaml-bindings" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Changes to the OCaml bindings</a><a class="headerlink" href="#changes-to-the-ocaml-bindings" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li>The ocaml function link_modules has been replaced with link_modules&#8217; which
+<li>The ocaml function link_modules has been replaced with link_modules’ which
 uses LLVMLinkModules2.</li>
 </ul>
 </div>
 </div>
 <div class="section" id="external-open-source-projects-using-llvm-3-8">
-<h2><a class="toc-backref" href="#id10">External Open Source Projects Using LLVM 3.8</a><a class="headerlink" href="#external-open-source-projects-using-llvm-3-8" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">External Open Source Projects Using LLVM 3.8</a><a class="headerlink" href="#external-open-source-projects-using-llvm-3-8" title="永久链接至标题">¶</a></h2>
 <p>An exciting aspect of LLVM is that it is used as an enabling technology for
 a lot of other language and tools projects. This section lists some of the
 projects that have already been updated to work with LLVM 3.8.</p>
 <div class="section" id="ldc-the-llvm-based-d-compiler">
-<h3><a class="toc-backref" href="#id11">LDC - the LLVM-based D compiler</a><a class="headerlink" href="#ldc-the-llvm-based-d-compiler" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">LDC - the LLVM-based D compiler</a><a class="headerlink" href="#ldc-the-llvm-based-d-compiler" title="永久链接至标题">¶</a></h3>
 <p><a class="reference external" href="http://dlang.org">D</a> is a language with C-like syntax and static typing. It
 pragmatically combines efficiency, control, and modeling power, with safety and
 programmer productivity. D supports powerful concepts like Compile-Time Function
@@ -358,7 +357,7 @@ and ARM. Ports to other architectures like AArch64 and MIPS64 are underway.</p>
 </div>
 </div>
 <div class="section" id="additional-information">
-<h2><a class="toc-backref" href="#id12">Additional Information</a><a class="headerlink" href="#additional-information" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">Additional Information</a><a class="headerlink" href="#additional-information" title="永久链接至标题">¶</a></h2>
 <p>A wide variety of additional information is available on the <a class="reference external" href="http://llvm.org/">LLVM web page</a>, in particular in the <a class="reference external" href="http://llvm.org/docs/">documentation</a> section.  The web page also contains versions of the
 API documentation which is up-to-date with the Subversion version of the source
 code.  You can access versions of these documents specific to this release by
@@ -391,9 +390,9 @@ us via the <a class="reference external" href="http://llvm.org/docs/#maillist">m
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

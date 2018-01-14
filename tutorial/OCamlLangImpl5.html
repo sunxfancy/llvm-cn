@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>5. Kaleidoscope: Extending the Language: Control Flow &mdash; LLVM 3.8 文档</title>
-    
+    <title>5. Kaleidoscope: Extending the Language: Control Flow &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="6. Kaleidoscope: Extending the Language: User-defined Operators" href="OCamlLangImpl6.html" />
     <link rel="prev" title="4. Kaleidoscope: Adding JIT and Optimizer Support" href="OCamlLangImpl4.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -77,49 +75,49 @@
             
   <div class="section" id="kaleidoscope-extending-the-language-control-flow">
 <h1>5. Kaleidoscope: Extending the Language: Control Flow<a class="headerlink" href="#kaleidoscope-extending-the-language-control-flow" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-5-introduction" id="id2">Chapter 5 Introduction</a></li>
-<li><a class="reference internal" href="#if-then-else" id="id3">If/Then/Else</a><ul>
-<li><a class="reference internal" href="#lexer-extensions-for-if-then-else" id="id4">Lexer Extensions for If/Then/Else</a></li>
-<li><a class="reference internal" href="#ast-extensions-for-if-then-else" id="id5">AST Extensions for If/Then/Else</a></li>
-<li><a class="reference internal" href="#parser-extensions-for-if-then-else" id="id6">Parser Extensions for If/Then/Else</a></li>
-<li><a class="reference internal" href="#llvm-ir-for-if-then-else" id="id7">LLVM IR for If/Then/Else</a></li>
-<li><a class="reference internal" href="#code-generation-for-if-then-else" id="id8">Code Generation for If/Then/Else</a></li>
+<li><a class="reference internal" href="#chapter-5-introduction" id="id3">Chapter 5 Introduction</a></li>
+<li><a class="reference internal" href="#if-then-else" id="id4">If/Then/Else</a><ul>
+<li><a class="reference internal" href="#lexer-extensions-for-if-then-else" id="id5">Lexer Extensions for If/Then/Else</a></li>
+<li><a class="reference internal" href="#ast-extensions-for-if-then-else" id="id6">AST Extensions for If/Then/Else</a></li>
+<li><a class="reference internal" href="#parser-extensions-for-if-then-else" id="id7">Parser Extensions for If/Then/Else</a></li>
+<li><a class="reference internal" href="#llvm-ir-for-if-then-else" id="id8">LLVM IR for If/Then/Else</a></li>
+<li><a class="reference internal" href="#code-generation-for-if-then-else" id="id9">Code Generation for If/Then/Else</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#for-loop-expression" id="id9">&#8216;for&#8217; Loop Expression</a><ul>
-<li><a class="reference internal" href="#lexer-extensions-for-the-for-loop" id="id10">Lexer Extensions for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#ast-extensions-for-the-for-loop" id="id11">AST Extensions for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#parser-extensions-for-the-for-loop" id="id12">Parser Extensions for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#llvm-ir-for-the-for-loop" id="id13">LLVM IR for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#code-generation-for-the-for-loop" id="id14">Code Generation for the &#8216;for&#8217; Loop</a></li>
+<li><a class="reference internal" href="#for-loop-expression" id="id10">‘for’ Loop Expression</a><ul>
+<li><a class="reference internal" href="#lexer-extensions-for-the-for-loop" id="id11">Lexer Extensions for the ‘for’ Loop</a></li>
+<li><a class="reference internal" href="#ast-extensions-for-the-for-loop" id="id12">AST Extensions for the ‘for’ Loop</a></li>
+<li><a class="reference internal" href="#parser-extensions-for-the-for-loop" id="id13">Parser Extensions for the ‘for’ Loop</a></li>
+<li><a class="reference internal" href="#llvm-ir-for-the-for-loop" id="id14">LLVM IR for the ‘for’ Loop</a></li>
+<li><a class="reference internal" href="#code-generation-for-the-for-loop" id="id15">Code Generation for the ‘for’ Loop</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#full-code-listing" id="id15">Full Code Listing</a></li>
+<li><a class="reference internal" href="#full-code-listing" id="id16">Full Code Listing</a></li>
 </ul>
 </div>
 <div class="section" id="chapter-5-introduction">
-<h2><a class="toc-backref" href="#id2">5.1. Chapter 5 Introduction</a><a class="headerlink" href="#chapter-5-introduction" title="永久链接至标题">¶</a></h2>
-<p>Welcome to Chapter 5 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
-LLVM</a>&#8221; tutorial. Parts 1-4 described the implementation of
+<h2><a class="toc-backref" href="#id3">5.1. Chapter 5 Introduction</a><a class="headerlink" href="#chapter-5-introduction" title="永久链接至标题">¶</a></h2>
+<p>Welcome to Chapter 5 of the “<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>” tutorial. Parts 1-4 described the implementation of
 the simple Kaleidoscope language and included support for generating
 LLVM IR, followed by optimizations and a JIT compiler. Unfortunately, as
 presented, Kaleidoscope is mostly useless: it has no control flow other
-than call and return. This means that you can&#8217;t have conditional
+than call and return. This means that you can’t have conditional
 branches in the code, significantly limiting its power. In this episode
-of &#8220;build that compiler&#8221;, we&#8217;ll extend Kaleidoscope to have an
-if/then/else expression plus a simple &#8216;for&#8217; loop.</p>
+of “build that compiler”, we’ll extend Kaleidoscope to have an
+if/then/else expression plus a simple ‘for’ loop.</p>
 </div>
 <div class="section" id="if-then-else">
-<h2><a class="toc-backref" href="#id3">5.2. If/Then/Else</a><a class="headerlink" href="#if-then-else" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">5.2. If/Then/Else</a><a class="headerlink" href="#if-then-else" title="永久链接至标题">¶</a></h2>
 <p>Extending Kaleidoscope to support if/then/else is quite straightforward.
-It basically requires adding lexer support for this &#8220;new&#8221; concept to the
+It basically requires adding lexer support for this “new” concept to the
 lexer, parser, AST, and LLVM code emitter. This example is nice, because
-it shows how easy it is to &#8220;grow&#8221; a language over time, incrementally
+it shows how easy it is to “grow” a language over time, incrementally
 extending it as new ideas are discovered.</p>
-<p>Before we get going on &#8220;how&#8221; we add this extension, lets talk about
-&#8220;what&#8221; we want. The basic idea is that we want to be able to write this
+<p>Before we get going on “how” we add this extension, lets talk about
+“what” we want. The basic idea is that we want to be able to write this
 sort of thing:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
   <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="n">then</span>
@@ -130,10 +128,10 @@ sort of thing:</p>
 </div>
 <p>In Kaleidoscope, every construct is an expression: there are no
 statements. As such, the if/then/else expression needs to return a value
-like any other. Since we&#8217;re using a mostly functional form, we&#8217;ll have
-it evaluate its conditional, then return the &#8216;then&#8217; or &#8216;else&#8217; value
+like any other. Since we’re using a mostly functional form, we’ll have
+it evaluate its conditional, then return the ‘then’ or ‘else’ value
 based on how the condition was resolved. This is very similar to the C
-&#8221;?:&#8221; expression.</p>
+“?:” expression.</p>
 <p>The semantics of the if/then/else expression is that it evaluates the
 condition to a boolean equality value: 0.0 is considered to be false and
 everything else is considered to be true. If the condition is true, the
@@ -141,10 +139,10 @@ first subexpression is evaluated and returned, if the condition is
 false, the second subexpression is evaluated and returned. Since
 Kaleidoscope allows side-effects, this behavior is important to nail
 down.</p>
-<p>Now that we know what we &#8220;want&#8221;, lets break this down into its
+<p>Now that we know what we “want”, lets break this down into its
 constituent pieces.</p>
 <div class="section" id="lexer-extensions-for-if-then-else">
-<h3><a class="toc-backref" href="#id4">5.2.1. Lexer Extensions for If/Then/Else</a><a class="headerlink" href="#lexer-extensions-for-if-then-else" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">5.2.1. Lexer Extensions for If/Then/Else</a><a class="headerlink" href="#lexer-extensions-for-if-then-else" title="永久链接至标题">¶</a></h3>
 <p>The lexer extensions are straightforward. First we add new variants for
 the relevant tokens:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* control *)</span>
@@ -167,7 +165,7 @@ pretty simple stuff:</p>
 </div>
 </div>
 <div class="section" id="ast-extensions-for-if-then-else">
-<h3><a class="toc-backref" href="#id5">5.2.2. AST Extensions for If/Then/Else</a><a class="headerlink" href="#ast-extensions-for-if-then-else" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">5.2.2. AST Extensions for If/Then/Else</a><a class="headerlink" href="#ast-extensions-for-if-then-else" title="永久链接至标题">¶</a></h3>
 <p>To represent the new expression we add a new AST variant for it:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
   <span class="o">...</span>
@@ -178,7 +176,7 @@ pretty simple stuff:</p>
 <p>The AST variant just has pointers to the various subexpressions.</p>
 </div>
 <div class="section" id="parser-extensions-for-if-then-else">
-<h3><a class="toc-backref" href="#id6">5.2.3. Parser Extensions for If/Then/Else</a><a class="headerlink" href="#parser-extensions-for-if-then-else" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">5.2.3. Parser Extensions for If/Then/Else</a><a class="headerlink" href="#parser-extensions-for-if-then-else" title="永久链接至标题">¶</a></h3>
 <p>Now that we have the relevant tokens coming from the lexer and we have
 the AST node to build, our parsing logic is relatively straightforward.
 First we define a new parsing function:</p>
@@ -203,7 +201,7 @@ First we define a new parsing function:</p>
 </div>
 </div>
 <div class="section" id="llvm-ir-for-if-then-else">
-<h3><a class="toc-backref" href="#id7">5.2.4. LLVM IR for If/Then/Else</a><a class="headerlink" href="#llvm-ir-for-if-then-else" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">5.2.4. LLVM IR for If/Then/Else</a><a class="headerlink" href="#llvm-ir-for-if-then-else" title="永久链接至标题">¶</a></h3>
 <p>Now that we have it parsing and building the AST, the final piece is
 adding LLVM code generation support. This is the most interesting part
 of the if/then/else example, because this is where it starts to
@@ -216,7 +214,7 @@ example. Consider:</p>
 <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="n">then</span> <span class="n">foo</span><span class="p">()</span> <span class="k">else</span> <span class="n">bar</span><span class="p">();</span>
 </pre></div>
 </div>
-<p>If you disable optimizations, the code you&#8217;ll (soon) get from
+<p>If you disable optimizations, the code you’ll (soon) get from
 Kaleidoscope looks like this:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="kt">double</span> <span class="vg">@foo</span><span class="p">()</span>
 
@@ -242,46 +240,46 @@ Kaleidoscope looks like this:</p>
 </pre></div>
 </div>
 <p>To visualize the control flow graph, you can use a nifty feature of the
-LLVM &#8216;<a class="reference external" href="http://llvm.org/cmds/opt.html">opt</a>&#8216; tool. If you put this LLVM
-IR into &#8220;t.ll&#8221; and run &#8220;<code class="docutils literal"><span class="pre">llvm-as</span> <span class="pre">&lt;</span> <span class="pre">t.ll</span> <span class="pre">|</span> <span class="pre">opt</span> <span class="pre">-analyze</span> <span class="pre">-view-cfg</span></code>&#8221;, <a class="reference external" href="../ProgrammersManual.html#viewing-graphs-while-debugging-code">a
-window will pop up</a> and you&#8217;ll
+LLVM ‘<a class="reference external" href="http://llvm.org/cmds/opt.html">opt</a>’ tool. If you put this LLVM
+IR into “t.ll” and run “<code class="docutils literal"><span class="pre">llvm-as</span> <span class="pre">&lt;</span> <span class="pre">t.ll</span> <span class="pre">|</span> <span class="pre">opt</span> <span class="pre">-analyze</span> <span class="pre">-view-cfg</span></code>”, <a class="reference external" href="../ProgrammersManual.html#viewing-graphs-while-debugging-code">a
+window will pop up</a> and you’ll
 see this graph:</p>
-<div class="figure align-center" id="id1">
+<div class="figure align-center" id="id2">
 <img alt="Example CFG" src="../_images/LangImpl5-cfg.png" />
 <p class="caption"><span class="caption-text">Example CFG</span></p>
 </div>
 <p>Another way to get this is to call
-&#8220;<code class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg</span> <span class="pre">f</span></code>&#8221; or
-&#8220;<code class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg_only</span> <span class="pre">f</span></code>&#8221; (where <code class="docutils literal"><span class="pre">f</span></code> is a
-&#8220;<code class="docutils literal"><span class="pre">Function</span></code>&#8221;) either by inserting actual calls into the code and
+“<code class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg</span> <span class="pre">f</span></code>” or
+“<code class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg_only</span> <span class="pre">f</span></code>” (where <code class="docutils literal"><span class="pre">f</span></code> is a
+“<code class="docutils literal"><span class="pre">Function</span></code>”) either by inserting actual calls into the code and
 recompiling or by calling these in the debugger. LLVM has many nice
 features for visualizing various graphs.</p>
 <p>Getting back to the generated code, it is fairly simple: the entry block
-evaluates the conditional expression (&#8220;x&#8221; in our case here) and compares
-the result to 0.0 with the &#8220;<code class="docutils literal"><span class="pre">fcmp</span> <span class="pre">one</span></code>&#8221; instruction (&#8216;one&#8217; is &#8220;Ordered
-and Not Equal&#8221;). Based on the result of this expression, the code jumps
-to either the &#8220;then&#8221; or &#8220;else&#8221; blocks, which contain the expressions for
+evaluates the conditional expression (“x” in our case here) and compares
+the result to 0.0 with the “<code class="docutils literal"><span class="pre">fcmp</span> <span class="pre">one</span></code>” instruction (‘one’ is “Ordered
+and Not Equal”). Based on the result of this expression, the code jumps
+to either the “then” or “else” blocks, which contain the expressions for
 the true/false cases.</p>
 <p>Once the then/else blocks are finished executing, they both branch back
-to the &#8216;ifcont&#8217; block to execute the code that happens after the
+to the ‘ifcont’ block to execute the code that happens after the
 if/then/else. In this case the only thing left to do is to return to the
 caller of the function. The question then becomes: how does the code
 know which expression to return?</p>
 <p>The answer to this question involves an important SSA operation: the
 <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">Phi
 operation</a>.
-If you&#8217;re not familiar with SSA, <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">the wikipedia
+If you’re not familiar with SSA, <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">the wikipedia
 article</a>
 is a good introduction and there are various other introductions to it
 available on your favorite search engine. The short version is that
-&#8220;execution&#8221; of the Phi operation requires &#8220;remembering&#8221; which block
+“execution” of the Phi operation requires “remembering” which block
 control came from. The Phi operation takes on the value corresponding to
 the input control block. In this case, if control comes in from the
-&#8220;then&#8221; block, it gets the value of &#8220;calltmp&#8221;. If control comes from the
-&#8220;else&#8221; block, it gets the value of &#8220;calltmp1&#8221;.</p>
-<p>At this point, you are probably starting to think &#8220;Oh no! This means my
+“then” block, it gets the value of “calltmp”. If control comes from the
+“else” block, it gets the value of “calltmp1”.</p>
+<p>At this point, you are probably starting to think “Oh no! This means my
 simple and elegant front-end will have to start generating SSA form in
-order to use LLVM!&#8221;. Fortunately, this is not the case, and we strongly
+order to use LLVM!”. Fortunately, this is not the case, and we strongly
 advise <em>not</em> implementing an SSA construction algorithm in your
 front-end unless there is an amazingly good reason to do so. In
 practice, there are two sorts of values that float around in code
@@ -292,16 +290,16 @@ Phi nodes:</p>
 <li>Values that are implicit in the structure of your AST, such as the
 Phi node in this case.</li>
 </ol>
-<p>In <a class="reference external" href="OCamlLangImpl7.html">Chapter 7</a> of this tutorial (&#8220;mutable
-variables&#8221;), we&#8217;ll talk about #1 in depth. For now, just believe me that
-you don&#8217;t need SSA construction to handle this case. For #2, you have
+<p>In <a class="reference external" href="OCamlLangImpl7.html">Chapter 7</a> of this tutorial (“mutable
+variables”), we’ll talk about #1 in depth. For now, just believe me that
+you don’t need SSA construction to handle this case. For #2, you have
 the choice of using the techniques that we will describe for #1, or you
 can insert Phi nodes directly, if convenient. In this case, it is really
 really easy to generate the Phi node, so we choose to do it directly.</p>
 <p>Okay, enough of the motivation and overview, lets generate code!</p>
 </div>
 <div class="section" id="code-generation-for-if-then-else">
-<h3><a class="toc-backref" href="#id8">5.2.5. Code Generation for If/Then/Else</a><a class="headerlink" href="#code-generation-for-if-then-else" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">5.2.5. Code Generation for If/Then/Else</a><a class="headerlink" href="#code-generation-for-if-then-else" title="永久链接至标题">¶</a></h3>
 <p>In order to generate code for this, we implement the <code class="docutils literal"><span class="pre">Codegen</span></code> method
 for <code class="docutils literal"><span class="pre">IfExprAST</span></code>:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
@@ -327,15 +325,15 @@ a truth value as a 1-bit (bool) value.</p>
 </pre></div>
 </div>
 <p>As opposed to the <a class="reference external" href="LangImpl5.html">C++ tutorial</a>, we have to build our
-basic blocks bottom up since we can&#8217;t have dangling BasicBlocks. We
+basic blocks bottom up since we can’t have dangling BasicBlocks. We
 start off by saving a pointer to the first block (which might not be the
-entry block), which we&#8217;ll need to build a conditional branch later. We
+entry block), which we’ll need to build a conditional branch later. We
 do this by asking the <code class="docutils literal"><span class="pre">builder</span></code> for the current BasicBlock. The fourth
 line gets the current Function object that is being built. It gets this
-by the <code class="docutils literal"><span class="pre">start_bb</span></code> for its &#8220;parent&#8221; (the function it is currently
+by the <code class="docutils literal"><span class="pre">start_bb</span></code> for its “parent” (the function it is currently
 embedded into).</p>
 <p>Once it has that, it creates one block. It is automatically appended
-into the function&#8217;s list of blocks.</p>
+into the function’s list of blocks.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Emit &#39;then&#39; value. *)</span>
 <span class="n">position_at_end</span> <span class="n">then_bb</span> <span class="n">builder</span><span class="o">;</span>
 <span class="k">let</span> <span class="n">then_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">then_</span> <span class="k">in</span>
@@ -346,20 +344,20 @@ into the function&#8217;s list of blocks.</p>
 <span class="k">let</span> <span class="n">new_then_bb</span> <span class="o">=</span> <span class="n">insertion_block</span> <span class="n">builder</span> <span class="k">in</span>
 </pre></div>
 </div>
-<p>We move the builder to start inserting into the &#8220;then&#8221; block. Strictly
+<p>We move the builder to start inserting into the “then” block. Strictly
 speaking, this call moves the insertion point to be at the end of the
-specified block. However, since the &#8220;then&#8221; block is empty, it also
+specified block. However, since the “then” block is empty, it also
 starts out by inserting at the beginning of the block. :)</p>
-<p>Once the insertion point is set, we recursively codegen the &#8220;then&#8221;
+<p>Once the insertion point is set, we recursively codegen the “then”
 expression from the AST.</p>
 <p>The final line here is quite subtle, but is very important. The basic
 issue is that when we create the Phi node in the merge block, we need to
 set up the block/value pairs that indicate how the Phi will work.
 Importantly, the Phi node expects to have an entry for each predecessor
 of the block in the CFG. Why then, are we getting the current block when
-we just set it to ThenBB 5 lines above? The problem is that the &#8220;Then&#8221;
+we just set it to ThenBB 5 lines above? The problem is that the “Then”
 expression may actually itself change the block that the Builder is
-emitting into if, for example, it contains a nested &#8220;if/then/else&#8221;
+emitting into if, for example, it contains a nested “if/then/else”
 expression. Because calling Codegen recursively could arbitrarily change
 the notion of the current block, we are required to get an up-to-date
 value for code that will set up the Phi node.</p>
@@ -373,8 +371,8 @@ value for code that will set up the Phi node.</p>
 <span class="k">let</span> <span class="n">new_else_bb</span> <span class="o">=</span> <span class="n">insertion_block</span> <span class="n">builder</span> <span class="k">in</span>
 </pre></div>
 </div>
-<p>Code generation for the &#8216;else&#8217; block is basically identical to codegen
-for the &#8216;then&#8217; block.</p>
+<p>Code generation for the ‘else’ block is basically identical to codegen
+for the ‘then’ block.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Emit merge block. *)</span>
 <span class="k">let</span> <span class="n">merge_bb</span> <span class="o">=</span> <span class="n">append_block</span> <span class="n">context</span> <span class="s2">&quot;ifcont&quot;</span> <span class="n">the_function</span> <span class="k">in</span>
 <span class="n">position_at_end</span> <span class="n">merge_bb</span> <span class="n">builder</span><span class="o">;</span>
@@ -382,9 +380,9 @@ for the &#8216;then&#8217; block.</p>
 <span class="k">let</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">build_phi</span> <span class="n">incoming</span> <span class="s2">&quot;iftmp&quot;</span> <span class="n">builder</span> <span class="k">in</span>
 </pre></div>
 </div>
-<p>The first two lines here are now familiar: the first adds the &#8220;merge&#8221;
+<p>The first two lines here are now familiar: the first adds the “merge”
 block to the Function object. The second changes the insertion
-point so that newly created code will go into the &#8220;merge&#8221; block. Once
+point so that newly created code will go into the “merge” block. Once
 that is done, we need to create the PHI node and set up the block/value
 pairs for the PHI.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Return to the start block to add the conditional branch. *)</span>
@@ -395,7 +393,7 @@ pairs for the PHI.</p>
 <p>Once the blocks are created, we can emit the conditional branch that
 chooses between them. Note that creating new blocks does not implicitly
 affect the IRBuilder, so it is still inserting into the block that the
-condition went into. This is why we needed to save the &#8220;start&#8221; block.</p>
+condition went into. This is why we needed to save the “start” block.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Set a unconditional branch at the end of the &#39;then&#39; block and the</span>
 <span class="c"> * &#39;else&#39; block to the &#39;merge&#39; block. *)</span>
 <span class="n">position_at_end</span> <span class="n">new_then_bb</span> <span class="n">builder</span><span class="o">;</span> <span class="n">ignore</span> <span class="o">(</span><span class="n">build_br</span> <span class="n">merge_bb</span> <span class="n">builder</span><span class="o">);</span>
@@ -410,7 +408,7 @@ condition went into. This is why we needed to save the &#8220;start&#8221; block
 <p>To finish off the blocks, we create an unconditional branch to the merge
 block. One interesting (and very important) aspect of the LLVM IR is
 that it <a class="reference external" href="../LangRef.html#functionstructure">requires all basic blocks to be
-&#8220;terminated&#8221;</a> with a <a class="reference external" href="../LangRef.html#terminators">control flow
+“terminated”</a> with a <a class="reference external" href="../LangRef.html#terminators">control flow
 instruction</a> such as return or branch.
 This means that all control flow, <em>including fall throughs</em> must be made
 explicit in the LLVM IR. If you violate this rule, the verifier will
@@ -422,15 +420,15 @@ create the return instruction.</p>
 <p>Overall, we now have the ability to execute conditional code in
 Kaleidoscope. With this extension, Kaleidoscope is a fairly complete
 language that can calculate a wide variety of numeric functions. Next up
-we&#8217;ll add another useful expression that is familiar from non-functional
-languages...</p>
+we’ll add another useful expression that is familiar from non-functional
+languages…</p>
 </div>
 </div>
 <div class="section" id="for-loop-expression">
-<h2><a class="toc-backref" href="#id9">5.3. &#8216;for&#8217; Loop Expression</a><a class="headerlink" href="#for-loop-expression" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">5.3. ‘for’ Loop Expression</a><a class="headerlink" href="#for-loop-expression" title="永久链接至标题">¶</a></h2>
 <p>Now that we know how to add basic control flow constructs to the
 language, we have the tools to add more powerful things. Lets add
-something more aggressive, a &#8216;for&#8217; expression:</p>
+something more aggressive, a ‘for’ expression:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">extern</span> <span class="n">putchard</span><span class="p">(</span><span class="n">char</span><span class="p">);</span>
 <span class="k">def</span> <span class="nf">printstar</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
   <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">,</span> <span class="mf">1.0</span> <span class="ow">in</span>
@@ -440,17 +438,17 @@ something more aggressive, a &#8216;for&#8217; expression:</p>
 <span class="n">printstar</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>This expression defines a new variable (&#8220;i&#8221; in this case) which iterates
-from a starting value, while the condition (&#8220;i &lt; n&#8221; in this case) is
-true, incrementing by an optional step value (&#8220;1.0&#8221; in this case). If
+<p>This expression defines a new variable (“i” in this case) which iterates
+from a starting value, while the condition (“i &lt; n” in this case) is
+true, incrementing by an optional step value (“1.0” in this case). If
 the step value is omitted, it defaults to 1.0. While the loop is true,
-it executes its body expression. Because we don&#8217;t have anything better
-to return, we&#8217;ll just define the loop as always returning 0.0. In the
+it executes its body expression. Because we don’t have anything better
+to return, we’ll just define the loop as always returning 0.0. In the
 future when we have mutable variables, it will get more useful.</p>
 <p>As before, lets talk about the changes that we need to Kaleidoscope to
 support this.</p>
 <div class="section" id="lexer-extensions-for-the-for-loop">
-<h3><a class="toc-backref" href="#id10">5.3.1. Lexer Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#lexer-extensions-for-the-for-loop" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">5.3.1. Lexer Extensions for the ‘for’ Loop</a><a class="headerlink" href="#lexer-extensions-for-the-for-loop" title="永久链接至标题">¶</a></h3>
 <p>The lexer extensions are the same sort of thing as for if/then/else:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">...</span> <span class="k">in</span> <span class="nn">Token</span><span class="p">.</span><span class="n">token</span> <span class="o">...</span>
 <span class="c">(* control *)</span>
@@ -471,7 +469,7 @@ support this.</p>
 </div>
 </div>
 <div class="section" id="ast-extensions-for-the-for-loop">
-<h3><a class="toc-backref" href="#id11">5.3.2. AST Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#ast-extensions-for-the-for-loop" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">5.3.2. AST Extensions for the ‘for’ Loop</a><a class="headerlink" href="#ast-extensions-for-the-for-loop" title="永久链接至标题">¶</a></h3>
 <p>The AST variant is just as simple. It basically boils down to capturing
 the variable name and the constituent expressions in the node.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
@@ -482,7 +480,7 @@ the variable name and the constituent expressions in the node.</p>
 </div>
 </div>
 <div class="section" id="parser-extensions-for-the-for-loop">
-<h3><a class="toc-backref" href="#id12">5.3.3. Parser Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#parser-extensions-for-the-for-loop" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id13">5.3.3. Parser Extensions for the ‘for’ Loop</a><a class="headerlink" href="#parser-extensions-for-the-for-loop" title="永久链接至标题">¶</a></h3>
 <p>The parser code is also fairly standard. The only interesting thing here
 is handling of the optional step value. The parser code handles it by
 checking to see if the second comma is present. If not, it sets the step
@@ -520,7 +518,7 @@ value to null in the AST node:</p>
 </div>
 </div>
 <div class="section" id="llvm-ir-for-the-for-loop">
-<h3><a class="toc-backref" href="#id13">5.3.4. LLVM IR for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#llvm-ir-for-the-for-loop" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">5.3.4. LLVM IR for the ‘for’ Loop</a><a class="headerlink" href="#llvm-ir-for-the-for-loop" title="永久链接至标题">¶</a></h3>
 <p>Now we get to the good part: the LLVM IR we want to generate for this
 thing. With the simple example above, we get this LLVM IR (note that
 this dump is generated with optimizations disabled for clarity):</p>
@@ -555,7 +553,7 @@ several expressions, and some basic blocks. Lets see how this fits
 together.</p>
 </div>
 <div class="section" id="code-generation-for-the-for-loop">
-<h3><a class="toc-backref" href="#id14">5.3.5. Code Generation for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#code-generation-for-the-for-loop" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">5.3.5. Code Generation for the ‘for’ Loop</a><a class="headerlink" href="#code-generation-for-the-for-loop" title="永久链接至标题">¶</a></h3>
 <p>The first part of Codegen is very simple: we just output the start
 expression for the loop value:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
@@ -593,12 +591,12 @@ the two blocks.</p>
 <span class="k">let</span> <span class="n">variable</span> <span class="o">=</span> <span class="n">build_phi</span> <span class="o">[(</span><span class="n">start_val</span><span class="o">,</span> <span class="n">preheader_bb</span><span class="o">)]</span> <span class="n">var_name</span> <span class="n">builder</span> <span class="k">in</span>
 </pre></div>
 </div>
-<p>Now that the &#8220;preheader&#8221; for the loop is set up, we switch to emitting
+<p>Now that the “preheader” for the loop is set up, we switch to emitting
 code for the loop body. To begin with, we move the insertion point and
 create the PHI node for the loop induction variable. Since we already
 know the incoming value for the starting value, we add it to the Phi
 node. Note that the Phi will eventually get a second value for the
-backedge, but we can&#8217;t set it up yet (because it doesn&#8217;t exist!).</p>
+backedge, but we can’t set it up yet (because it doesn’t exist!).</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Within the loop, the variable is defined equal to the PHI node. If it</span>
 <span class="c"> * shadows an existing variable, we have to restore it, so save it</span>
 <span class="c"> * now. *)</span>
@@ -613,7 +611,7 @@ backedge, but we can&#8217;t set it up yet (because it doesn&#8217;t exist!).</p
 <span class="n">ignore</span> <span class="o">(</span><span class="n">codegen_expr</span> <span class="n">body</span><span class="o">);</span>
 </pre></div>
 </div>
-<p>Now the code starts to get more interesting. Our &#8216;for&#8217; loop introduces a
+<p>Now the code starts to get more interesting. Our ‘for’ loop introduces a
 new variable to the symbol table. This means that our symbol table can
 now contain either function arguments or loop variables. To handle this,
 before we codegen the body of the loop, we add the loop variable as the
@@ -625,7 +623,7 @@ order to handle this correctly, we remember the Value that we are
 potentially shadowing in <code class="docutils literal"><span class="pre">old_val</span></code> (which will be None if there is no
 shadowed variable).</p>
 <p>Once the loop variable is set into the symbol table, the code
-recursively codegen&#8217;s the body. This allows the body to use the loop
+recursively codegen’s the body. This allows the body to use the loop
 variable: any references to it will naturally find it in the symbol
 table.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Emit the step value. *)</span>
@@ -640,8 +638,8 @@ table.</p>
 </pre></div>
 </div>
 <p>Now that the body is emitted, we compute the next value of the iteration
-variable by adding the step value, or 1.0 if it isn&#8217;t present.
-&#8216;<code class="docutils literal"><span class="pre">next_var</span></code>&#8216; will be the value of the loop variable on the next
+variable by adding the step value, or 1.0 if it isn’t present.
+‘<code class="docutils literal"><span class="pre">next_var</span></code>’ will be the value of the loop variable on the next
 iteration of the loop.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Compute the end condition. *)</span>
 <span class="k">let</span> <span class="n">end_cond</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">end_</span> <span class="k">in</span>
@@ -667,10 +665,10 @@ if/then/else statement.</p>
 </div>
 <p>With the code for the body of the loop complete, we just need to finish
 up the control flow for it. This code remembers the end block (for the
-phi node), then creates the block for the loop exit (&#8220;afterloop&#8221;). Based
+phi node), then creates the block for the loop exit (“afterloop”). Based
 on the value of the exit condition, it creates a conditional branch that
 chooses between executing the loop again and exiting the loop. Any
-future code is emitted in the &#8220;afterloop&#8221; block, so it sets the
+future code is emitted in the “afterloop” block, so it sets the
 insertion position to it.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="c">(* Add a new entry to the PHI node for the backedge. *)</span>
 <span class="n">add_incoming</span> <span class="o">(</span><span class="n">next_var</span><span class="o">,</span> <span class="n">loop_end_bb</span><span class="o">)</span> <span class="n">variable</span><span class="o">;</span>
@@ -686,12 +684,12 @@ insertion position to it.</p>
 </pre></div>
 </div>
 <p>The final code handles various cleanups: now that we have the
-&#8220;<code class="docutils literal"><span class="pre">next_var</span></code>&#8221; value, we can add the incoming value to the loop PHI
+“<code class="docutils literal"><span class="pre">next_var</span></code>” value, we can add the incoming value to the loop PHI
 node. After that, we remove the loop variable from the symbol table, so
-that it isn&#8217;t in scope after the for loop. Finally, code generation of
+that it isn’t in scope after the for loop. Finally, code generation of
 the for loop always returns 0.0, so that is what we return from
 <code class="docutils literal"><span class="pre">Codegen.codegen_expr</span></code>.</p>
-<p>With this, we conclude the &#8220;adding control flow to Kaleidoscope&#8221; chapter
+<p>With this, we conclude the “adding control flow to Kaleidoscope” chapter
 of the tutorial. In this chapter we added two control flow constructs,
 and used them to motivate a couple of aspects of the LLVM IR that are
 important for front-end implementors to know. In the next chapter of our
@@ -700,7 +698,7 @@ operators</a> to our poor innocent language.</p>
 </div>
 </div>
 <div class="section" id="full-code-listing">
-<h2><a class="toc-backref" href="#id15">5.4. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">5.4. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="永久链接至标题">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 the if/then/else and for expressions.. To build this example, use:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
@@ -1390,13 +1388,13 @@ operators</a></p>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

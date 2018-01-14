@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>8. Kaleidoscope: Adding Debug Information &mdash; LLVM 3.8 文档</title>
-    
+    <title>8. Kaleidoscope: Adding Debug Information &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="9. Kaleidoscope: Conclusion and other useful LLVM tidbits" href="LangImpl9.html" />
     <link rel="prev" title="7. Kaleidoscope: Extending the Language: Mutable Variables" href="LangImpl7.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -77,23 +75,23 @@
             
   <div class="section" id="kaleidoscope-adding-debug-information">
 <h1>8. Kaleidoscope: Adding Debug Information<a class="headerlink" href="#kaleidoscope-adding-debug-information" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-8-introduction" id="id1">Chapter 8 Introduction</a></li>
-<li><a class="reference internal" href="#why-is-this-a-hard-problem" id="id2">Why is this a hard problem?</a></li>
-<li><a class="reference internal" href="#ahead-of-time-compilation-mode" id="id3">Ahead-of-Time Compilation Mode</a></li>
-<li><a class="reference internal" href="#compile-unit" id="id4">Compile Unit</a></li>
-<li><a class="reference internal" href="#dwarf-emission-setup" id="id5">DWARF Emission Setup</a></li>
-<li><a class="reference internal" href="#functions" id="id6">Functions</a></li>
-<li><a class="reference internal" href="#source-locations" id="id7">Source Locations</a></li>
-<li><a class="reference internal" href="#variables" id="id8">Variables</a></li>
-<li><a class="reference internal" href="#full-code-listing" id="id9">Full Code Listing</a></li>
+<li><a class="reference internal" href="#chapter-8-introduction" id="id2">Chapter 8 Introduction</a></li>
+<li><a class="reference internal" href="#why-is-this-a-hard-problem" id="id3">Why is this a hard problem?</a></li>
+<li><a class="reference internal" href="#ahead-of-time-compilation-mode" id="id4">Ahead-of-Time Compilation Mode</a></li>
+<li><a class="reference internal" href="#compile-unit" id="id5">Compile Unit</a></li>
+<li><a class="reference internal" href="#dwarf-emission-setup" id="id6">DWARF Emission Setup</a></li>
+<li><a class="reference internal" href="#functions" id="id7">Functions</a></li>
+<li><a class="reference internal" href="#source-locations" id="id8">Source Locations</a></li>
+<li><a class="reference internal" href="#variables" id="id9">Variables</a></li>
+<li><a class="reference internal" href="#full-code-listing" id="id10">Full Code Listing</a></li>
 </ul>
 </div>
 <div class="section" id="chapter-8-introduction">
-<h2><a class="toc-backref" href="#id1">8.1. Chapter 8 Introduction</a><a class="headerlink" href="#chapter-8-introduction" title="永久链接至标题">¶</a></h2>
-<p>Welcome to Chapter 8 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
-LLVM</a>&#8221; tutorial. In chapters 1 through 7, we&#8217;ve built a
+<h2><a class="toc-backref" href="#id2">8.1. Chapter 8 Introduction</a><a class="headerlink" href="#chapter-8-introduction" title="永久链接至标题">¶</a></h2>
+<p>Welcome to Chapter 8 of the “<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>” tutorial. In chapters 1 through 7, we’ve built a
 decent little programming language with functions and variables.
 What happens if something goes wrong though, how do you debug your
 program?</p>
@@ -102,18 +100,18 @@ translate from binary and the state of the machine back to the
 source that the programmer wrote. In LLVM we generally use a format
 called <a class="reference external" href="http://dwarfstd.org">DWARF</a>. DWARF is a compact encoding
 that represents types, source locations, and variable locations.</p>
-<p>The short summary of this chapter is that we&#8217;ll go through the
+<p>The short summary of this chapter is that we’ll go through the
 various things you have to add to a programming language to
 support debug info, and how you translate that into DWARF.</p>
-<p>Caveat: For now we can&#8217;t debug via the JIT, so we&#8217;ll need to compile
+<p>Caveat: For now we can’t debug via the JIT, so we’ll need to compile
 our program down to something small and standalone. As part of this
-we&#8217;ll make a few modifications to the running of the language and
-how programs are compiled. This means that we&#8217;ll have a source file
+we’ll make a few modifications to the running of the language and
+how programs are compiled. This means that we’ll have a source file
 with a simple program written in Kaleidoscope rather than the
 interactive JIT. It does involve a limitation that we can only
-have one &#8220;top level&#8221; command at a time to reduce the number of
+have one “top level” command at a time to reduce the number of
 changes necessary.</p>
-<p>Here&#8217;s the sample program we&#8217;ll be compiling:</p>
+<p>Here’s the sample program we’ll be compiling:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
   <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="n">then</span>
     <span class="mi">1</span>
@@ -125,7 +123,7 @@ changes necessary.</p>
 </div>
 </div>
 <div class="section" id="why-is-this-a-hard-problem">
-<h2><a class="toc-backref" href="#id2">8.2. Why is this a hard problem?</a><a class="headerlink" href="#why-is-this-a-hard-problem" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">8.2. Why is this a hard problem?</a><a class="headerlink" href="#why-is-this-a-hard-problem" title="永久链接至标题">¶</a></h2>
 <p>Debug information is a hard problem for a few different reasons - mostly
 centered around optimized code. First, optimization makes keeping source
 locations more difficult. In LLVM IR we keep the original source location
@@ -135,24 +133,24 @@ instructions only get to keep a single location - this can cause jumping
 around when stepping through optimized programs. Secondly, optimization
 can move variables in ways that are either optimized out, shared in memory
 with other variables, or difficult to track. For the purposes of this
-tutorial we&#8217;re going to avoid optimization (as you&#8217;ll see with one of the
+tutorial we’re going to avoid optimization (as you’ll see with one of the
 next sets of patches).</p>
 </div>
 <div class="section" id="ahead-of-time-compilation-mode">
-<h2><a class="toc-backref" href="#id3">8.3. Ahead-of-Time Compilation Mode</a><a class="headerlink" href="#ahead-of-time-compilation-mode" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">8.3. Ahead-of-Time Compilation Mode</a><a class="headerlink" href="#ahead-of-time-compilation-mode" title="永久链接至标题">¶</a></h2>
 <p>To highlight only the aspects of adding debug information to a source
 language without needing to worry about the complexities of JIT debugging
-we&#8217;re going to make a few changes to Kaleidoscope to support compiling
+we’re going to make a few changes to Kaleidoscope to support compiling
 the IR emitted by the front end into a simple standalone program that
 you can execute, debug, and see results.</p>
 <p>First we make our anonymous function that contains our top level
-statement be our &#8220;main&#8221;:</p>
+statement be our “main”:</p>
 <div class="highlight-udiff"><div class="highlight"><pre><span></span><span class="gd">-    auto Proto = llvm::make_unique&lt;PrototypeAST&gt;(&quot;&quot;, std::vector&lt;std::string&gt;());</span>
 <span class="gi">+    auto Proto = llvm::make_unique&lt;PrototypeAST&gt;(&quot;main&quot;, std::vector&lt;std::string&gt;());</span>
 </pre></div>
 </div>
 <p>just with the simple change of giving it a name.</p>
-<p>Then we&#8217;re going to remove the command line code wherever it exists:</p>
+<p>Then we’re going to remove the command line code wherever it exists:</p>
 <div class="highlight-udiff"><div class="highlight"><pre><span></span><span class="gu">@@ -1129,7 +1129,6 @@ static void HandleTopLevelExpression() {</span>
  /// top ::= definition | external | expression | &#39;;&#39;
  static void MainLoop() {
@@ -169,8 +167,8 @@ statement be our &#8220;main&#8221;:</p>
    getNextToken();
 </pre></div>
 </div>
-<p>Lastly we&#8217;re going to disable all of the optimization passes and the JIT so
-that the only thing that happens after we&#8217;re done parsing and generating
+<p>Lastly we’re going to disable all of the optimization passes and the JIT so
+that the only thing that happens after we’re done parsing and generating
 code is that the llvm IR goes to standard error:</p>
 <div class="highlight-udiff"><div class="highlight"><pre><span></span><span class="gu">@@ -1108,17 +1108,8 @@ static void HandleExtern() {</span>
  static void HandleTopLevelExpression() {
@@ -220,14 +218,14 @@ command line:</p>
 <p>which gives an a.out/a.exe in the current working directory.</p>
 </div>
 <div class="section" id="compile-unit">
-<h2><a class="toc-backref" href="#id4">8.4. Compile Unit</a><a class="headerlink" href="#compile-unit" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">8.4. Compile Unit</a><a class="headerlink" href="#compile-unit" title="永久链接至标题">¶</a></h2>
 <p>The top level container for a section of code in DWARF is a compile unit.
 This contains the type and function data for an individual translation unit
 (read: one file of source code). So the first thing we need to do is
 construct one for our fib.ks file.</p>
 </div>
 <div class="section" id="dwarf-emission-setup">
-<h2><a class="toc-backref" href="#id5">8.5. DWARF Emission Setup</a><a class="headerlink" href="#dwarf-emission-setup" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">8.5. DWARF Emission Setup</a><a class="headerlink" href="#dwarf-emission-setup" title="永久链接至标题">¶</a></h2>
 <p>Similar to the <code class="docutils literal"><span class="pre">IRBuilder</span></code> class we have a
 <a class="reference external" href="http://llvm.org/doxygen/classllvm_1_1DIBuilder.html">DIBuilder</a> class
 that helps in constructing debug metadata for an llvm IR file. It
@@ -236,13 +234,13 @@ Using it does require that you be more familiar with DWARF terminology than
 you needed to be with <code class="docutils literal"><span class="pre">IRBuilder</span></code> and <code class="docutils literal"><span class="pre">Instruction</span></code> names, but if you
 read through the general documentation on the
 <a class="reference external" href="http://llvm.org/docs/SourceLevelDebugging.html">Metadata Format</a> it
-should be a little more clear. We&#8217;ll be using this class to construct all
+should be a little more clear. We’ll be using this class to construct all
 of our IR level descriptions. Construction for it takes a module so we
-need to construct it shortly after we construct our module. We&#8217;ve left it
+need to construct it shortly after we construct our module. We’ve left it
 as a global static variable to make it a bit easier to use.</p>
-<p>Next we&#8217;re going to create a small container to cache some of our frequent
-data. The first will be our compile unit, but we&#8217;ll also write a bit of
-code for our one type since we won&#8217;t have to worry about multiple typed
+<p>Next we’re going to create a small container to cache some of our frequent
+data. The first will be our compile unit, but we’ll also write a bit of
+code for our one type since we won’t have to worry about multiple typed
 expressions:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">DIBuilder</span> <span class="o">*</span><span class="n">DBuilder</span><span class="p">;</span>
 
@@ -262,26 +260,26 @@ expressions:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>And then later on in <code class="docutils literal"><span class="pre">main</span></code> when we&#8217;re constructing our module:</p>
+<p>And then later on in <code class="docutils literal"><span class="pre">main</span></code> when we’re constructing our module:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DIBuilder</span><span class="p">(</span><span class="o">*</span><span class="n">TheModule</span><span class="p">);</span>
 
 <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createCompileUnit</span><span class="p">(</span>
     <span class="n">dwarf</span><span class="o">::</span><span class="n">DW_LANG_C</span><span class="p">,</span> <span class="s">&quot;fib.ks&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;Kaleidoscope Compiler&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>There are a couple of things to note here. First, while we&#8217;re producing a
+<p>There are a couple of things to note here. First, while we’re producing a
 compile unit for a language called Kaleidoscope we used the language
-constant for C. This is because a debugger wouldn&#8217;t necessarily understand
-the calling conventions or default ABI for a language it doesn&#8217;t recognize
-and we follow the C ABI in our llvm code generation so it&#8217;s the closest
+constant for C. This is because a debugger wouldn’t necessarily understand
+the calling conventions or default ABI for a language it doesn’t recognize
+and we follow the C ABI in our llvm code generation so it’s the closest
 thing to accurate. This ensures we can actually call functions from the
-debugger and have them execute. Secondly, you&#8217;ll see the &#8220;fib.ks&#8221; in the
+debugger and have them execute. Secondly, you’ll see the “fib.ks” in the
 call to <code class="docutils literal"><span class="pre">createCompileUnit</span></code>. This is a default hard coded value since
-we&#8217;re using shell redirection to put our source into the Kaleidoscope
-compiler. In a usual front end you&#8217;d have an input file name and it would
+we’re using shell redirection to put our source into the Kaleidoscope
+compiler. In a usual front end you’d have an input file name and it would
 go there.</p>
 <p>One last thing as part of emitting debug information via DIBuilder is that
-we need to &#8220;finalize&#8221; the debug information. The reasons are part of the
+we need to “finalize” the debug information. The reasons are part of the
 underlying API for DIBuilder, but make sure you do this near the end of
 main:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">finalize</span><span class="p">();</span>
@@ -290,11 +288,11 @@ main:</p>
 <p>before you dump out the module.</p>
 </div>
 <div class="section" id="functions">
-<h2><a class="toc-backref" href="#id6">8.6. Functions</a><a class="headerlink" href="#functions" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">8.6. Functions</a><a class="headerlink" href="#functions" title="永久链接至标题">¶</a></h2>
 <p>Now that we have our <code class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></code> and our source locations, we can add
 function definitions to the debug info. So in <code class="docutils literal"><span class="pre">PrototypeAST::codegen()</span></code> we
 add a few lines of code to describe a context for our subprogram, in this
-case the &#8220;File&#8221;, and the actual definition of the function itself.</p>
+case the “File”, and the actual definition of the function itself.</p>
 <p>So the context:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
                                     <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
@@ -302,7 +300,7 @@ case the &#8220;File&#8221;, and the actual definition of the function itself.</
 </div>
 <p>giving us an DIFile and asking the <code class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></code> we created above for the
 directory and filename where we are currently. Then, for now, we use some
-source locations of 0 (since our AST doesn&#8217;t currently have source location
+source locations of 0 (since our AST doesn’t currently have source location
 information) and construct our function definition:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DIScope</span> <span class="o">*</span><span class="n">FContext</span> <span class="o">=</span> <span class="n">Unit</span><span class="p">;</span>
 <span class="kt">unsigned</span> <span class="n">LineNo</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -318,11 +316,11 @@ information) and construct our function definition:</p>
 metadata for the function.</p>
 </div>
 <div class="section" id="source-locations">
-<h2><a class="toc-backref" href="#id7">8.7. Source Locations</a><a class="headerlink" href="#source-locations" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">8.7. Source Locations</a><a class="headerlink" href="#source-locations" title="永久链接至标题">¶</a></h2>
 <p>The most important thing for debug information is accurate source location -
 this makes it possible to map your source code back. We have a problem though,
-Kaleidoscope really doesn&#8217;t have any source location information in the lexer
-or parser so we&#8217;ll need to add it.</p>
+Kaleidoscope really doesn’t have any source location information in the lexer
+or parser so we’ll need to add it.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">SourceLocation</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">Line</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">Col</span><span class="p">;</span>
@@ -342,9 +340,9 @@ or parser so we&#8217;ll need to add it.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>In this set of code we&#8217;ve added some functionality on how to keep track of the
-line and column of the &#8220;source file&#8221;. As we lex every token we set our current
-current &#8220;lexical location&#8221; to the assorted line and column for the beginning
+<p>In this set of code we’ve added some functionality on how to keep track of the
+line and column of the “source file”. As we lex every token we set our current
+current “lexical location” to the assorted line and column for the beginning
 of the token. We do this by overriding all of the previous calls to
 <code class="docutils literal"><span class="pre">getchar()</span></code> with our new <code class="docutils literal"><span class="pre">advance()</span></code> that keeps track of the information
 and then we have added to all of our AST classes a source location:</p>
@@ -368,7 +366,7 @@ and then we have added to all of our AST classes a source location:</p>
 </pre></div>
 </div>
 <p>giving us locations for each of our expressions and variables.</p>
-<p>From this we can make sure to tell <code class="docutils literal"><span class="pre">DIBuilder</span></code> when we&#8217;re at a new source
+<p>From this we can make sure to tell <code class="docutils literal"><span class="pre">DIBuilder</span></code> when we’re at a new source
 location so it can use that when we generate the rest of our code and make
 sure that each instruction has source location information. We do this
 by constructing another small function:</p>
@@ -384,7 +382,7 @@ by constructing another small function:</p>
 </pre></div>
 </div>
 <p>that both tells the main <code class="docutils literal"><span class="pre">IRBuilder</span></code> where we are, but also what scope
-we&#8217;re in. Since we&#8217;ve just created a function above we can either be in
+we’re in. Since we’ve just created a function above we can either be in
 the main file scope (like when we created our function), or now we can be
 in the function scope we just created. To represent this we create a stack
 of scopes:</p>
@@ -407,7 +405,7 @@ also:</p>
 <blockquote>
 <div>KSDbgInfo.LexicalBlocks.push_back(&amp;KSDbgInfo.FnScopeMap[Proto]);</div></blockquote>
 <p>when we start generating the code for each function.</p>
-<p>also, don&#8217;t forget to pop the scope back off of your scope stack at the
+<p>also, don’t forget to pop the scope back off of your scope stack at the
 end of the code generation for the function:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Pop off the lexical block for the function since we added it</span>
 <span class="c1">// unconditionally.</span>
@@ -416,11 +414,11 @@ end of the code generation for the function:</p>
 </div>
 </div>
 <div class="section" id="variables">
-<h2><a class="toc-backref" href="#id8">8.8. Variables</a><a class="headerlink" href="#variables" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">8.8. Variables</a><a class="headerlink" href="#variables" title="永久链接至标题">¶</a></h2>
 <p>Now that we have functions, we need to be able to print out the variables
-we have in scope. Let&#8217;s get our function arguments set up so we can get
-decent backtraces and see how our functions are being called. It isn&#8217;t
-a lot of code, and we generally handle it when we&#8217;re creating the
+we have in scope. Let’s get our function arguments set up so we can get
+decent backtraces and see how our functions are being called. It isn’t
+a lot of code, and we generally handle it when we’re creating the
 argument allocas in <code class="docutils literal"><span class="pre">PrototypeAST::CreateArgumentAllocas</span></code>.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DIScope</span> <span class="o">*</span><span class="n">Scope</span> <span class="o">=</span> <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
 <span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
@@ -433,12 +431,12 @@ argument allocas in <code class="docutils literal"><span class="pre">PrototypeAS
                         <span class="n">Builder</span><span class="p">.</span><span class="n">GetInsertBlock</span><span class="p">());</span>
 </pre></div>
 </div>
-<p>Here we&#8217;re doing a few things. First, we&#8217;re grabbing our current scope
+<p>Here we’re doing a few things. First, we’re grabbing our current scope
 for the variable so we can say what range of code our variable is valid
-through. Second, we&#8217;re creating the variable, giving it the scope,
-the name, source location, type, and since it&#8217;s an argument, the argument
+through. Second, we’re creating the variable, giving it the scope,
+the name, source location, type, and since it’s an argument, the argument
 index. Third, we create an <code class="docutils literal"><span class="pre">lvm.dbg.declare</span></code> call to indicate at the IR
-level that we&#8217;ve got a variable in an alloca (and it gives a starting
+level that we’ve got a variable in an alloca (and it gives a starting
 location for the variable), and setting a source location for the
 beginning of the scope on the declare.</p>
 <p>One interesting thing to note at this point is that various debuggers have
@@ -463,7 +461,7 @@ print out argument variables, and call functions. Not too bad for just a
 few simple lines of code!</p>
 </div>
 <div class="section" id="full-code-listing">
-<h2><a class="toc-backref" href="#id9">8.9. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">8.9. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="永久链接至标题">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 debug information. To build this example, use:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
@@ -497,13 +495,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

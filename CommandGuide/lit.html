@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>lit - LLVM Integrated Tester &mdash; LLVM 3.8 文档</title>
-    
+    <title>lit - LLVM Integrated Tester &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="llvm-build - LLVM Project Build Utility" href="llvm-build.html" />
     <link rel="prev" title="tblgen - Target Description To C++ Code Generator" href="tblgen.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -111,27 +109,27 @@ subset of the options specified on the command line, see
 <h2>GENERAL OPTIONS<a class="headerlink" href="#general-options" title="永久链接至标题">¶</a></h2>
 <dl class="option">
 <dt id="cmdoption-h">
-<span id="cmdoption--help"></span><code class="descname">-h</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-h" title="永久链接至目标">¶</a></dt>
+<code class="descname">-h</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-h" title="永久链接至目标">¶</a></dt>
 <dd><p>Show the <strong class="program">lit</strong> help message.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-j">
-<span id="cmdoption--threads"></span><code class="descname">-j</code><code class="descclassname"> N</code><code class="descclassname">, </code><code class="descname">--threads</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption-j" title="永久链接至目标">¶</a></dt>
+<code class="descname">-j</code><code class="descclassname"> N</code><code class="descclassname">, </code><code class="descname">--threads</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption-j" title="永久链接至目标">¶</a></dt>
 <dd><p>Run <code class="docutils literal"><span class="pre">N</span></code> tests in parallel.  By default, this is automatically chosen to
 match the number of detected available CPUs.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--config-prefix">
-<code class="descname">--config-prefix</code><code class="descclassname">=NAME</code><a class="headerlink" href="#cmdoption--config-prefix" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-config-prefix">
+<code class="descname">--config-prefix</code><code class="descclassname">=NAME</code><a class="headerlink" href="#cmdoption-config-prefix" title="永久链接至目标">¶</a></dt>
 <dd><p>Search for <code class="file docutils literal"><em><span class="pre">NAME</span></em><span class="pre">.cfg</span></code> and <code class="file docutils literal"><em><span class="pre">NAME</span></em><span class="pre">.site.cfg</span></code> when searching for
 test suites, instead of <code class="file docutils literal"><span class="pre">lit.cfg</span></code> and <code class="file docutils literal"><span class="pre">lit.site.cfg</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-D">
-<span id="cmdoption-D"></span><span id="cmdoption--param"></span><span id="cmdoption--param"></span><code class="descname">-D</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> NAME=VALUE</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME=VALUE</code><a class="headerlink" href="#cmdoption-D" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-d">
+<code class="descname">-D</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> NAME=VALUE</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME=VALUE</code><a class="headerlink" href="#cmdoption-d" title="永久链接至目标">¶</a></dt>
 <dd><p>Add a user defined parameter <code class="docutils literal"><span class="pre">NAME</span></code> with the given <code class="docutils literal"><span class="pre">VALUE</span></code> (or the empty
 string if not given).  The meaning and use of these parameters is test suite
 dependent.</p>
@@ -142,45 +140,45 @@ dependent.</p>
 <span id="id1"></span><h2>OUTPUT OPTIONS<a class="headerlink" href="#output-options" title="永久链接至标题">¶</a></h2>
 <dl class="option">
 <dt id="cmdoption-q">
-<span id="cmdoption--quiet"></span><code class="descname">-q</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--quiet</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-q" title="永久链接至目标">¶</a></dt>
+<code class="descname">-q</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--quiet</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-q" title="永久链接至目标">¶</a></dt>
 <dd><p>Suppress any output except for test failures.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-s">
-<span id="cmdoption--succinct"></span><code class="descname">-s</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--succinct</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-s" title="永久链接至目标">¶</a></dt>
-<dd><p>Show less output, for example don&#8217;t show information on tests that pass.</p>
+<code class="descname">-s</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--succinct</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-s" title="永久链接至目标">¶</a></dt>
+<dd><p>Show less output, for example don’t show information on tests that pass.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-v">
-<span id="cmdoption--verbose"></span><code class="descname">-v</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--verbose</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-v" title="永久链接至目标">¶</a></dt>
+<code class="descname">-v</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--verbose</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-v" title="永久链接至目标">¶</a></dt>
 <dd><p>Show more information on test failures, for example the entire test output
 instead of just the test result.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-a">
-<span id="cmdoption--show-all"></span><code class="descname">-a</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--show-all</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-a" title="永久链接至目标">¶</a></dt>
+<code class="descname">-a</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--show-all</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-a" title="永久链接至目标">¶</a></dt>
 <dd><p>Show more information about all tests, for example the entire test
 commandline and output.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--no-progress-bar">
-<code class="descname">--no-progress-bar</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--no-progress-bar" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-no-progress-bar">
+<code class="descname">--no-progress-bar</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-no-progress-bar" title="永久链接至目标">¶</a></dt>
 <dd><p>Do not use curses based progress bar.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-unsupported">
-<code class="descname">--show-unsupported</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-unsupported" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-show-unsupported">
+<code class="descname">--show-unsupported</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-show-unsupported" title="永久链接至目标">¶</a></dt>
 <dd><p>Show the names of unsupported tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-xfail">
-<code class="descname">--show-xfail</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-xfail" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-show-xfail">
+<code class="descname">--show-xfail</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-show-xfail" title="永久链接至目标">¶</a></dt>
 <dd><p>Show the names of tests that were expected to fail.</p>
 </dd></dl>
 
@@ -188,41 +186,41 @@ commandline and output.</p>
 <div class="section" id="execution-options">
 <span id="id2"></span><h2>EXECUTION OPTIONS<a class="headerlink" href="#execution-options" title="永久链接至标题">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption--path">
-<code class="descname">--path</code><code class="descclassname">=PATH</code><a class="headerlink" href="#cmdoption--path" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-path">
+<code class="descname">--path</code><code class="descclassname">=PATH</code><a class="headerlink" href="#cmdoption-path" title="永久链接至目标">¶</a></dt>
 <dd><p>Specify an additional <code class="docutils literal"><span class="pre">PATH</span></code> to use when searching for executables in tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--vg">
-<code class="descname">--vg</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--vg" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-vg">
+<code class="descname">--vg</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-vg" title="永久链接至目标">¶</a></dt>
 <dd><p>Run individual tests under valgrind (using the memcheck tool).  The
 <code class="docutils literal"><span class="pre">--error-exitcode</span></code> argument for valgrind is used so that valgrind failures
 will cause the program to exit with a non-zero status.</p>
 <p>When this option is enabled, <strong class="program">lit</strong> will also automatically provide a
-&#8220;<code class="docutils literal"><span class="pre">valgrind</span></code>&#8221; feature that can be used to conditionally disable (or expect
+“<code class="docutils literal"><span class="pre">valgrind</span></code>” feature that can be used to conditionally disable (or expect
 failure in) certain tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--vg-arg">
-<code class="descname">--vg-arg</code><code class="descclassname">=ARG</code><a class="headerlink" href="#cmdoption--vg-arg" title="永久链接至目标">¶</a></dt>
-<dd><p>When <a class="reference internal" href="#cmdoption--vg"><code class="xref std std-option docutils literal"><span class="pre">--vg</span></code></a> is used, specify an additional argument to pass to
+<dt id="cmdoption-vg-arg">
+<code class="descname">--vg-arg</code><code class="descclassname">=ARG</code><a class="headerlink" href="#cmdoption-vg-arg" title="永久链接至目标">¶</a></dt>
+<dd><p>When <a class="reference internal" href="#cmdoption-vg"><code class="xref std std-option docutils literal"><span class="pre">--vg</span></code></a> is used, specify an additional argument to pass to
 <strong class="program">valgrind</strong> itself.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--vg-leak">
-<code class="descname">--vg-leak</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--vg-leak" title="永久链接至目标">¶</a></dt>
-<dd><p>When <a class="reference internal" href="#cmdoption--vg"><code class="xref std std-option docutils literal"><span class="pre">--vg</span></code></a> is used, enable memory leak checks.  When this option is
-enabled, <strong class="program">lit</strong> will also automatically provide a &#8220;<code class="docutils literal"><span class="pre">vg_leak</span></code>&#8221;
+<dt id="cmdoption-vg-leak">
+<code class="descname">--vg-leak</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-vg-leak" title="永久链接至目标">¶</a></dt>
+<dd><p>When <a class="reference internal" href="#cmdoption-vg"><code class="xref std std-option docutils literal"><span class="pre">--vg</span></code></a> is used, enable memory leak checks.  When this option is
+enabled, <strong class="program">lit</strong> will also automatically provide a “<code class="docutils literal"><span class="pre">vg_leak</span></code>”
 feature that can be used to conditionally disable (or expect failure in)
 certain tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--time-tests">
-<code class="descname">--time-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--time-tests" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-time-tests">
+<code class="descname">--time-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-time-tests" title="永久链接至目标">¶</a></dt>
 <dd><p>Track the wall time individual tests take to execute and includes the results
 in the summary output.  This is useful for determining which tests in a test
 suite take the most time to execute.  Note that this option is most useful
@@ -233,20 +231,20 @@ with <code class="docutils literal"><span class="pre">-j</span> <span class="pre
 <div class="section" id="selection-options">
 <span id="id3"></span><h2>SELECTION OPTIONS<a class="headerlink" href="#selection-options" title="永久链接至标题">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption--max-tests">
-<code class="descname">--max-tests</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption--max-tests" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-max-tests">
+<code class="descname">--max-tests</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption-max-tests" title="永久链接至目标">¶</a></dt>
 <dd><p>Run at most <code class="docutils literal"><span class="pre">N</span></code> tests and then terminate.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--max-time">
-<code class="descname">--max-time</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption--max-time" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-max-time">
+<code class="descname">--max-time</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption-max-time" title="永久链接至目标">¶</a></dt>
 <dd><p>Spend at most <code class="docutils literal"><span class="pre">N</span></code> seconds (approximately) running tests and then terminate.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--shuffle">
-<code class="descname">--shuffle</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--shuffle" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-shuffle">
+<code class="descname">--shuffle</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-shuffle" title="永久链接至目标">¶</a></dt>
 <dd><p>Run the tests in a random order.</p>
 </dd></dl>
 
@@ -254,21 +252,21 @@ with <code class="docutils literal"><span class="pre">-j</span> <span class="pre
 <div class="section" id="additional-options">
 <h2>ADDITIONAL OPTIONS<a class="headerlink" href="#additional-options" title="永久链接至标题">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption--debug">
-<code class="descname">--debug</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--debug" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-debug">
+<code class="descname">--debug</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-debug" title="永久链接至目标">¶</a></dt>
 <dd><p>Run <strong class="program">lit</strong> in debug mode, for debugging configuration issues and
 <strong class="program">lit</strong> itself.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-suites">
-<code class="descname">--show-suites</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-suites" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-show-suites">
+<code class="descname">--show-suites</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-show-suites" title="永久链接至目标">¶</a></dt>
 <dd><p>List the discovered test suites and exit.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-tests">
-<code class="descname">--show-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-tests" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-show-tests">
+<code class="descname">--show-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-show-tests" title="永久链接至目标">¶</a></dt>
 <dd><p>List all of the discovered tests and exit.</p>
 </dd></dl>
 
@@ -339,7 +337,7 @@ section for more information.</p>
 creating a new <strong class="program">lit</strong> testing implementation, or extending an existing one.</p>
 <p><strong class="program">lit</strong> proper is primarily an infrastructure for discovering and running
 arbitrary tests, and to expose a single convenient interface to these
-tests. <strong class="program">lit</strong> itself doesn&#8217;t know how to run tests, rather this logic is
+tests. <strong class="program">lit</strong> itself doesn’t know how to run tests, rather this logic is
 defined by <em>test suites</em>.</p>
 <div class="section" id="test-suites">
 <h3>TEST SUITES<a class="headerlink" href="#test-suites" title="永久链接至标题">¶</a></h3>
@@ -347,10 +345,10 @@ defined by <em>test suites</em>.</p>
 suite</em>.  Test suites serve to define the format of the tests they contain, the
 logic for finding those tests, and any additional information to run the tests.</p>
 <p><strong class="program">lit</strong> identifies test suites as directories containing <code class="docutils literal"><span class="pre">lit.cfg</span></code> or
-<code class="docutils literal"><span class="pre">lit.site.cfg</span></code> files (see also <a class="reference internal" href="#cmdoption--config-prefix"><code class="xref std std-option docutils literal"><span class="pre">--config-prefix</span></code></a>).  Test suites are
+<code class="docutils literal"><span class="pre">lit.site.cfg</span></code> files (see also <a class="reference internal" href="#cmdoption-config-prefix"><code class="xref std std-option docutils literal"><span class="pre">--config-prefix</span></code></a>).  Test suites are
 initially discovered by recursively searching up the directory hierarchy for
 all the input files passed on the command line.  You can use
-<a class="reference internal" href="#cmdoption--show-suites"><code class="xref std std-option docutils literal"><span class="pre">--show-suites</span></code></a> to display the discovered test suites at startup.</p>
+<a class="reference internal" href="#cmdoption-show-suites"><code class="xref std std-option docutils literal"><span class="pre">--show-suites</span></code></a> to display the discovered test suites at startup.</p>
 <p>Once a test suite is discovered, its config file is loaded.  Config files
 themselves are Python modules which will be executed.  When the config file is
 executed, two important global variables are predefined:</p>
@@ -403,19 +401,19 @@ otherwise it instantiates a local test config for the directory (see
 <p>Tests are identified by the test suite they are contained within, and the
 relative path inside that suite.  Note that the relative path may not refer to
 an actual file on disk; some test formats (such as <em>GoogleTest</em>) define
-&#8220;virtual tests&#8221; which have a path that contains both the path to the actual
+“virtual tests” which have a path that contains both the path to the actual
 test file and a subpath to identify the virtual test.</p>
 </div>
 <div class="section" id="local-configuration-files">
 <span id="id8"></span><h3>LOCAL CONFIGURATION FILES<a class="headerlink" href="#local-configuration-files" title="永久链接至标题">¶</a></h3>
 <p>When <strong class="program">lit</strong> loads a subdirectory in a test suite, it instantiates a
 local test configuration by cloning the configuration for the parent directory
-&#8212; the root of this configuration chain will always be a test suite.  Once the
+— the root of this configuration chain will always be a test suite.  Once the
 test configuration is cloned <strong class="program">lit</strong> checks for a <em>lit.local.cfg</em> file
 in the subdirectory.  If present, this file will be loaded and can be used to
 specialize the configuration for each individual directory.  This facility can
 be used to define subdirectories of optional tests, or to change other
-configuration parameters &#8212; for example, to change the test format, or the
+configuration parameters — for example, to change the test format, or the
 suffixes which identify test files.</p>
 </div>
 <div class="section" id="test-run-output-format">
@@ -444,7 +442,7 @@ following format:</p>
 </pre></div>
 </div>
 <p>where <code class="docutils literal"><span class="pre">&lt;test</span> <span class="pre">name&gt;</span></code> should be the name of a preceding reported test, <code class="docutils literal"><span class="pre">&lt;log</span>
-<span class="pre">delineator&gt;</span></code> is a string of &#8220;*&#8221; characters <em>at least</em> four characters long
+<span class="pre">delineator&gt;</span></code> is a string of “*” characters <em>at least</em> four characters long
 (the recommended length is 20), and <code class="docutils literal"><span class="pre">&lt;trailing</span> <span class="pre">delineator&gt;</span></code> is an arbitrary
 (unparsed) string.</p>
 <p>The following is an example of a test run output which consists of four tests A,
@@ -491,13 +489,13 @@ test suites in the <em>ExampleTests</em> directory.</p>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

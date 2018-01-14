@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Performance Tips for Frontend Authors &mdash; LLVM 3.8 文档</title>
-    
+    <title>Performance Tips for Frontend Authors &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="MCJIT Design and Implementation" href="../MCJITDesignAndImplementation.html" />
     <link rel="prev" title="The Often Misunderstood GEP Instruction" href="../GetElementPtr.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -75,59 +74,59 @@
             
   <div class="section" id="performance-tips-for-frontend-authors">
 <h1>Performance Tips for Frontend Authors<a class="headerlink" href="#performance-tips-for-frontend-authors" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
-<li><a class="reference internal" href="#ir-best-practices" id="id3">IR Best Practices</a><ul>
-<li><a class="reference internal" href="#the-basics" id="id4">The Basics</a></li>
-<li><a class="reference internal" href="#use-of-allocas" id="id5">Use of allocas</a></li>
-<li><a class="reference internal" href="#avoid-loads-and-stores-of-large-aggregate-type" id="id6">Avoid loads and stores of large aggregate type</a></li>
-<li><a class="reference internal" href="#prefer-zext-over-sext-when-legal" id="id7">Prefer zext over sext when legal</a></li>
-<li><a class="reference internal" href="#zext-gep-indices-to-machine-register-width" id="id8">Zext GEP indices to machine register width</a></li>
-<li><a class="reference internal" href="#when-to-specify-alignment" id="id9">When to specify alignment</a></li>
-<li><a class="reference internal" href="#other-things-to-consider" id="id10">Other Things to Consider</a></li>
+<li><a class="reference internal" href="#abstract" id="id3">Abstract</a></li>
+<li><a class="reference internal" href="#ir-best-practices" id="id4">IR Best Practices</a><ul>
+<li><a class="reference internal" href="#the-basics" id="id5">The Basics</a></li>
+<li><a class="reference internal" href="#use-of-allocas" id="id6">Use of allocas</a></li>
+<li><a class="reference internal" href="#avoid-loads-and-stores-of-large-aggregate-type" id="id7">Avoid loads and stores of large aggregate type</a></li>
+<li><a class="reference internal" href="#prefer-zext-over-sext-when-legal" id="id8">Prefer zext over sext when legal</a></li>
+<li><a class="reference internal" href="#zext-gep-indices-to-machine-register-width" id="id9">Zext GEP indices to machine register width</a></li>
+<li><a class="reference internal" href="#when-to-specify-alignment" id="id10">When to specify alignment</a></li>
+<li><a class="reference internal" href="#other-things-to-consider" id="id11">Other Things to Consider</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#describing-language-specific-properties" id="id11">Describing Language Specific Properties</a><ul>
-<li><a class="reference internal" href="#restricted-operation-semantics" id="id12">Restricted Operation Semantics</a></li>
-<li><a class="reference internal" href="#describing-aliasing-properties" id="id13">Describing Aliasing Properties</a></li>
-<li><a class="reference internal" href="#modeling-memory-effects" id="id14">Modeling Memory Effects</a></li>
-<li><a class="reference internal" href="#pass-ordering" id="id15">Pass Ordering</a></li>
-<li><a class="reference internal" href="#i-still-can-t-find-what-i-m-looking-for" id="id16">I Still Can&#8217;t Find What I&#8217;m Looking For</a></li>
+<li><a class="reference internal" href="#describing-language-specific-properties" id="id12">Describing Language Specific Properties</a><ul>
+<li><a class="reference internal" href="#restricted-operation-semantics" id="id13">Restricted Operation Semantics</a></li>
+<li><a class="reference internal" href="#describing-aliasing-properties" id="id14">Describing Aliasing Properties</a></li>
+<li><a class="reference internal" href="#modeling-memory-effects" id="id15">Modeling Memory Effects</a></li>
+<li><a class="reference internal" href="#pass-ordering" id="id16">Pass Ordering</a></li>
+<li><a class="reference internal" href="#i-still-can-t-find-what-i-m-looking-for" id="id17">I Still Can’t Find What I’m Looking For</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#adding-to-this-document" id="id17">Adding to this document</a></li>
+<li><a class="reference internal" href="#adding-to-this-document" id="id18">Adding to this document</a></li>
 </ul>
 </div>
 <div class="section" id="abstract">
-<h2><a class="toc-backref" href="#id2">Abstract</a><a class="headerlink" href="#abstract" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Abstract</a><a class="headerlink" href="#abstract" title="永久链接至标题">¶</a></h2>
 <p>The intended audience of this document is developers of language frontends
 targeting LLVM IR. This document is home to a collection of tips on how to
 generate IR that optimizes well.</p>
 </div>
 <div class="section" id="ir-best-practices">
-<h2><a class="toc-backref" href="#id3">IR Best Practices</a><a class="headerlink" href="#ir-best-practices" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">IR Best Practices</a><a class="headerlink" href="#ir-best-practices" title="永久链接至标题">¶</a></h2>
 <p>As with any optimizer, LLVM has its strengths and weaknesses.  In some cases,
 surprisingly small changes in the source IR can have a large effect on the
 generated code.</p>
-<p>Beyond the specific items on the list below, it&#8217;s worth noting that the most
+<p>Beyond the specific items on the list below, it’s worth noting that the most
 mature frontend for LLVM is Clang.  As a result, the further your IR gets from what Clang might emit, the less likely it is to be effectively optimized.  It
-can often be useful to write a quick C program with the semantics you&#8217;re trying
-to model and see what decisions Clang&#8217;s IRGen makes about what IR to emit.
-Studying Clang&#8217;s CodeGen directory can also be a good source of ideas.  Note
-that Clang and LLVM are explicitly version locked so you&#8217;ll need to make sure
-you&#8217;re using a Clang built from the same svn revision or release as the LLVM
-library you&#8217;re using.  As always, it&#8217;s <em>strongly</em> recommended that you track
+can often be useful to write a quick C program with the semantics you’re trying
+to model and see what decisions Clang’s IRGen makes about what IR to emit.
+Studying Clang’s CodeGen directory can also be a good source of ideas.  Note
+that Clang and LLVM are explicitly version locked so you’ll need to make sure
+you’re using a Clang built from the same svn revision or release as the LLVM
+library you’re using.  As always, it’s <em>strongly</em> recommended that you track
 tip of tree development, particularly during bring up of a new project.</p>
 <div class="section" id="the-basics">
-<h3><a class="toc-backref" href="#id4">The Basics</a><a class="headerlink" href="#the-basics" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">The Basics</a><a class="headerlink" href="#the-basics" title="永久链接至标题">¶</a></h3>
 <ol class="arabic simple">
 <li>Make sure that your Modules contain both a data layout specification and
 target triple. Without these pieces, non of the target specific optimization
 will be enabled.  This can have a major effect on the generated code quality.</li>
 <li>For each function or global emitted, use the most private linkage type
 possible (private, internal or linkonce_odr preferably).  Doing so will
-make LLVM&#8217;s inter-procedural optimizations much more effective.</li>
+make LLVM’s inter-procedural optimizations much more effective.</li>
 <li>Avoid high in-degree basic blocks (e.g. basic blocks with dozens or hundreds
 of predecessors).  Among other issues, the register allocator is known to
 perform badly with confronted with such structures.  The only exception to
@@ -135,7 +134,7 @@ this guidance is that a unified return block with high in-degree is fine.</li>
 </ol>
 </div>
 <div class="section" id="use-of-allocas">
-<h3><a class="toc-backref" href="#id5">Use of allocas</a><a class="headerlink" href="#use-of-allocas" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Use of allocas</a><a class="headerlink" href="#use-of-allocas" title="永久链接至标题">¶</a></h3>
 <p>An alloca instruction can be used to represent a function scoped stack slot,
 but can also represent dynamic frame expansion.  When representing function
 scoped variables or locations, placing alloca instructions at the beginning of
@@ -150,7 +149,7 @@ not be eliminated by Mem2Reg or SROA, the optimizer is likely to be less
 effective than it could be.</p>
 </div>
 <div class="section" id="avoid-loads-and-stores-of-large-aggregate-type">
-<h3><a class="toc-backref" href="#id6">Avoid loads and stores of large aggregate type</a><a class="headerlink" href="#avoid-loads-and-stores-of-large-aggregate-type" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Avoid loads and stores of large aggregate type</a><a class="headerlink" href="#avoid-loads-and-stores-of-large-aggregate-type" title="永久链接至标题">¶</a></h3>
 <p>LLVM currently does not optimize well loads and stores of large <a class="reference internal" href="../LangRef.html#t-aggregate"><span class="std std-ref">aggregate
 types</span></a> (i.e. structs and arrays).  As an alternative, consider
 loading individual fields from memory.</p>
@@ -159,7 +158,7 @@ instruction supported by the targeted hardware are well supported.  These can
 be an effective way to represent collections of small packed fields.</p>
 </div>
 <div class="section" id="prefer-zext-over-sext-when-legal">
-<h3><a class="toc-backref" href="#id7">Prefer zext over sext when legal</a><a class="headerlink" href="#prefer-zext-over-sext-when-legal" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Prefer zext over sext when legal</a><a class="headerlink" href="#prefer-zext-over-sext-when-legal" title="永久链接至标题">¶</a></h3>
 <p>On some architectures (X86_64 is one), sign extension can involve an extra
 instruction whereas zero extension can be folded into a load.  LLVM will try to
 replace a sext with a zext when it can be proven safe, but if you have
@@ -168,7 +167,7 @@ be profitable to use a zext rather than a sext.</p>
 <p>Alternatively, you can <a class="reference internal" href="../LangRef.html#range-metadata"><span class="std std-ref">specify the range of the value using metadata</span></a> and LLVM can do the sext to zext conversion for you.</p>
 </div>
 <div class="section" id="zext-gep-indices-to-machine-register-width">
-<h3><a class="toc-backref" href="#id8">Zext GEP indices to machine register width</a><a class="headerlink" href="#zext-gep-indices-to-machine-register-width" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Zext GEP indices to machine register width</a><a class="headerlink" href="#zext-gep-indices-to-machine-register-width" title="永久链接至标题">¶</a></h3>
 <p>Internally, LLVM often promotes the width of GEP indices to machine register
 width.  When it does so, it will default to using sign extension (sext)
 operations for safety.  If your source language provides information about
@@ -176,7 +175,7 @@ the range of the index, you may wish to manually extend indices to machine
 register width using a zext instruction.</p>
 </div>
 <div class="section" id="when-to-specify-alignment">
-<h3><a class="toc-backref" href="#id9">When to specify alignment</a><a class="headerlink" href="#when-to-specify-alignment" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">When to specify alignment</a><a class="headerlink" href="#when-to-specify-alignment" title="永久链接至标题">¶</a></h3>
 <p>LLVM will always generate correct code if you don’t specify alignment, but may
 generate inefficient code.  For example, if you are targeting MIPS (or older
 ARM ISAs) then the hardware does not handle unaligned loads and stores, and
@@ -199,7 +198,7 @@ lower an under aligned access into a sequence of natively aligned accesses.
 As a result, alignment is mandatory for atomic loads and stores.</p>
 </div>
 <div class="section" id="other-things-to-consider">
-<h3><a class="toc-backref" href="#id10">Other Things to Consider</a><a class="headerlink" href="#other-things-to-consider" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">Other Things to Consider</a><a class="headerlink" href="#other-things-to-consider" title="永久链接至标题">¶</a></h3>
 <ol class="arabic simple">
 <li>Use ptrtoint/inttoptr sparingly (they interfere with pointer aliasing
 analysis), prefer GEPs</li>
@@ -223,7 +222,7 @@ difference in code placement and thus the performance of tight loops.</li>
 the loop earlier than necessary.  If the terminator of the loop header
 block is a loop exiting conditional branch, the effectiveness of LICM will
 be limited for loads not in the header.  (This is due to the fact that LLVM
-may not know such a load is safe to speculatively execute and thus can&#8217;t
+may not know such a load is safe to speculatively execute and thus can’t
 lift an otherwise loop invariant load unless it can prove the exiting
 condition is not taken.)  It can be profitable, in some cases, to emit such
 instructions into the header even if they are not used along a rarely
@@ -250,8 +249,8 @@ profitable for code generation purposes, the optimizer will likely form the
 intrinsics itself late in the optimization pipeline.  It is <em>very</em> rarely
 profitable to emit these directly in the language frontend.  This item
 explicitly includes the use of the <a class="reference internal" href="../LangRef.html#int-overflow"><span class="std std-ref">overflow intrinsics</span></a>.</li>
-<li>Avoid using the <a class="reference internal" href="../LangRef.html#int-assume"><span class="std std-ref">assume intrinsic</span></a> until you&#8217;ve
-established that a) there&#8217;s no other way to express the given fact and b)
+<li>Avoid using the <a class="reference internal" href="../LangRef.html#int-assume"><span class="std std-ref">assume intrinsic</span></a> until you’ve
+established that a) there’s no other way to express the given fact and b)
 that fact is critical for optimization purposes.  Assumes are a great
 prototyping mechanism, but they can have negative effects on both compile
 time and optimization effectiveness.  The former is fixable with enough
@@ -260,11 +259,11 @@ effort, but the later is fairly fundamental to their designed purpose.</li>
 </div>
 </div>
 <div class="section" id="describing-language-specific-properties">
-<h2><a class="toc-backref" href="#id11">Describing Language Specific Properties</a><a class="headerlink" href="#describing-language-specific-properties" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id12">Describing Language Specific Properties</a><a class="headerlink" href="#describing-language-specific-properties" title="永久链接至标题">¶</a></h2>
 <p>When translating a source language to LLVM, finding ways to express concepts
 and guarantees available in your source language which are not natively
-provided by LLVM IR will greatly improve LLVM&#8217;s ability to optimize your code.
-As an example, C/C++&#8217;s ability to mark every add as &#8220;no signed wrap (nsw)&#8221; goes
+provided by LLVM IR will greatly improve LLVM’s ability to optimize your code.
+As an example, C/C++’s ability to mark every add as “no signed wrap (nsw)” goes
 a long way to assisting the optimizer in reasoning about loop induction
 variables and thus generating more optimal code for loops.</p>
 <p>The LLVM LangRef includes a number of mechanisms for annotating the IR with
@@ -272,19 +271,19 @@ additional semantic information.  It is <em>strongly</em> recommended that you b
 highly familiar with this document.  The list below is intended to highlight a
 couple of items of particular interest, but is by no means exhaustive.</p>
 <div class="section" id="restricted-operation-semantics">
-<h3><a class="toc-backref" href="#id12">Restricted Operation Semantics</a><a class="headerlink" href="#restricted-operation-semantics" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id13">Restricted Operation Semantics</a><a class="headerlink" href="#restricted-operation-semantics" title="永久链接至标题">¶</a></h3>
 <ol class="arabic simple">
 <li>Add nsw/nuw flags as appropriate.  Reasoning about overflow is
 generally hard for an optimizer so providing these facts from the frontend
 can be very impactful.</li>
-<li>Use fast-math flags on floating point operations if legal.  If you don&#8217;t
+<li>Use fast-math flags on floating point operations if legal.  If you don’t
 need strict IEEE floating point semantics, there are a number of additional
 optimizations that can be performed.  This can be highly impactful for
 floating point intensive computations.</li>
 </ol>
 </div>
 <div class="section" id="describing-aliasing-properties">
-<h3><a class="toc-backref" href="#id13">Describing Aliasing Properties</a><a class="headerlink" href="#describing-aliasing-properties" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Describing Aliasing Properties</a><a class="headerlink" href="#describing-aliasing-properties" title="永久链接至标题">¶</a></h3>
 <ol class="arabic simple">
 <li>Add noalias/align/dereferenceable/nonnull to function arguments and return
 values as appropriate</li>
@@ -294,7 +293,7 @@ otherwise-non-deducible pointer aliasing facts</li>
 </ol>
 </div>
 <div class="section" id="modeling-memory-effects">
-<h3><a class="toc-backref" href="#id14">Modeling Memory Effects</a><a class="headerlink" href="#modeling-memory-effects" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">Modeling Memory Effects</a><a class="headerlink" href="#modeling-memory-effects" title="永久链接至标题">¶</a></h3>
 <ol class="arabic simple">
 <li>Mark functions as readnone/readonly/argmemonly or noreturn/nounwind when
 known.  The optimizer will try to infer these flags, but may not always be
@@ -304,11 +303,11 @@ functions that the optimizer can not analyze.</li>
 intrinsics where possible.  Common profitable uses are for stack like data
 structures (thus allowing dead store elimination) and for describing
 life times of allocas (thus allowing smaller stack sizes).</li>
-<li>Mark invariant locations using !invariant.load and TBAA&#8217;s constant flags</li>
+<li>Mark invariant locations using !invariant.load and TBAA’s constant flags</li>
 </ol>
 </div>
 <div class="section" id="pass-ordering">
-<h3><a class="toc-backref" href="#id15">Pass Ordering</a><a class="headerlink" href="#pass-ordering" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">Pass Ordering</a><a class="headerlink" href="#pass-ordering" title="永久链接至标题">¶</a></h3>
 <p>One of the most common mistakes made by new language frontend projects is to
 use the existing -O2 or -O3 pass pipelines as is.  These pass pipelines make a
 good starting point for an optimizing compiler for any language, but they have
@@ -329,21 +328,21 @@ you likely need to adjust your pass order.</li>
 </ol>
 </div>
 <div class="section" id="i-still-can-t-find-what-i-m-looking-for">
-<h3><a class="toc-backref" href="#id16">I Still Can&#8217;t Find What I&#8217;m Looking For</a><a class="headerlink" href="#i-still-can-t-find-what-i-m-looking-for" title="永久链接至标题">¶</a></h3>
-<p>If you didn&#8217;t find what you were looking for above, consider proposing an piece
+<h3><a class="toc-backref" href="#id17">I Still Can’t Find What I’m Looking For</a><a class="headerlink" href="#i-still-can-t-find-what-i-m-looking-for" title="永久链接至标题">¶</a></h3>
+<p>If you didn’t find what you were looking for above, consider proposing an piece
 of metadata which provides the optimization hint you need.  Such extensions are
 relatively common and are generally well received by the community.  You will
 need to ensure that your proposal is sufficiently general so that it benefits
 others if you wish to contribute it upstream.</p>
-<p>You should also consider describing the problem you&#8217;re facing on <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev</a> and asking for advice.
-It&#8217;s entirely possible someone has encountered your problem before and can
+<p>You should also consider describing the problem you’re facing on <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev</a> and asking for advice.
+It’s entirely possible someone has encountered your problem before and can
 give good advice.  If there are multiple interested parties, that also
 increases the chances that a metadata extension would be well received by the
 community as a whole.</p>
 </div>
 </div>
 <div class="section" id="adding-to-this-document">
-<h2><a class="toc-backref" href="#id17">Adding to this document</a><a class="headerlink" href="#adding-to-this-document" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id18">Adding to this document</a><a class="headerlink" href="#adding-to-this-document" title="永久链接至标题">¶</a></h2>
 <p>If you run across a case that you feel deserves to be covered here, please send
 a patch to <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-commits">llvm-commits</a> for review.</p>
 <p>If you have questions on these items, please direct them to <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev</a>.  The more relevant
@@ -375,9 +374,9 @@ answered.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

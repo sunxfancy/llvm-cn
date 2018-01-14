@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Stack maps and patch points in LLVM &mdash; LLVM 3.8 文档</title>
-    
+    <title>Stack maps and patch points in LLVM &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Design and Usage of the InAlloca Attribute" href="InAlloca.html" />
     <link rel="prev" title="User Guide for AMDGPU Back-end" href="AMDGPUUsage.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,29 +74,29 @@
             
   <div class="section" id="stack-maps-and-patch-points-in-llvm">
 <h1>Stack maps and patch points in LLVM<a class="headerlink" href="#stack-maps-and-patch-points-in-llvm" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#definitions" id="id5">Definitions</a></li>
-<li><a class="reference internal" href="#motivation" id="id6">Motivation</a></li>
-<li><a class="reference internal" href="#intrinsics" id="id7">Intrinsics</a><ul>
-<li><a class="reference internal" href="#llvm-experimental-stackmap-intrinsic" id="id8">&#8216;<code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code>&#8216; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-experimental-patchpoint-intrinsic" id="id9">&#8216;<code class="docutils literal"><span class="pre">llvm.experimental.patchpoint.*</span></code>&#8216; Intrinsic</a></li>
+<li><a class="reference internal" href="#definitions" id="id6">Definitions</a></li>
+<li><a class="reference internal" href="#motivation" id="id7">Motivation</a></li>
+<li><a class="reference internal" href="#intrinsics" id="id8">Intrinsics</a><ul>
+<li><a class="reference internal" href="#llvm-experimental-stackmap-intrinsic" id="id9">‘<code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code>’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-experimental-patchpoint-intrinsic" id="id10">‘<code class="docutils literal"><span class="pre">llvm.experimental.patchpoint.*</span></code>’ Intrinsic</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#stack-map-format" id="id10">Stack Map Format</a><ul>
-<li><a class="reference internal" href="#stack-map-section" id="id11">Stack Map Section</a></li>
+<li><a class="reference internal" href="#stack-map-format" id="id11">Stack Map Format</a><ul>
+<li><a class="reference internal" href="#stack-map-section" id="id12">Stack Map Section</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#stack-map-usage" id="id12">Stack Map Usage</a><ul>
-<li><a class="reference internal" href="#direct-stack-map-entries" id="id13">Direct Stack Map Entries</a></li>
+<li><a class="reference internal" href="#stack-map-usage" id="id13">Stack Map Usage</a><ul>
+<li><a class="reference internal" href="#direct-stack-map-entries" id="id14">Direct Stack Map Entries</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#supported-architectures" id="id14">Supported Architectures</a></li>
+<li><a class="reference internal" href="#supported-architectures" id="id15">Supported Architectures</a></li>
 </ul>
 </div>
 <div class="section" id="definitions">
-<h2><a class="toc-backref" href="#id5">Definitions</a><a class="headerlink" href="#definitions" title="永久链接至标题">¶</a></h2>
-<p>In this document we refer to the &#8220;runtime&#8221; collectively as all
+<h2><a class="toc-backref" href="#id6">Definitions</a><a class="headerlink" href="#definitions" title="永久链接至标题">¶</a></h2>
+<p>In this document we refer to the “runtime” collectively as all
 components that serve as the LLVM client, including the LLVM IR
 generator, object code consumer, and code patcher.</p>
 <p>A stack map records the location of <code class="docutils literal"><span class="pre">live</span> <span class="pre">values</span></code> at a particular
@@ -109,9 +108,9 @@ program execution at that point independent of the compiled function
 containing the stack map.</p>
 <p>LLVM emits stack map data into the object code within a designated
 <a class="reference internal" href="#stackmap-section"><span class="std std-ref">Stack Map Section</span></a>. This stack map data contains a record for
-each stack map. The record stores the stack map&#8217;s instruction address
+each stack map. The record stores the stack map’s instruction address
 and contains a entry for each mapped value. Each entry encodes a
-value&#8217;s location as a register, stack offset, or constant.</p>
+value’s location as a register, stack offset, or constant.</p>
 <p>A patch point is an instruction address at which space is reserved for
 patching a new instruction sequence at run time. Patch points look
 much like calls to LLVM. They take arguments that follow a calling
@@ -120,7 +119,7 @@ generation, which allows the runtime to locate the patchpoint and
 find the location of <code class="docutils literal"><span class="pre">live</span> <span class="pre">values</span></code> at that point.</p>
 </div>
 <div class="section" id="motivation">
-<h2><a class="toc-backref" href="#id6">Motivation</a><a class="headerlink" href="#motivation" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Motivation</a><a class="headerlink" href="#motivation" title="永久链接至标题">¶</a></h2>
 <p>This functionality is currently experimental but is potentially useful
 in a variety of settings, the most obvious being a runtime (JIT)
 compiler. Example applications of the patchpoint intrinsics are
@@ -136,7 +135,7 @@ releases is not guaranteed.</p>
 from the functionality described in
 <a class="reference internal" href="GarbageCollection.html#stack-map"><span class="std std-ref">Computing stack maps</span></a>. <cite>GCFunctionMetadata</cite> provides the location of
 pointers into a collected heap captured by the <cite>GCRoot</cite> intrinsic,
-which can also be considered a &#8220;stack map&#8221;. Unlike the stack maps
+which can also be considered a “stack map”. Unlike the stack maps
 defined above, the <cite>GCFunctionMetadata</cite> stack map interface does not
 provide a way to associate live register values of arbitrary type with
 an instruction address, nor does it specify a format for the resulting
@@ -145,7 +144,7 @@ richer information to a garbage collecting runtime, but that usage
 will not be discussed in this document.</p>
 </div>
 <div class="section" id="intrinsics">
-<h2><a class="toc-backref" href="#id7">Intrinsics</a><a class="headerlink" href="#intrinsics" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Intrinsics</a><a class="headerlink" href="#intrinsics" title="永久链接至标题">¶</a></h2>
 <p>The following two kinds of intrinsics can be used to implement stack
 maps and patch points: <code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code> and
 <code class="docutils literal"><span class="pre">llvm.experimental.patchpoint</span></code>. Both kinds of intrinsics generate a
@@ -157,7 +156,7 @@ depends on whether it is necessary to reserve space for code patching
 and whether any of the intrinsic arguments should be lowered according
 to calling conventions. <code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code> does not
 reserve any space, nor does it expect any call arguments. If the
-runtime patches code at the stack map&#8217;s address, it will destructively
+runtime patches code at the stack map’s address, it will destructively
 overwrite the program text. This is unlike
 <code class="docutils literal"><span class="pre">llvm.experimental.patchpoint</span></code>, which reserves space for in-place
 patching without overwriting surrounding code. The
@@ -169,7 +168,7 @@ in the <a class="reference internal" href="#stackmap-section"><span class="std s
 the runtime to uniquely identify the stack map, and the offset within
 the code from the beginning of the enclosing function.</p>
 <div class="section" id="llvm-experimental-stackmap-intrinsic">
-<h3><a class="toc-backref" href="#id8">&#8216;<code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code>&#8216; Intrinsic</a><a class="headerlink" href="#llvm-experimental-stackmap-intrinsic" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">‘<code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code>’ Intrinsic</a><a class="headerlink" href="#llvm-experimental-stackmap-intrinsic" title="永久链接至标题">¶</a></h3>
 <div class="section" id="syntax">
 <h4>Syntax:<a class="headerlink" href="#syntax" title="永久链接至标题">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">void</span>
@@ -179,7 +178,7 @@ the code from the beginning of the enclosing function.</p>
 </div>
 <div class="section" id="overview">
 <h4>Overview:<a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h4>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code>&#8216; intrinsic records the location of
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code>’ intrinsic records the location of
 specified values in the stack map without generating any code.</p>
 </div>
 <div class="section" id="operands">
@@ -201,13 +200,13 @@ precede the stack map.</p>
 <p>The stack map ID allows a runtime to locate the desired stack map
 record. LLVM passes this ID through directly to the stack map
 record without checking uniqueness.</p>
-<p>LLVM guarantees a shadow of instructions following the stack map&#8217;s
+<p>LLVM guarantees a shadow of instructions following the stack map’s
 instruction offset during which neither the end of the basic block nor
 another call to <code class="docutils literal"><span class="pre">llvm.experimental.stackmap</span></code> or
 <code class="docutils literal"><span class="pre">llvm.experimental.patchpoint</span></code> may occur. This allows the runtime to
 patch the code at this point in response to an event triggered from
 outside the code. The code for instructions following the stack map
-may be emitted in the stack map&#8217;s shadow, and these instructions may
+may be emitted in the stack map’s shadow, and these instructions may
 be overwritten by destructive patching. Without shadow bytes, this
 destructive patching could overwrite program text or data outside the
 current function. We disallow overlapping stack map shadows so that
@@ -231,7 +230,7 @@ the runtime does not need to consider this corner case.</p>
 </pre></div>
 </div>
 <p>Now, if the runtime needs to invalidate the compiled code, it may
-patch 8 bytes of code at the stack map&#8217;s address at follows:</p>
+patch 8 bytes of code at the stack map’s address at follows:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>0x00 callq _runtime
 0x05 movl  $0xffff, %rax &lt;--- patched code at stack map address
 0x0a callq *%rax         &lt;---- end of 8-byte shadow
@@ -243,9 +242,9 @@ stack frame from the values located by the stack map.</p>
 </div>
 </div>
 <div class="section" id="llvm-experimental-patchpoint-intrinsic">
-<h3><a class="toc-backref" href="#id9">&#8216;<code class="docutils literal"><span class="pre">llvm.experimental.patchpoint.*</span></code>&#8216; Intrinsic</a><a class="headerlink" href="#llvm-experimental-patchpoint-intrinsic" title="永久链接至标题">¶</a></h3>
-<div class="section" id="id1">
-<h4>Syntax:<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h4>
+<h3><a class="toc-backref" href="#id10">‘<code class="docutils literal"><span class="pre">llvm.experimental.patchpoint.*</span></code>’ Intrinsic</a><a class="headerlink" href="#llvm-experimental-patchpoint-intrinsic" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id2">
+<h4>Syntax:<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">void</span>
   <span class="nd">@llvm</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">patchpoint</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="n">i64</span> <span class="o">&lt;</span><span class="nb">id</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i32</span> <span class="o">&lt;</span><span class="n">numBytes</span><span class="o">&gt;</span><span class="p">,</span>
                                      <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">target</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i32</span> <span class="o">&lt;</span><span class="n">numArgs</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
@@ -255,14 +254,14 @@ stack frame from the values located by the stack map.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id2">
-<h4>Overview:<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h4>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.experimental.patchpoint.*</span></code>&#8216; intrinsics creates a function
+<div class="section" id="id3">
+<h4>Overview:<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.experimental.patchpoint.*</span></code>’ intrinsics creates a function
 call to the specified <code class="docutils literal"><span class="pre">&lt;target&gt;</span></code> and records the location of specified
 values in the stack map.</p>
 </div>
-<div class="section" id="id3">
-<h4>Operands:<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id4">
+<h4>Operands:<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
 <p>The first operand is an ID, the second operand is the number of bytes
 reserved for the patchable region, the third operand is the target
 address of a function (optionally null), and the fourth operand
@@ -271,13 +270,13 @@ function call arguments. The remaining variable number of operands are
 the <code class="docutils literal"><span class="pre">live</span> <span class="pre">values</span></code> for which locations will be recorded in the stack
 map.</p>
 </div>
-<div class="section" id="id4">
-<h4>Semantics:<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<div class="section" id="id5">
+<h4>Semantics:<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
 <p>The patch point intrinsic generates a stack map. It also emits a
 function call to the address specified by <code class="docutils literal"><span class="pre">&lt;target&gt;</span></code> if the address
 is not a constant null. The function call and its arguments are
 lowered according to the calling convention specified at the
-intrinsic&#8217;s callsite. Variants of the intrinsic with non-void return
+intrinsic’s callsite. Variants of the intrinsic with non-void return
 type also return a value according to calling convention.</p>
 <p>On PowerPC, note that <code class="docutils literal"><span class="pre">&lt;target&gt;</span></code> must be the ABI function pointer for the
 intended target of the indirect call. Specifically, when compiling for the
@@ -354,7 +353,7 @@ allocated in %r8 and return a value allocated in %r9:</p>
 </div>
 </div>
 <div class="section" id="stack-map-format">
-<span id="stackmap-format"></span><h2><a class="toc-backref" href="#id10">Stack Map Format</a><a class="headerlink" href="#stack-map-format" title="永久链接至标题">¶</a></h2>
+<span id="stackmap-format"></span><h2><a class="toc-backref" href="#id11">Stack Map Format</a><a class="headerlink" href="#stack-map-format" title="永久链接至标题">¶</a></h2>
 <p>The existence of a stack map or patch point intrinsic within an LLVM
 Module forces code emission to create a <a class="reference internal" href="#stackmap-section"><span class="std std-ref">Stack Map Section</span></a>. The
 format of this section follows:</p>
@@ -448,7 +447,7 @@ encoded as <code class="docutils literal"><span class="pre">Direct</span></code>
 also optimize constants by emitting them directly in the stack map,
 either in the <code class="docutils literal"><span class="pre">Offset</span></code> of a <code class="docutils literal"><span class="pre">Constant</span></code> location or in the constant
 pool, referred to by <code class="docutils literal"><span class="pre">ConstantIndex</span></code> locations.</p>
-<p>At each callsite, a &#8220;liveout&#8221; register list is also recorded. These
+<p>At each callsite, a “liveout” register list is also recorded. These
 are the registers that are live across the stackmap and therefore must
 be saved by the runtime. This is an important optimization when the
 patchpoint intrinsic is used with a calling convention that by default
@@ -458,7 +457,7 @@ number and size in bytes. The stackmap format deliberately omits
 specific subregister information. Instead the runtime must interpret
 this information conservatively. For example, if the stackmap reports
 one byte at <code class="docutils literal"><span class="pre">%rax</span></code>, then the value may be in either <code class="docutils literal"><span class="pre">%al</span></code> or
-<code class="docutils literal"><span class="pre">%ah</span></code>. It doesn&#8217;t matter in practice, because the runtime will
+<code class="docutils literal"><span class="pre">%ah</span></code>. It doesn’t matter in practice, because the runtime will
 simply save <code class="docutils literal"><span class="pre">%rax</span></code>. However, if the stackmap reports 16 bytes at
 <code class="docutils literal"><span class="pre">%ymm0</span></code>, then the runtime can safely optimize by saving only
 <code class="docutils literal"><span class="pre">%xmm0</span></code>.</p>
@@ -475,7 +474,7 @@ can reuse the same stack map space for multiple modules.</p>
 platforms. However, a 32-bit implementation should be able to use the
 same format with an insignificant amount of wasted space.</p>
 <div class="section" id="stack-map-section">
-<span id="stackmap-section"></span><h3><a class="toc-backref" href="#id11">Stack Map Section</a><a class="headerlink" href="#stack-map-section" title="永久链接至标题">¶</a></h3>
+<span id="stackmap-section"></span><h3><a class="toc-backref" href="#id12">Stack Map Section</a><a class="headerlink" href="#stack-map-section" title="永久链接至标题">¶</a></h3>
 <p>A JIT compiler can easily access this section by providing its own
 memory manager via the LLVM C API
 <code class="docutils literal"><span class="pre">LLVMCreateSimpleMCJITMemoryManager()</span></code>. When creating the memory
@@ -484,12 +483,12 @@ manager, the JIT provides a callback:
 this section, it invokes the callback and passes the section name. The
 JIT can record the in-memory address of the section at this time and
 later parse it to recover the stack map data.</p>
-<p>On Darwin, the stack map section name is &#8220;__llvm_stackmaps&#8221;. The
-segment name is &#8220;__LLVM_STACKMAPS&#8221;.</p>
+<p>On Darwin, the stack map section name is “__llvm_stackmaps”. The
+segment name is “__LLVM_STACKMAPS”.</p>
 </div>
 </div>
 <div class="section" id="stack-map-usage">
-<h2><a class="toc-backref" href="#id12">Stack Map Usage</a><a class="headerlink" href="#stack-map-usage" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">Stack Map Usage</a><a class="headerlink" href="#stack-map-usage" title="永久链接至标题">¶</a></h2>
 <p>The stack map support described in this document can be used to
 precisely determine the location of values at a specific position in
 the code. LLVM does not maintain any mapping between those values and
@@ -511,7 +510,7 @@ conservatively. If the load may trigger an exception, hoisting it
 above a stack map could be invalid. For example, the runtime may
 determine that a load is safe to execute without a type check given
 the current state of the type system. If the type system changes while
-some activation of the load&#8217;s function exists on the stack, the load
+some activation of the load’s function exists on the stack, the load
 becomes unsafe. The runtime can prevent subsequent execution of that
 load by immediately patching any stack map location that lies between
 the current call site and the load (typically, the runtime would
@@ -521,12 +520,12 @@ program could crash before the runtime could take back control.</p>
 <p>To enforce these semantics, stackmap and patchpoint intrinsics are
 considered to potentially read and write all memory. This may limit
 optimization more than some clients desire. This limitation may be
-avoided by marking the call site as &#8220;readonly&#8221;. In the future we may
+avoided by marking the call site as “readonly”. In the future we may
 also allow meta-data to be added to the intrinsic call to express
 aliasing, thereby allowing optimizations to hoist certain loads above
 stack maps.</p>
 <div class="section" id="direct-stack-map-entries">
-<h3><a class="toc-backref" href="#id13">Direct Stack Map Entries</a><a class="headerlink" href="#direct-stack-map-entries" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Direct Stack Map Entries</a><a class="headerlink" href="#direct-stack-map-entries" title="永久链接至标题">¶</a></h3>
 <p>As shown in <a class="reference internal" href="#stackmap-section"><span class="std std-ref">Stack Map Section</span></a>, a Direct stack map location
 records the address of frame index. This address is itself the value
 that the runtime requested. This differs from Indirect locations,
@@ -539,7 +538,7 @@ while Indirect locations handle register spills.</p>
   llvm.experimental.stackmap(i64 &lt;ID&gt;, i32 &lt;shadowBytes&gt;, i64* %a)
 </pre></div>
 </div>
-<p>The runtime can determine this alloca&#8217;s relative location on the
+<p>The runtime can determine this alloca’s relative location on the
 stack immediately after compilation, or at any time thereafter. This
 differs from Register and Indirect locations, because the runtime can
 only read the values in those locations when execution reaches the
@@ -549,13 +548,13 @@ specially when they are directly consumed by an intrinsics. (This is
 the same requirement imposed by the llvm.gcroot intrinsic.) LLVM
 transformations must not substitute the alloca with any intervening
 value. This can be verified by the runtime simply by checking that the
-stack map&#8217;s location is a Direct location type.</p>
+stack map’s location is a Direct location type.</p>
 </div>
 </div>
 <div class="section" id="supported-architectures">
-<h2><a class="toc-backref" href="#id14">Supported Architectures</a><a class="headerlink" href="#supported-architectures" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id15">Supported Architectures</a><a class="headerlink" href="#supported-architectures" title="永久链接至标题">¶</a></h2>
 <p>Support for StackMap generation and the related intrinsics requires
-some code for each backend.  Today, only a subset of LLVM&#8217;s backends
+some code for each backend.  Today, only a subset of LLVM’s backends
 are supported.  The currently supported architectures are X86_64,
 PowerPC, and Aarch64.</p>
 </div>
@@ -584,9 +583,9 @@ PowerPC, and Aarch64.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

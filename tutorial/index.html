@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Tutorial: Table of Contents &mdash; LLVM 3.8 文档</title>
-    
+    <title>LLVM Tutorial: Table of Contents &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="1. Kaleidoscope: Tutorial Introduction and the Lexer" href="LangImpl1.html" />
     <link rel="prev" title="LLVM test-suite Makefile Guide" href="../TestSuiteMakefileGuide.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -79,33 +78,15 @@
 <h2>Kaleidoscope: Implementing a Language with LLVM<a class="headerlink" href="#kaleidoscope-implementing-a-language-with-llvm" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl1.html">1. Kaleidoscope: Tutorial Introduction and the Lexer</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl2.html">2. Kaleidoscope: Implementing a Parser and AST</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl3.html">3. Kaleidoscope: Code generation to LLVM IR</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl4.html">4. Kaleidoscope: Adding JIT and Optimizer Support</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl5.html">5. Kaleidoscope: Extending the Language: Control Flow</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl6.html">6. Kaleidoscope: Extending the Language: User-defined Operators</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl7.html">7. Kaleidoscope: Extending the Language: Mutable Variables</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl8.html">8. Kaleidoscope: Adding Debug Information</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="LangImpl9.html">9. Kaleidoscope: Conclusion and other useful LLVM tidbits</a><ul class="simple">
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl1.html">1. Kaleidoscope: Tutorial Introduction and the Lexer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl2.html">2. Kaleidoscope: Implementing a Parser and AST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl3.html">3. Kaleidoscope: Code generation to LLVM IR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl4.html">4. Kaleidoscope: Adding JIT and Optimizer Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl5.html">5. Kaleidoscope: Extending the Language: Control Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl6.html">6. Kaleidoscope: Extending the Language: User-defined Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl7.html">7. Kaleidoscope: Extending the Language: Mutable Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl8.html">8. Kaleidoscope: Adding Debug Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LangImpl9.html">9. Kaleidoscope: Conclusion and other useful LLVM tidbits</a></li>
 </ul>
 </div>
 </div>
@@ -113,30 +94,14 @@
 <h2>Kaleidoscope: Implementing a Language with LLVM in Objective Caml<a class="headerlink" href="#kaleidoscope-implementing-a-language-with-llvm-in-objective-caml" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl1.html">1. Kaleidoscope: Tutorial Introduction and the Lexer</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl2.html">2. Kaleidoscope: Implementing a Parser and AST</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl3.html">3. Kaleidoscope: Code generation to LLVM IR</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl4.html">4. Kaleidoscope: Adding JIT and Optimizer Support</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl5.html">5. Kaleidoscope: Extending the Language: Control Flow</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl6.html">6. Kaleidoscope: Extending the Language: User-defined Operators</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl7.html">7. Kaleidoscope: Extending the Language: Mutable Variables</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl8.html">8. Kaleidoscope: Conclusion and other useful LLVM tidbits</a><ul class="simple">
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl1.html">1. Kaleidoscope: Tutorial Introduction and the Lexer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl2.html">2. Kaleidoscope: Implementing a Parser and AST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl3.html">3. Kaleidoscope: Code generation to LLVM IR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl4.html">4. Kaleidoscope: Adding JIT and Optimizer Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl5.html">5. Kaleidoscope: Extending the Language: Control Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl6.html">6. Kaleidoscope: Extending the Language: User-defined Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl7.html">7. Kaleidoscope: Extending the Language: Mutable Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OCamlLangImpl8.html">8. Kaleidoscope: Conclusion and other useful LLVM tidbits</a></li>
 </ul>
 </div>
 </div>
@@ -183,9 +148,9 @@ architecture.</dd>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

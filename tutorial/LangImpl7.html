@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>7. Kaleidoscope: Extending the Language: Mutable Variables &mdash; LLVM 3.8 文档</title>
-    
+    <title>7. Kaleidoscope: Extending the Language: Mutable Variables &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="8. Kaleidoscope: Adding Debug Information" href="LangImpl8.html" />
     <link rel="prev" title="6. Kaleidoscope: Extending the Language: User-defined Operators" href="LangImpl6.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -77,29 +75,29 @@
             
   <div class="section" id="kaleidoscope-extending-the-language-mutable-variables">
 <h1>7. Kaleidoscope: Extending the Language: Mutable Variables<a class="headerlink" href="#kaleidoscope-extending-the-language-mutable-variables" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-7-introduction" id="id2">Chapter 7 Introduction</a></li>
-<li><a class="reference internal" href="#why-is-this-a-hard-problem" id="id3">Why is this a hard problem?</a></li>
-<li><a class="reference internal" href="#memory-in-llvm" id="id4">Memory in LLVM</a></li>
-<li><a class="reference internal" href="#mutable-variables-in-kaleidoscope" id="id5">Mutable Variables in Kaleidoscope</a></li>
-<li><a class="reference internal" href="#adjusting-existing-variables-for-mutation" id="id6">Adjusting Existing Variables for Mutation</a></li>
-<li><a class="reference internal" href="#new-assignment-operator" id="id7">New Assignment Operator</a></li>
-<li><a class="reference internal" href="#user-defined-local-variables" id="id8">User-defined Local Variables</a></li>
-<li><a class="reference internal" href="#id1" id="id9">Full Code Listing</a></li>
+<li><a class="reference internal" href="#chapter-7-introduction" id="id3">Chapter 7 Introduction</a></li>
+<li><a class="reference internal" href="#why-is-this-a-hard-problem" id="id4">Why is this a hard problem?</a></li>
+<li><a class="reference internal" href="#memory-in-llvm" id="id5">Memory in LLVM</a></li>
+<li><a class="reference internal" href="#mutable-variables-in-kaleidoscope" id="id6">Mutable Variables in Kaleidoscope</a></li>
+<li><a class="reference internal" href="#adjusting-existing-variables-for-mutation" id="id7">Adjusting Existing Variables for Mutation</a></li>
+<li><a class="reference internal" href="#new-assignment-operator" id="id8">New Assignment Operator</a></li>
+<li><a class="reference internal" href="#user-defined-local-variables" id="id9">User-defined Local Variables</a></li>
+<li><a class="reference internal" href="#id2" id="id10">Full Code Listing</a></li>
 </ul>
 </div>
 <div class="section" id="chapter-7-introduction">
-<h2><a class="toc-backref" href="#id2">7.1. Chapter 7 Introduction</a><a class="headerlink" href="#chapter-7-introduction" title="永久链接至标题">¶</a></h2>
-<p>Welcome to Chapter 7 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
-LLVM</a>&#8221; tutorial. In chapters 1 through 6, we&#8217;ve built a
+<h2><a class="toc-backref" href="#id3">7.1. Chapter 7 Introduction</a><a class="headerlink" href="#chapter-7-introduction" title="永久链接至标题">¶</a></h2>
+<p>Welcome to Chapter 7 of the “<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>” tutorial. In chapters 1 through 6, we’ve built a
 very respectable, albeit simple, <a class="reference external" href="http://en.wikipedia.org/wiki/Functional_programming">functional programming
 language</a>. In our
 journey, we learned some parsing techniques, how to build and represent
 an AST, how to build LLVM IR, and how to optimize the resultant code as
 well as JIT compile it.</p>
 <p>While Kaleidoscope is interesting as a functional language, the fact
-that it is functional makes it &#8220;too easy&#8221; to generate LLVM IR for it. In
+that it is functional makes it “too easy” to generate LLVM IR for it. In
 particular, a functional language makes it very easy to build LLVM IR
 directly in <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">SSA
 form</a>.
@@ -112,7 +110,7 @@ well tested support for this, though the way it works is a bit
 unexpected for some.</p>
 </div>
 <div class="section" id="why-is-this-a-hard-problem">
-<h2><a class="toc-backref" href="#id3">7.2. Why is this a hard problem?</a><a class="headerlink" href="#why-is-this-a-hard-problem" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">7.2. Why is this a hard problem?</a><a class="headerlink" href="#why-is-this-a-hard-problem" title="永久链接至标题">¶</a></h2>
 <p>To understand why mutable variables cause complexities in SSA
 construction, consider this extremely simple C example:</p>
 <div class="highlight-c"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">G</span><span class="p">,</span> <span class="n">H</span><span class="p">;</span>
@@ -126,7 +124,7 @@ construction, consider this extremely simple C example:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>In this case, we have the variable &#8220;X&#8221;, whose value depends on the path
+<p>In this case, we have the variable “X”, whose value depends on the path
 executed in the program. Because there are two different possible values
 for X before the return instruction, a PHI node is inserted to merge the
 two values. The LLVM IR that we want for this example looks like this:</p>
@@ -161,16 +159,16 @@ control flow comes from cond_true, it gets the value of X.0. The intent
 of this chapter is not to explain the details of SSA form. For more
 information, see one of the many <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">online
 references</a>.</p>
-<p>The question for this article is &#8220;who places the phi nodes when lowering
-assignments to mutable variables?&#8221;. The issue here is that LLVM
-<em>requires</em> that its IR be in SSA form: there is no &#8220;non-ssa&#8221; mode for
+<p>The question for this article is “who places the phi nodes when lowering
+assignments to mutable variables?”. The issue here is that LLVM
+<em>requires</em> that its IR be in SSA form: there is no “non-ssa” mode for
 it. However, SSA construction requires non-trivial algorithms and data
 structures, so it is inconvenient and wasteful for every front-end to
 have to reproduce this logic.</p>
 </div>
 <div class="section" id="memory-in-llvm">
-<h2><a class="toc-backref" href="#id4">7.3. Memory in LLVM</a><a class="headerlink" href="#memory-in-llvm" title="永久链接至标题">¶</a></h2>
-<p>The &#8216;trick&#8217; here is that while LLVM does require all register values to
+<h2><a class="toc-backref" href="#id5">7.3. Memory in LLVM</a><a class="headerlink" href="#memory-in-llvm" title="永久链接至标题">¶</a></h2>
+<p>The ‘trick’ here is that while LLVM does require all register values to
 be in SSA form, it does not require (or permit) memory objects to be in
 SSA form. In the example above, note that the loads from G and H are
 direct accesses to G and H: they are not renamed or versioned. This
@@ -183,9 +181,9 @@ variable (which lives in memory, because it is on the stack) for each
 mutable object in a function. To take advantage of this trick, we need
 to talk about how LLVM represents stack variables.</p>
 <p>In LLVM, all memory accesses are explicit with load/store instructions,
-and it is carefully designed not to have (or need) an &#8220;address-of&#8221;
+and it is carefully designed not to have (or need) an “address-of”
 operator. Notice how the type of the &#64;G/&#64;H global variables is actually
-&#8220;i32*&#8221; even though the variable is defined as &#8220;i32&#8221;. What this means is
+“i32*” even though the variable is defined as “i32”. What this means is
 that &#64;G defines <em>space</em> for an i32 in the global data area, but its
 <em>name</em> actually refers to the address for that space. Stack variables
 work the same way, except that instead of being declared with global
@@ -244,12 +242,12 @@ directly.</li>
 another one: we have now apparently introduced a lot of stack traffic
 for very simple and common operations, a major performance problem.
 Fortunately for us, the LLVM optimizer has a highly-tuned optimization
-pass named &#8220;mem2reg&#8221; that handles this case, promoting allocas like this
+pass named “mem2reg” that handles this case, promoting allocas like this
 into SSA registers, inserting Phi nodes as appropriate. If you run this
-example through the pass, for example, you&#8217;ll get:</p>
+example through the pass, for example, you’ll get:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ llvm-as &lt; example.ll <span class="p">|</span> opt -mem2reg <span class="p">|</span> llvm-dis
-@G <span class="o">=</span> weak global i32 0
-@H <span class="o">=</span> weak global i32 0
+@G <span class="o">=</span> weak global i32 <span class="m">0</span>
+@H <span class="o">=</span> weak global i32 <span class="m">0</span>
 
 define i32 @test<span class="o">(</span>i1 %Condition<span class="o">)</span> <span class="o">{</span>
 entry:
@@ -269,7 +267,7 @@ cond_next:
 <span class="o">}</span>
 </pre></div>
 </div>
-<p>The mem2reg pass implements the standard &#8220;iterated dominance frontier&#8221;
+<p>The mem2reg pass implements the standard “iterated dominance frontier”
 algorithm for constructing SSA form and has a number of optimizations
 that speed up (very common) degenerate cases. The mem2reg optimization
 pass is the answer to dealing with mutable variables, and we highly
@@ -290,14 +288,14 @@ promoted.</li>
 class</a> values (such as pointers,
 scalars and vectors), and only if the array size of the allocation is
 1 (or missing in the .ll file). mem2reg is not capable of promoting
-structs or arrays to registers. Note that the &#8220;scalarrepl&#8221; pass is
-more powerful and can promote structs, &#8220;unions&#8221;, and arrays in many
+structs or arrays to registers. Note that the “scalarrepl” pass is
+more powerful and can promote structs, “unions”, and arrays in many
 cases.</li>
 </ol>
 <p>All of these properties are easy to satisfy for most imperative
-languages, and we&#8217;ll illustrate it below with Kaleidoscope. The final
+languages, and we’ll illustrate it below with Kaleidoscope. The final
 question you may be asking is: should I bother with this nonsense for my
-front-end? Wouldn&#8217;t it be better if I just did SSA construction
+front-end? Wouldn’t it be better if I just did SSA construction
 directly, avoiding use of the mem2reg optimization pass? In short, we
 strongly recommend that you use this technique for building SSA form,
 unless there is an extremely good reason not to. Using this technique
@@ -322,19 +320,19 @@ running, and is very simple to implement. Lets extend Kaleidoscope with
 mutable variables now!</p>
 </div>
 <div class="section" id="mutable-variables-in-kaleidoscope">
-<h2><a class="toc-backref" href="#id5">7.4. Mutable Variables in Kaleidoscope</a><a class="headerlink" href="#mutable-variables-in-kaleidoscope" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">7.4. Mutable Variables in Kaleidoscope</a><a class="headerlink" href="#mutable-variables-in-kaleidoscope" title="永久链接至标题">¶</a></h2>
 <p>Now that we know the sort of problem we want to tackle, lets see what
 this looks like in the context of our little Kaleidoscope language.
-We&#8217;re going to add two features:</p>
+We’re going to add two features:</p>
 <ol class="arabic simple">
-<li>The ability to mutate variables with the &#8216;=&#8217; operator.</li>
+<li>The ability to mutate variables with the ‘=’ operator.</li>
 <li>The ability to define new variables.</li>
 </ol>
 <p>While the first item is really what this is about, we only have
 variables for incoming arguments as well as for induction variables, and
 redefining those only goes so far :). Also, the ability to define new
 variables is a useful thing regardless of whether you will be mutating
-them. Here&#8217;s a motivating example that shows how we could use these:</p>
+them. Here’s a motivating example that shows how we could use these:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Define &#39;:&#39; for sequencing: as a low-precedence operator that ignores operands</span>
 <span class="c1"># and just returns the RHS.</span>
 <span class="k">def</span> <span class="nf">binary</span> <span class="p">:</span> <span class="mi">1</span> <span class="p">(</span><span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="n">y</span><span class="p">;</span>
@@ -360,32 +358,32 @@ them. Here&#8217;s a motivating example that shows how we could use these:</p>
 </pre></div>
 </div>
 <p>In order to mutate variables, we have to change our existing variables
-to use the &#8220;alloca trick&#8221;. Once we have that, we&#8217;ll add our new
+to use the “alloca trick”. Once we have that, we’ll add our new
 operator, then extend Kaleidoscope to support new variable definitions.</p>
 </div>
 <div class="section" id="adjusting-existing-variables-for-mutation">
-<h2><a class="toc-backref" href="#id6">7.5. Adjusting Existing Variables for Mutation</a><a class="headerlink" href="#adjusting-existing-variables-for-mutation" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">7.5. Adjusting Existing Variables for Mutation</a><a class="headerlink" href="#adjusting-existing-variables-for-mutation" title="永久链接至标题">¶</a></h2>
 <p>The symbol table in Kaleidoscope is managed at code generation time by
-the &#8216;<code class="docutils literal"><span class="pre">NamedValues</span></code>&#8216; map. This map currently keeps track of the LLVM
-&#8220;Value*&#8221; that holds the double value for the named variable. In order
+the ‘<code class="docutils literal"><span class="pre">NamedValues</span></code>’ map. This map currently keeps track of the LLVM
+“Value*” that holds the double value for the named variable. In order
 to support mutation, we need to change this slightly, so that it
 <code class="docutils literal"><span class="pre">NamedValues</span></code> holds the <em>memory location</em> of the variable in question.
 Note that this change is a refactoring: it changes the structure of the
 code, but does not (by itself) change the behavior of the compiler. All
 of these changes are isolated in the Kaleidoscope code generator.</p>
-<p>At this point in Kaleidoscope&#8217;s development, it only supports variables
+<p>At this point in Kaleidoscope’s development, it only supports variables
 for two things: incoming arguments to functions and the induction
-variable of &#8216;for&#8217; loops. For consistency, we&#8217;ll allow mutation of these
+variable of ‘for’ loops. For consistency, we’ll allow mutation of these
 variables in addition to other user-defined variables. This means that
 these will both need memory locations.</p>
-<p>To start our transformation of Kaleidoscope, we&#8217;ll change the
+<p>To start our transformation of Kaleidoscope, we’ll change the
 NamedValues map so that it maps to AllocaInst* instead of Value*. Once
 we do this, the C++ compiler will tell us what parts of the code we need
 to update:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">AllocaInst</span><span class="o">*&gt;</span> <span class="n">NamedValues</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>Also, since we will need to create these alloca&#8217;s, we&#8217;ll use a helper
+<p>Also, since we will need to create these alloca’s, we’ll use a helper
 function that ensures that the allocas are created in the entry block of
 the function:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">/// CreateEntryBlockAlloca - Create an alloca instruction in the entry block of</span>
@@ -419,7 +417,7 @@ from the stack slot:</p>
 </pre></div>
 </div>
 <p>As you can see, this is pretty straightforward. Now we need to update
-the things that define the variables to set up the alloca. We&#8217;ll start
+the things that define the variables to set up the alloca. We’ll start
 with <code class="docutils literal"><span class="pre">ForExprAST::codegen()</span></code> (see the <a class="reference external" href="#id1">full code listing</a> for
 the unabridged code):</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">Function</span> <span class="o">*</span><span class="n">TheFunction</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">.</span><span class="n">GetInsertBlock</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getParent</span><span class="p">();</span>
@@ -525,7 +523,7 @@ for our recursive fib function. Before the optimization:</p>
 still see the extremely simple-minded code generation strategy we are
 using. In the entry block, an alloca is created, and the initial input
 value is stored into it. Each reference to the variable does a reload
-from the stack. Also, note that we didn&#8217;t modify the if/then/else
+from the stack. Also, note that we didn’t modify the if/then/else
 expression, so it still inserts a PHI node. While we could make an
 alloca for it, it is actually easier to create a PHI node for it, so we
 still just make the PHI.</p>
@@ -579,13 +577,13 @@ inserting such blatent inefficiencies :).</p>
 </pre></div>
 </div>
 <p>Here we see that the simplifycfg pass decided to clone the return
-instruction into the end of the &#8216;else&#8217; block. This allowed it to
+instruction into the end of the ‘else’ block. This allowed it to
 eliminate some branches and the PHI node.</p>
 <p>Now that all symbol table references are updated to use stack variables,
-we&#8217;ll add the assignment operator.</p>
+we’ll add the assignment operator.</p>
 </div>
 <div class="section" id="new-assignment-operator">
-<h2><a class="toc-backref" href="#id7">7.6. New Assignment Operator</a><a class="headerlink" href="#new-assignment-operator" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">7.6. New Assignment Operator</a><a class="headerlink" href="#new-assignment-operator" title="永久链接至标题">¶</a></h2>
 <p>With our current framework, adding a new assignment operator is really
 simple. We will parse it just like any other binary operator, but handle
 it internally (instead of allowing the user to define it). The first
@@ -611,11 +609,11 @@ implement codegen for the assignment operator. This looks like:</p>
       <span class="k">return</span> <span class="n">ErrorV</span><span class="p">(</span><span class="s">&quot;destination of &#39;=&#39; must be a variable&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Unlike the rest of the binary operators, our assignment operator doesn&#8217;t
-follow the &#8220;emit LHS, emit RHS, do computation&#8221; model. As such, it is
+<p>Unlike the rest of the binary operators, our assignment operator doesn’t
+follow the “emit LHS, emit RHS, do computation” model. As such, it is
 handled as a special case before the other binary operators are handled.
 The other strange thing is that it requires the LHS to be a variable. It
-is invalid to have &#8220;(x+1) = expr&#8221; - only things like &#8220;x = expr&#8221; are
+is invalid to have “(x+1) = expr” - only things like “x = expr” are
 allowed.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span>  <span class="c1">// Codegen the RHS.</span>
   <span class="n">Value</span> <span class="o">*</span><span class="n">Val</span> <span class="o">=</span> <span class="n">RHS</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">();</span>
@@ -633,10 +631,10 @@ allowed.</p>
 <span class="p">...</span>
 </pre></div>
 </div>
-<p>Once we have the variable, codegen&#8217;ing the assignment is
+<p>Once we have the variable, codegen’ing the assignment is
 straightforward: we emit the RHS of the assignment, create a store, and
 return the computed value. Returning a value allows for chained
-assignments like &#8220;X = (Y = Z)&#8221;.</p>
+assignments like “X = (Y = Z)”.</p>
 <p>Now that we have an assignment operator, we can mutate loop variables
 and arguments. For example, we can now run code like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Function to print a double.</span>
@@ -654,17 +652,17 @@ and arguments. For example, we can now run code like this:</p>
 <span class="n">test</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>When run, this example prints &#8220;123&#8221; and then &#8220;4&#8221;, showing that we did
+<p>When run, this example prints “123” and then “4”, showing that we did
 actually mutate the value! Okay, we have now officially implemented our
 goal: getting this to work requires SSA construction in the general
 case. However, to be really useful, we want the ability to define our
 own local variables, lets add this next!</p>
 </div>
 <div class="section" id="user-defined-local-variables">
-<h2><a class="toc-backref" href="#id8">7.7. User-defined Local Variables</a><a class="headerlink" href="#user-defined-local-variables" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">7.7. User-defined Local Variables</a><a class="headerlink" href="#user-defined-local-variables" title="永久链接至标题">¶</a></h2>
 <p>Adding var/in is just like any other extension we made to
 Kaleidoscope: we extend the lexer, the parser, the AST and the code
-generator. The first step for adding our new &#8216;var/in&#8217; construct is to
+generator. The first step for adding our new ‘var/in’ construct is to
 extend the lexer. As before, this is pretty trivial, the code looks like
 this:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">Token</span> <span class="p">{</span>
@@ -859,11 +857,11 @@ definitions, and we even (trivially) allow mutation of them :).</p>
 <p>With this, we completed what we set out to do. Our nice iterative fib
 example from the intro compiles and runs just fine. The mem2reg pass
 optimizes all of our stack variables into SSA registers, inserting PHI
-nodes where needed, and our front-end remains simple: no &#8220;iterated
-dominance frontier&#8221; computation anywhere in sight.</p>
+nodes where needed, and our front-end remains simple: no “iterated
+dominance frontier” computation anywhere in sight.</p>
 </div>
-<div class="section" id="id1">
-<h2><a class="toc-backref" href="#id9">7.8. Full Code Listing</a><a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id10">7.8. Full Code Listing</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 mutable variables and var/in support. To build this example, use:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
@@ -897,13 +895,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

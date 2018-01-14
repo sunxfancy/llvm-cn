@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Getting Started with the LLVM System using Microsoft Visual Studio &mdash; LLVM 3.8 文档</title>
-    
+    <title>Getting Started with the LLVM System using Microsoft Visual Studio &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Building LLVM With Autotools" href="BuildingLLVMWithAutotools.html" />
     <link rel="prev" title="Getting Started with the LLVM System" href="GettingStarted.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,22 +74,22 @@
             
   <div class="section" id="getting-started-with-the-llvm-system-using-microsoft-visual-studio">
 <h1>Getting Started with the LLVM System using Microsoft Visual Studio<a class="headerlink" href="#getting-started-with-the-llvm-system-using-microsoft-visual-studio" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#overview" id="id2">Overview</a></li>
-<li><a class="reference internal" href="#requirements" id="id3">Requirements</a><ul>
-<li><a class="reference internal" href="#hardware" id="id4">Hardware</a></li>
-<li><a class="reference internal" href="#software" id="id5">Software</a></li>
+<li><a class="reference internal" href="#overview" id="id3">Overview</a></li>
+<li><a class="reference internal" href="#requirements" id="id4">Requirements</a><ul>
+<li><a class="reference internal" href="#hardware" id="id5">Hardware</a></li>
+<li><a class="reference internal" href="#software" id="id6">Software</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#getting-started" id="id6">Getting Started</a></li>
-<li><a class="reference internal" href="#an-example-using-the-llvm-tool-chain" id="id7">An Example Using the LLVM Tool Chain</a></li>
-<li><a class="reference internal" href="#common-problems" id="id8">Common Problems</a></li>
-<li><a class="reference internal" href="#links" id="id9">Links</a></li>
+<li><a class="reference internal" href="#getting-started" id="id7">Getting Started</a></li>
+<li><a class="reference internal" href="#an-example-using-the-llvm-tool-chain" id="id8">An Example Using the LLVM Tool Chain</a></li>
+<li><a class="reference internal" href="#common-problems" id="id9">Common Problems</a></li>
+<li><a class="reference internal" href="#links" id="id10">Links</a></li>
 </ul>
 </div>
 <div class="section" id="overview">
-<h2><a class="toc-backref" href="#id2">Overview</a><a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Overview</a><a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
 <p>Welcome to LLVM on Windows! This document only covers LLVM on Windows using
 Visual Studio, not mingw or cygwin. In order to get started, you first need to
 know some basic information.</p>
@@ -110,18 +109,18 @@ and this document does not discuss it.</p>
 can be found on the main <a class="reference internal" href="GettingStarted.html"><span class="doc">Getting Started with the LLVM System</span></a> page.</p>
 </div>
 <div class="section" id="requirements">
-<h2><a class="toc-backref" href="#id3">Requirements</a><a class="headerlink" href="#requirements" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Requirements</a><a class="headerlink" href="#requirements" title="永久链接至标题">¶</a></h2>
 <p>Before you begin to use the LLVM system, review the requirements given
 below.  This may save you some trouble by knowing ahead of time what hardware
 and software you will need.</p>
 <div class="section" id="hardware">
-<h3><a class="toc-backref" href="#id4">Hardware</a><a class="headerlink" href="#hardware" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">Hardware</a><a class="headerlink" href="#hardware" title="永久链接至标题">¶</a></h3>
 <p>Any system that can adequately run Visual Studio 2013 is fine. The LLVM
 source tree and object files, libraries and executables will consume
 approximately 3GB.</p>
 </div>
 <div class="section" id="software">
-<h3><a class="toc-backref" href="#id5">Software</a><a class="headerlink" href="#software" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Software</a><a class="headerlink" href="#software" title="永久链接至标题">¶</a></h3>
 <p>You will need Visual Studio 2013 or higher.</p>
 <p>You will also need the <a class="reference external" href="http://www.cmake.org/">CMake</a> build system since it
 generates the project files you will use to build with.</p>
@@ -132,8 +131,8 @@ need <a class="reference external" href="http://gnuwin32.sourceforge.net/">GnuWi
 </div>
 </div>
 <div class="section" id="getting-started">
-<h2><a class="toc-backref" href="#id6">Getting Started</a><a class="headerlink" href="#getting-started" title="永久链接至标题">¶</a></h2>
-<p>Here&#8217;s the short story for getting up and running quickly with LLVM:</p>
+<h2><a class="toc-backref" href="#id7">Getting Started</a><a class="headerlink" href="#getting-started" title="永久链接至标题">¶</a></h2>
+<p>Here’s the short story for getting up and running quickly with LLVM:</p>
 <ol class="arabic">
 <li><p class="first">Read the documentation.</p>
 </li>
@@ -198,7 +197,7 @@ which first builds the <code class="docutils literal"><span class="pre">ALL_BUIL
 headers, libs, and other useful things to the directory set by the
 <code class="docutils literal"><span class="pre">CMAKE_INSTALL_PREFIX</span></code> setting when you first configured CMake.</li>
 <li>The Fibonacci project is a sample program that uses the JIT. Modify the
-project&#8217;s debugging properties to provide a numeric command line argument
+project’s debugging properties to provide a numeric command line argument
 or run it from the command line.  The program will print the
 corresponding fibonacci value.</li>
 </ul>
@@ -207,7 +206,7 @@ corresponding fibonacci value.</li>
 <ul class="simple">
 <li>If <code class="docutils literal"><span class="pre">%PATH%</span></code> does not contain GnuWin32, you may specify
 <code class="docutils literal"><span class="pre">LLVM_LIT_TOOLS_DIR</span></code> on CMake for the path to GnuWin32.</li>
-<li>You can run LLVM tests by merely building the project &#8220;check&#8221;. The test
+<li>You can run LLVM tests by merely building the project “check”. The test
 results will be shown in the VS output window.</li>
 </ul>
 </li>
@@ -232,9 +231,9 @@ see many unsupported tests and expected failures.</p>
 </ol>
 </div>
 <div class="section" id="an-example-using-the-llvm-tool-chain">
-<h2><a class="toc-backref" href="#id7">An Example Using the LLVM Tool Chain</a><a class="headerlink" href="#an-example-using-the-llvm-tool-chain" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">An Example Using the LLVM Tool Chain</a><a class="headerlink" href="#an-example-using-the-llvm-tool-chain" title="永久链接至标题">¶</a></h2>
 <ol class="arabic">
-<li><p class="first">First, create a simple C file, name it &#8216;<code class="docutils literal"><span class="pre">hello.c</span></code>&#8216;:</p>
+<li><p class="first">First, create a simple C file, name it ‘<code class="docutils literal"><span class="pre">hello.c</span></code>’:</p>
 <div class="highlight-c"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello world</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
@@ -287,15 +286,15 @@ when neither <code class="docutils literal"><span class="pre">-o</span></code> n
 </ol>
 </div>
 <div class="section" id="common-problems">
-<h2><a class="toc-backref" href="#id8">Common Problems</a><a class="headerlink" href="#common-problems" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Common Problems</a><a class="headerlink" href="#common-problems" title="永久链接至标题">¶</a></h2>
 <p>If you are having problems building or using LLVM, or if you have any other
 general questions about LLVM, please consult the <a class="reference internal" href="FAQ.html"><span class="doc">Frequently Asked Questions</span></a> page.</p>
 </div>
 <div class="section" id="links">
-<h2><a class="toc-backref" href="#id9">Links</a><a class="headerlink" href="#links" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Links</a><a class="headerlink" href="#links" title="永久链接至标题">¶</a></h2>
 <p>This document is just an <strong>introduction</strong> to how to use LLVM to do some simple
-things... there are many more interesting and complicated things that you can
-do that aren&#8217;t documented here (but we&#8217;ll gladly accept a patch if you want to
+things… there are many more interesting and complicated things that you can
+do that aren’t documented here (but we’ll gladly accept a patch if you want to
 write something up!).  For more information about LLVM, check out:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://llvm.org/">LLVM homepage</a></li>
@@ -327,9 +326,9 @@ write something up!).  For more information about LLVM, check out:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

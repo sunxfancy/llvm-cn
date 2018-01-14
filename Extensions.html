@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Extensions &mdash; LLVM 3.8 文档</title>
-    
+    <title>LLVM Extensions &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="LibFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
     <link rel="prev" title="LLVM Programmer’s Manual" href="ProgrammersManual.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,30 +74,30 @@
             
   <div class="section" id="llvm-extensions">
 <h1>LLVM Extensions<a class="headerlink" href="#llvm-extensions" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
-<li><a class="reference internal" href="#general-assembly-syntax" id="id3">General Assembly Syntax</a><ul>
-<li><a class="reference internal" href="#c99-style-hexadecimal-floating-point-constants" id="id4">C99-style Hexadecimal Floating-point Constants</a></li>
+<li><a class="reference internal" href="#introduction" id="id3">Introduction</a></li>
+<li><a class="reference internal" href="#general-assembly-syntax" id="id4">General Assembly Syntax</a><ul>
+<li><a class="reference internal" href="#c99-style-hexadecimal-floating-point-constants" id="id5">C99-style Hexadecimal Floating-point Constants</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#machine-specific-assembly-syntax" id="id5">Machine-specific Assembly Syntax</a><ul>
-<li><a class="reference internal" href="#x86-coff-dependent" id="id6">X86/COFF-Dependent</a><ul>
-<li><a class="reference internal" href="#relocations" id="id7">Relocations</a></li>
-<li><a class="reference internal" href="#linkonce-directive" id="id8"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a></li>
-<li><a class="reference internal" href="#section-directive" id="id9"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
+<li><a class="reference internal" href="#machine-specific-assembly-syntax" id="id6">Machine-specific Assembly Syntax</a><ul>
+<li><a class="reference internal" href="#x86-coff-dependent" id="id7">X86/COFF-Dependent</a><ul>
+<li><a class="reference internal" href="#relocations" id="id8">Relocations</a></li>
+<li><a class="reference internal" href="#linkonce-directive" id="id9"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a></li>
+<li><a class="reference internal" href="#section-directive" id="id10"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#elf-dependent" id="id10">ELF-Dependent</a><ul>
-<li><a class="reference internal" href="#id1" id="id11"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
+<li><a class="reference internal" href="#elf-dependent" id="id11">ELF-Dependent</a><ul>
+<li><a class="reference internal" href="#id2" id="id12"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#target-specific-behaviour" id="id12">Target Specific Behaviour</a><ul>
-<li><a class="reference internal" href="#windows-on-arm" id="id13">Windows on ARM</a><ul>
-<li><a class="reference internal" href="#stack-probe-emission" id="id14">Stack Probe Emission</a></li>
-<li><a class="reference internal" href="#variable-length-arrays" id="id15">Variable Length Arrays</a></li>
+<li><a class="reference internal" href="#target-specific-behaviour" id="id13">Target Specific Behaviour</a><ul>
+<li><a class="reference internal" href="#windows-on-arm" id="id14">Windows on ARM</a><ul>
+<li><a class="reference internal" href="#stack-probe-emission" id="id15">Stack Probe Emission</a></li>
+<li><a class="reference internal" href="#variable-length-arrays" id="id16">Variable Length Arrays</a></li>
 </ul>
 </li>
 </ul>
@@ -108,15 +107,15 @@
 <div class="toctree-wrapper compound">
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>This document describes extensions to tools and formats LLVM seeks compatibility
 with.</p>
 </div>
 <div class="section" id="general-assembly-syntax">
-<h2><a class="toc-backref" href="#id3">General Assembly Syntax</a><a class="headerlink" href="#general-assembly-syntax" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">General Assembly Syntax</a><a class="headerlink" href="#general-assembly-syntax" title="永久链接至标题">¶</a></h2>
 <div class="section" id="c99-style-hexadecimal-floating-point-constants">
-<h3><a class="toc-backref" href="#id4">C99-style Hexadecimal Floating-point Constants</a><a class="headerlink" href="#c99-style-hexadecimal-floating-point-constants" title="永久链接至标题">¶</a></h3>
-<p>LLVM&#8217;s assemblers allow floating-point constants to be written in C99&#8217;s
+<h3><a class="toc-backref" href="#id5">C99-style Hexadecimal Floating-point Constants</a><a class="headerlink" href="#c99-style-hexadecimal-floating-point-constants" title="永久链接至标题">¶</a></h3>
+<p>LLVM’s assemblers allow floating-point constants to be written in C99’s
 hexadecimal format instead of decimal if desired.</p>
 <div class="highlight-gas"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">.data</span>
 <span class="na">.float</span> <span class="mi">0x1c2</span><span class="no">.2ap3</span>
@@ -125,11 +124,11 @@ hexadecimal format instead of decimal if desired.</p>
 </div>
 </div>
 <div class="section" id="machine-specific-assembly-syntax">
-<h2><a class="toc-backref" href="#id5">Machine-specific Assembly Syntax</a><a class="headerlink" href="#machine-specific-assembly-syntax" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Machine-specific Assembly Syntax</a><a class="headerlink" href="#machine-specific-assembly-syntax" title="永久链接至标题">¶</a></h2>
 <div class="section" id="x86-coff-dependent">
-<h3><a class="toc-backref" href="#id6">X86/COFF-Dependent</a><a class="headerlink" href="#x86-coff-dependent" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">X86/COFF-Dependent</a><a class="headerlink" href="#x86-coff-dependent" title="永久链接至标题">¶</a></h3>
 <div class="section" id="relocations">
-<h4><a class="toc-backref" href="#id7">Relocations</a><a class="headerlink" href="#relocations" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id8">Relocations</a><a class="headerlink" href="#relocations" title="永久链接至标题">¶</a></h4>
 <p>The following additional relocation types are supported:</p>
 <p><strong>&#64;IMGREL</strong> (AT&amp;T syntax only) generates an image-relative relocation that
 corresponds to the COFF relocation types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_DIR32NB</span></code> (32-bit) or
@@ -160,7 +159,7 @@ the target.  It corresponds to the COFF relocation types
 </div>
 </div>
 <div class="section" id="linkonce-directive">
-<h4><a class="toc-backref" href="#id8"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a><a class="headerlink" href="#linkonce-directive" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a><a class="headerlink" href="#linkonce-directive" title="永久链接至标题">¶</a></h4>
 <p>Syntax:</p>
 <blockquote>
 <div><code class="docutils literal"><span class="pre">.linkonce</span> <span class="pre">[</span> <span class="pre">comdat</span> <span class="pre">type</span> <span class="pre">]</span></code></div></blockquote>
@@ -189,7 +188,7 @@ do not have exactly the same content.</dd>
 </div>
 </div>
 <div class="section" id="section-directive">
-<h4><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#section-directive" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id10"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#section-directive" title="永久链接至标题">¶</a></h4>
 <p>MC supports passing the information in <code class="docutils literal"><span class="pre">.linkonce</span></code> at the end of
 <code class="docutils literal"><span class="pre">.section</span></code>. For example,  these two codes are equivalent</p>
 <div class="highlight-gas"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span><span class="p">,</span> <span class="no">discard</span><span class="p">,</span> <span class="s">&quot;Symbol1&quot;</span>
@@ -223,7 +222,7 @@ different COMDATs:</p>
 <code class="docutils literal"><span class="pre">associative</span></code>. The meaning is that the section is linked  if a certain other
 COMDAT section is linked. This other section is indicated by the comdat symbol
 in this directive. It can be any symbol defined in the associated section, but
-is usually the associated section&#8217;s comdat.</p>
+is usually the associated section’s comdat.</p>
 <blockquote>
 <div><p>The following restrictions apply to the associated section:</p>
 <ol class="arabic simple">
@@ -240,9 +239,9 @@ and <code class="docutils literal"><span class="pre">.bar</span></code> is assoc
 </div>
 </div>
 <div class="section" id="elf-dependent">
-<h3><a class="toc-backref" href="#id10">ELF-Dependent</a><a class="headerlink" href="#elf-dependent" title="永久链接至标题">¶</a></h3>
-<div class="section" id="id1">
-<h4><a class="toc-backref" href="#id11"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h4>
+<h3><a class="toc-backref" href="#id11">ELF-Dependent</a><a class="headerlink" href="#elf-dependent" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id12"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h4>
 <p>In order to support creating multiple sections with the same name and comdat,
 it is possible to add an unique number at the end of the <code class="docutils literal"><span class="pre">.seciton</span></code> directive.
 For example, the following code creates two sections named <code class="docutils literal"><span class="pre">.text</span></code>.</p>
@@ -259,15 +258,15 @@ in the assembler to differentiate the sections.</p>
 </div>
 </div>
 <div class="section" id="target-specific-behaviour">
-<h2><a class="toc-backref" href="#id12">Target Specific Behaviour</a><a class="headerlink" href="#target-specific-behaviour" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">Target Specific Behaviour</a><a class="headerlink" href="#target-specific-behaviour" title="永久链接至标题">¶</a></h2>
 <div class="section" id="windows-on-arm">
-<h3><a class="toc-backref" href="#id13">Windows on ARM</a><a class="headerlink" href="#windows-on-arm" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Windows on ARM</a><a class="headerlink" href="#windows-on-arm" title="永久链接至标题">¶</a></h3>
 <div class="section" id="stack-probe-emission">
-<h4><a class="toc-backref" href="#id14">Stack Probe Emission</a><a class="headerlink" href="#stack-probe-emission" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id15">Stack Probe Emission</a><a class="headerlink" href="#stack-probe-emission" title="永久链接至标题">¶</a></h4>
 <p>The reference implementation (Microsoft Visual Studio 2012) emits stack probes
 in the following fashion:</p>
 <div class="highlight-gas"><div class="highlight"><pre><span></span><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
-<span class="nf">bl</span> <span class="no">__chkstk</span>
+<span class="no">bl</span> <span class="no">__chkstk</span>
 <span class="nf">sub.w</span> <span class="no">sp</span><span class="p">,</span> <span class="no">sp</span><span class="p">,</span> <span class="no">r4</span>
 </pre></div>
 </div>
@@ -275,7 +274,7 @@ in the following fashion:</p>
 larger binaries, LLVM supports the use of <code class="docutils literal"><span class="pre">-mcode-model=large</span></code> to allow a 4GiB
 range via a slight deviation.  It will generate an indirect jump as follows:</p>
 <div class="highlight-gas"><div class="highlight"><pre><span></span><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
-<span class="nf">movw</span> <span class="no">r12</span><span class="p">,</span> <span class="p">:</span><span class="no">lower16</span><span class="p">:</span><span class="no">__chkstk</span>
+<span class="no">movw</span> <span class="no">r12</span><span class="p">,</span> <span class="p">:</span><span class="no">lower16</span><span class="p">:</span><span class="no">__chkstk</span>
 <span class="nf">movt</span> <span class="no">r12</span><span class="p">,</span> <span class="p">:</span><span class="no">upper16</span><span class="p">:</span><span class="no">__chkstk</span>
 <span class="nf">blx</span> <span class="no">r12</span>
 <span class="nf">sub.w</span> <span class="no">sp</span><span class="p">,</span> <span class="no">sp</span><span class="p">,</span> <span class="no">r4</span>
@@ -283,7 +282,7 @@ range via a slight deviation.  It will generate an indirect jump as follows:</p>
 </div>
 </div>
 <div class="section" id="variable-length-arrays">
-<h4><a class="toc-backref" href="#id15">Variable Length Arrays</a><a class="headerlink" href="#variable-length-arrays" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id16">Variable Length Arrays</a><a class="headerlink" href="#variable-length-arrays" title="永久链接至标题">¶</a></h4>
 <p>The reference implementation (Microsoft Visual Studio 2012) does not permit the
 emission of Variable Length Arrays (VLAs).</p>
 <p>The Windows ARM Itanium ABI extends the base ABI by adding support for emitting
@@ -320,9 +319,9 @@ standard stack probe emission.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

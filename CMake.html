@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>使用CMake构建LLVM &mdash; LLVM 3.8 文档</title>
-    
+    <title>使用CMake构建LLVM系统 &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How To Build On ARM" href="HowToBuildOnARM.html" />
     <link rel="prev" title="LLVM 语法参考手册" href="LangRef.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -74,74 +73,68 @@
           <div class="body" role="main">
             
   <div class="section" id="building-llvm-with-cmake">
-<h1>使用CMake构建LLVM<a class="headerlink" href="#building-llvm-with-cmake" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<h1>使用CMake构建LLVM系统<a class="headerlink" href="#building-llvm-with-cmake" title="永久链接至标题">¶</a></h1>
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id5">简介</a></li>
-<li><a class="reference internal" href="#quick-start" id="id6">快速入门</a></li>
-<li><a class="reference internal" href="#usage" id="id7">Basic CMake usage</a></li>
-<li><a class="reference internal" href="#options-and-variables" id="id8">Options and variables</a><ul>
-<li><a class="reference internal" href="#frequently-used-cmake-variables" id="id9">Frequently-used CMake variables</a></li>
-<li><a class="reference internal" href="#llvm-specific-variables" id="id10">LLVM-specific variables</a></li>
+<li><a class="reference internal" href="#introduction" id="id6">简介</a></li>
+<li><a class="reference internal" href="#quick-start" id="id7">快速入门</a></li>
+<li><a class="reference internal" href="#usage" id="id8">CMake基本用法</a></li>
+<li><a class="reference internal" href="#options-and-variables" id="id9">Options and variables</a><ul>
+<li><a class="reference internal" href="#frequently-used-cmake-variables" id="id10">Frequently-used CMake variables</a></li>
+<li><a class="reference internal" href="#llvm-specific-variables" id="id11">LLVM-specific variables</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#executing-the-test-suite" id="id11">Executing the test suite</a></li>
-<li><a class="reference internal" href="#cross-compiling" id="id12">Cross compiling</a></li>
-<li><a class="reference internal" href="#embedding-llvm-in-your-project" id="id13">Embedding LLVM in your project</a><ul>
-<li><a class="reference internal" href="#developing-llvm-passes-out-of-source" id="id14">Developing LLVM passes out of source</a></li>
+<li><a class="reference internal" href="#executing-the-test-suite" id="id12">运行测试套件</a></li>
+<li><a class="reference internal" href="#cross-compiling" id="id13">Cross compiling</a></li>
+<li><a class="reference internal" href="#embedding-llvm-in-your-project" id="id14">在您的项目中嵌入LLVM</a><ul>
+<li><a class="reference internal" href="#developing-llvm-passes-out-of-source" id="id15">在源码目录外开发LLVM pass</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#compiler-platform-specific-topics" id="id15">Compiler/Platform-specific topics</a><ul>
-<li><a class="reference internal" href="#microsoft-visual-c" id="id16">Microsoft Visual C++</a></li>
+<li><a class="reference internal" href="#compiler-platform-specific-topics" id="id16">Compiler/Platform-specific topics</a><ul>
+<li><a class="reference internal" href="#microsoft-visual-c" id="id17">Microsoft Visual C++</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id5">简介</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
-<p><a class="reference external" href="http://www.cmake.org/">CMake</a> 是一款跨平台的构建脚步生成工具。 CMake 本身并不支持构建项目，但它能生成您使用的构建系统的配置文件（例如GNU make，Visual Studio等等）来构建LLVM。</p>
-<p>如果您急于构建一个可用的LLVM，请参见 <a class="reference internal" href="#quick-start">Quick start</a> 一节。如果您是初次接触CMake，您可用从 <a class="reference internal" href="#basic-cmake-usage">Basic CMake usage</a> 开始阅读，在了解了CMake的基本用法后，再返回阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节是关于如何配置您的构建的参考资料，如果您已经有足够的CMake使用经验，推荐您直接从这一节开始阅读。</p>
+<h2><a class="toc-backref" href="#id6">简介</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://www.cmake.org/">CMake</a> 是一款跨平台构建生成系统。虽然CMake本身并不负责项目构建，但它能够生成其他构建工具 (例如 GNU make, Visual Studio 等) 必要的配置项，来构建LLVM。</p>
+<p>如果您担心没法顺利构建一个实用的LLVM系统，请先阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。如果您从未使用过CMake构建工具，请先从 <a class="reference internal" href="#basic-cmake-usage">Basic CMake usage</a> 开始读起，然后阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。<a class="reference internal" href="#options-and-variables">Options and variables</a> 一节是一份自定义构建的参考，您可以获取如何定制化构建LLVM的相关信息。如果您已经很熟悉CMake构建工具，那么推荐您直接阅读 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节。</p>
 </div>
 <div class="section" id="quick-start">
-<span id="id1"></span><h2><a class="toc-backref" href="#id6">快速入门</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
-<p>我们这里使用命令行工具，而不是交换式界面。</p>
+<span id="id2"></span><h2><a class="toc-backref" href="#id7">快速入门</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
+<p>我们将使用CMake的命令行工具，而非GUI接口。</p>
 <ol class="arabic">
-<li><p class="first"><a class="reference external" href="http://www.cmake.org/cmake/resources/software.html">下载</a> 并且安装CMake。 2.8.8 版是所支持的最早版本，但如果您还使用Ninja的后端，CMake需要使用3.2版或更高。 用来运行 <a class="reference internal" href="CommandGuide/lit.html"><span class="doc">Lit</span></a> 工具，并 <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20141117/244797.html">得到交互输出</a> 。</p>
+<li><p class="first">首先下载 <a class="reference external" href="http://www.cmake.org/cmake/resources/software.html">Download</a>  并安装CMake工具。最低可用版本是 2.8.8, 但如果您还使用Ninja构建工具，则必须使用 CMake v3.2或更新版本，才能在运行  <a class="reference internal" href="CommandGuide/lit.html"><span class="doc">Lit</span></a> 时得到 <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20141117/244797.html">交互式输出</a> 。（译者注：ninja构建工具是一套快速构建C/C++项目的构建套件，类似于GNU Make，对于LLVM这类代码量大的项目，相比make能够明显提升构建速度。使用时只需将CMake的生成目标设定为ninja即可。命令为：cmake -G “Ninjapath/to/llvm/source）</p>
 </li>
-<li><p class="first">打开一个Shell命令行，您的开发工具必须是可用的，能通过PATH环境变量找到的。</p>
+<li><p class="first">打开命令行。您的开发工具必须能从该命令行中访问到，换言之，应该将工具链添加到PATH路径中。</p>
 </li>
-<li><p class="first">创建一个构建目录，再源文件夹中构建LLVM是不推荐的，‘cd’ 转移到构建目录中：</p>
+<li><p class="first">创建一个build文件夹。在源码路径中构建LLVM是不支持的， 需要先cd到这个构建目录中。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mkdir mybuilddir
 <span class="gp">$</span> <span class="nb">cd</span> mybuilddir
 </pre></div>
 </div>
 </li>
-<li><p class="first">中Shell命令行下，执行如下命令，并将 <cite>path/to/llvm/source/root</cite> 替换成您的LLVM源代码根目录。</p>
+<li><p class="first">执行这行命令时，请把 <cite>path/to/llvm/source/root</cite> 换成您真正的llvm源码所在的目录，相对目录或绝对目录均可。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake path/to/llvm/source/root
 </pre></div>
 </div>
-<p>CMake 会自动检测您的开发环境，执行一系列的测试，并生成可用构建LLVM的配置文件。 不配置参数时，CMake 会对于所有的构建参数使用默认值。详情请看 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节列出的您可以修改的构建参数。</p>
-<p>这一步可能在CMake没有找到的你的编译工具链时失败，或者它认为你的环境变量没有配置正确时。在这一步，请确保您打算使用的工具集时可用的且是唯一的，还有Shell控制台本身在您的开发环境下能正常工作。例如：CMake 在您的环境变量中发现了一个可用的POSIX Shell程序时，会拒绝生成一个 MinGW makefiles。您也可用强制指定CMake使用的构建工具，如下面 <a class="reference internal" href="#usage">Usage</a> 一节中所写的。</p>
+<p>CMake 会自动检查您的开发环境，执行一系列测试命令，最终生成必要的配置文件来构建LLVM。CMake 会自动使用默认的构建参数，请阅读 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节来了解哪些构建参数是您可以修改的。</p>
+<p>如果CMake无法找到您的开发工具链或者它认为此套工具并不健全，目前的命令可能会运行失败。在这种情况下，请确保CMake找到的工具链是您希望让其使用的，并且是当前shell环境唯一能访问的到的（例如，请不要给不同版本的gcc设置相同的名字，并且全部放到PATH路径下）。并且确保使用适合的shell来访问您目前想用的开发环境。（例如，如果您使用一个POSIX shell来访问MinGW工具，CMake会拒绝构建MinGW makefile）。您可以为CMake强制指定一套工具，具体请阅读下面 <a class="reference internal" href="#usage">Usage</a> 一节。</p>
 </li>
-<li><p class="first">After CMake has finished running, proceed to use IDE project files, or start
-the build from the build directory:</p>
+<li><p class="first">CMake 运行结束后，将会生成Makefile或IDE project配置，对于IDE支持的配置，您可以选择打开它并在IDE中构建，或者继续使用命令行直接构建。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake --build .
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">--build</span></code> option tells <code class="docutils literal"><span class="pre">cmake</span></code> to invoke the underlying build
-tool (<code class="docutils literal"><span class="pre">make</span></code>, <code class="docutils literal"><span class="pre">ninja</span></code>, <code class="docutils literal"><span class="pre">xcodebuild</span></code>, <code class="docutils literal"><span class="pre">msbuild</span></code>, etc.)</p>
-<p>The underlying build tool can be invoked directly, of course, but
-the <code class="docutils literal"><span class="pre">--build</span></code> option is portable.</p>
+<p>使用 <code class="docutils literal"><span class="pre">--build</span></code> 参数，可以让CMake直接调用构建工具（<code class="docutils literal"><span class="pre">make</span></code> GNU Makefile, <code class="docutils literal"><span class="pre">ninja</span></code> Ninja构建系统, <code class="docutils literal"><span class="pre">xcodebuild</span></code> XCode工具链, <code class="docutils literal"><span class="pre">msbuild</span></code> Visual Studio工具链 这类指令）来直接构建项目。</p>
+<p>刚才列出的这些构建工具也可以直接调用，但``–build``可以在任何情况下使用，更具可移植性。</p>
 </li>
-<li><p class="first">After LLVM has finished building, install it from the build directory:</p>
+<li><p class="first">在LLVM构建完成后，你可以直接从构建目录安装构建好的代码库和工具到您的系统里。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake --build . --target install
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">--target</span></code> option with <code class="docutils literal"><span class="pre">install</span></code> parameter in addition to
-the <code class="docutils literal"><span class="pre">--build</span></code> option tells <code class="docutils literal"><span class="pre">cmake</span></code> to build the <code class="docutils literal"><span class="pre">install</span></code> target.</p>
-<p>It is possible to set a different install prefix at installation time
-by invoking the <code class="docutils literal"><span class="pre">cmake_install.cmake</span></code> script generated in the
-build directory:</p>
+<p><code class="docutils literal"><span class="pre">--target</span></code> 选项可以指定构建目标，其中 <code class="docutils literal"><span class="pre">install</span></code> 构建目标就是用来安装项目的。</p>
+<p>您可以在安装时指定一个不同的安装路径，通过调用刚刚生成的 <code class="docutils literal"><span class="pre">cmake_install.cmake</span></code> 脚本。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake -DCMAKE_INSTALL_PREFIX<span class="o">=</span>/tmp/llvm -P cmake_install.cmake
 </pre></div>
 </div>
@@ -149,9 +142,8 @@ build directory:</p>
 </ol>
 </div>
 <div class="section" id="usage">
-<span id="basic-cmake-usage"></span><span id="id2"></span><h2><a class="toc-backref" href="#id7">Basic CMake usage</a><a class="headerlink" href="#usage" title="永久链接至标题">¶</a></h2>
-<p>This section explains basic aspects of CMake
-which you may need in your day-to-day usage.</p>
+<span id="basic-cmake-usage"></span><span id="id3"></span><h2><a class="toc-backref" href="#id8">CMake基本用法</a><a class="headerlink" href="#usage" title="永久链接至标题">¶</a></h2>
+<p>这一节主要讲解了Cmake的基本使用方法，以及最常用的指令。</p>
 <p>CMake comes with extensive documentation, in the form of html files, and as
 online help accessible via the <code class="docutils literal"><span class="pre">cmake</span></code> executable itself. Execute <code class="docutils literal"><span class="pre">cmake</span>
 <span class="pre">--help</span></code> for further help options.</p>
@@ -166,7 +158,7 @@ explicitly specify the generator with the command line option <code class="docut
 </pre></div>
 </div>
 <p>This will list the generator names at the end of the help text.</p>
-<p>Generators&#8217; names are case-sensitive, and may contain spaces. For this reason,
+<p>Generators’ names are case-sensitive, and may contain spaces. For this reason,
 you should enter them exactly as they are listed in the <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help</span></code>
 output, in quotes. For example, to generate project files specifically for
 Visual Studio 12, you can execute:</p>
@@ -174,13 +166,13 @@ Visual Studio 12, you can execute:</p>
 </pre></div>
 </div>
 <p>For a given development platform there can be more than one adequate
-generator. If you use Visual Studio, &#8220;NMake Makefiles&#8221; is a generator you can use
+generator. If you use Visual Studio, “NMake Makefiles” is a generator you can use
 for building with NMake. By default, CMake chooses the most specific generator
 supported by your development environment. If you want an alternative generator,
 you must tell this to CMake with the <code class="docutils literal"><span class="pre">-G</span></code> option.</p>
 </div>
 <div class="section" id="options-and-variables">
-<span id="id3"></span><h2><a class="toc-backref" href="#id8">Options and variables</a><a class="headerlink" href="#options-and-variables" title="永久链接至标题">¶</a></h2>
+<span id="id4"></span><h2><a class="toc-backref" href="#id9">Options and variables</a><a class="headerlink" href="#options-and-variables" title="永久链接至标题">¶</a></h2>
 <p>Variables customize how the build will be generated. Options are boolean
 variables, with possible values ON/OFF. Options and variables are defined on the
 CMake command line like this:</p>
@@ -202,7 +194,7 @@ variable and type on the CMake command line:</p>
 </pre></div>
 </div>
 <div class="section" id="frequently-used-cmake-variables">
-<h3><a class="toc-backref" href="#id9">Frequently-used CMake variables</a><a class="headerlink" href="#frequently-used-cmake-variables" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Frequently-used CMake variables</a><a class="headerlink" href="#frequently-used-cmake-variables" title="永久链接至标题">¶</a></h3>
 <p>Here are some of the CMake variables that are used often, along with a
 brief explanation and LLVM-specific notes. For full documentation, consult the
 CMake manual, or execute <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help-variable</span> <span class="pre">VARIABLE_NAME</span></code>.</p>
@@ -212,8 +204,8 @@ CMake manual, or execute <code class="docutils literal"><span class="pre">cmake<
 Release, Debug, RelWithDebInfo and MinSizeRel. If you are using an IDE such as
 Visual Studio, you should use the IDE settings to set the build type.</dd>
 <dt><strong>CMAKE_INSTALL_PREFIX</strong>:PATH</dt>
-<dd>Path where LLVM will be installed if &#8220;make install&#8221; is invoked or the
-&#8220;install&#8221; target is built.</dd>
+<dd>Path where LLVM will be installed if “make install” is invoked or the
+“install” target is built.</dd>
 <dt><strong>LLVM_LIBDIR_SUFFIX</strong>:STRING</dt>
 <dd>Extra suffix to append to the directory where libraries are to be
 installed. On a 64-bit architecture, one could use <code class="docutils literal"><span class="pre">-DLLVM_LIBDIR_SUFFIX=64</span></code>
@@ -225,7 +217,7 @@ to install libraries to <code class="docutils literal"><span class="pre">/usr/li
 </dl>
 </div>
 <div class="section" id="llvm-specific-variables">
-<span id="id4"></span><h3><a class="toc-backref" href="#id10">LLVM-specific variables</a><a class="headerlink" href="#llvm-specific-variables" title="永久链接至标题">¶</a></h3>
+<span id="id5"></span><h3><a class="toc-backref" href="#id11">LLVM-specific variables</a><a class="headerlink" href="#llvm-specific-variables" title="永久链接至标题">¶</a></h3>
 <dl class="docutils">
 <dt><strong>LLVM_TARGETS_TO_BUILD</strong>:STRING</dt>
 <dd>Semicolon-separated list of targets to build, or <em>all</em> for building all
@@ -297,7 +289,7 @@ is not ABI compatible with a version built without it.</dd>
 available only on some 64-bit Unix systems. Defaults to OFF.</dd>
 <dt><strong>LLVM_TARGET_ARCH</strong>:STRING</dt>
 <dd>LLVM target to use for native code generation. This is required for JIT
-generation. It defaults to &#8220;host&#8221;, meaning that it shall pick the architecture
+generation. It defaults to “host”, meaning that it shall pick the architecture
 of the machine where LLVM is being built. If you are cross-compiling, set it
 to the target architecture name.</dd>
 <dt><strong>LLVM_TABLEGEN</strong>:STRING</dt>
@@ -331,8 +323,8 @@ to a valid path, then that project will not be built.</dd>
 <dt><strong>LLVM_USE_OPROFILE</strong>:BOOL</dt>
 <dd>Enable building OProfile JIT support. Defaults to OFF.</dd>
 <dt><strong>LLVM_PROFDATA_FILE</strong>:PATH</dt>
-<dd>Path to a profdata file to pass into clang&#8217;s -fprofile-instr-use flag. This
-can only be specified if you&#8217;re building with clang.</dd>
+<dd>Path to a profdata file to pass into clang’s -fprofile-instr-use flag. This
+can only be specified if you’re building with clang.</dd>
 <dt><strong>LLVM_USE_INTEL_JITEVENTS</strong>:BOOL</dt>
 <dd>Enable building support for Intel JIT Events API. Defaults to OFF.</dd>
 <dt><strong>LLVM_ENABLE_ZLIB</strong>:BOOL</dt>
@@ -372,7 +364,7 @@ otherwise it has no effect.</dd>
 <dt><strong>LLVM_DOXYGEN_QHP_NAMESPACE</strong>:STRING</dt>
 <dd>Namespace under which the intermediate Qt Help Project file lives. See <a class="reference external" href="http://qt-project.org/doc/qt-4.8/qthelpproject.html#custom-filters">Qt
 Help Project</a>
-for more information. Defaults to &#8220;org.llvm&#8221;. This option is only useful in
+for more information. Defaults to “org.llvm”. This option is only useful in
 combination with <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code>; otherwise
 it has no effect.</dd>
 <dt><strong>LLVM_DOXYGEN_QHP_CUST_FILTER_NAME</strong>:STRING</dt>
@@ -386,7 +378,7 @@ otherwise it has no effect.</dd>
 </dl>
 <dl class="docutils">
 <dt><strong>LLVM_DOXYGEN_QHELPGENERATOR_PATH</strong>:STRING</dt>
-<dd>The path to the <code class="docutils literal"><span class="pre">qhelpgenerator</span></code> executable. Defaults to whatever CMake&#8217;s
+<dd>The path to the <code class="docutils literal"><span class="pre">qhelpgenerator</span></code> executable. Defaults to whatever CMake’s
 <code class="docutils literal"><span class="pre">find_program()</span></code> can find. This option is only useful in combination with
 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code>; otherwise it has no
 effect.</dd>
@@ -415,12 +407,12 @@ to ON.</dd>
 errors. Defaults to ON.</dd>
 <dt><strong>LLVM_CREATE_XCODE_TOOLCHAIN</strong>:BOOL</dt>
 <dd>OS X Only: If enabled CMake will generate a target named
-&#8216;install-xcode-toolchain&#8217;. This target will create a directory at
+‘install-xcode-toolchain’. This target will create a directory at
 $CMAKE_INSTALL_PREFIX/Toolchains containing an xctoolchain directory which can
 be used to override the default system tools.</dd>
 <dt><strong>LLVM_BUILD_LLVM_DYLIB</strong>:BOOL</dt>
 <dd>If enabled, the target for building the libLLVM shared library is added.
-This library contains all of LLVM&#8217;s components in a single shared library.
+This library contains all of LLVM’s components in a single shared library.
 Defaults to OFF. This cannot be used in conjunction with BUILD_SHARED_LIBS.
 Tools will only be linked to the libLLVM shared library if LLVM_LINK_LLVM_DYLIB
 is also ON.
@@ -446,17 +438,17 @@ If you want to build LLVM as a shared library, you should use the
 </div>
 </div>
 <div class="section" id="executing-the-test-suite">
-<h2><a class="toc-backref" href="#id11">Executing the test suite</a><a class="headerlink" href="#executing-the-test-suite" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id12">运行测试套件</a><a class="headerlink" href="#executing-the-test-suite" title="永久链接至标题">¶</a></h2>
 <p>Testing is performed when the <em>check-all</em> target is built. For instance, if you are
 using Makefiles, execute this command in the root of your build directory:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> make check-all
 </pre></div>
 </div>
-<p>On Visual Studio, you may run tests by building the project &#8220;check-all&#8221;.
+<p>On Visual Studio, you may run tests by building the project “check-all”.
 For more information about testing, see the <a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a>.</p>
 </div>
 <div class="section" id="cross-compiling">
-<h2><a class="toc-backref" href="#id12">Cross compiling</a><a class="headerlink" href="#cross-compiling" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">Cross compiling</a><a class="headerlink" href="#cross-compiling" title="永久链接至标题">¶</a></h2>
 <p>See <a class="reference external" href="http://www.vtk.org/Wiki/CMake_Cross_Compiling">this wiki page</a> for
 generic instructions on how to cross-compile with CMake. It goes into detailed
 explanations and may seem daunting, but it is not. On the wiki page there are
@@ -466,13 +458,9 @@ for a quick solution.</p>
 cross-compiling.</p>
 </div>
 <div class="section" id="embedding-llvm-in-your-project">
-<h2><a class="toc-backref" href="#id13">Embedding LLVM in your project</a><a class="headerlink" href="#embedding-llvm-in-your-project" title="永久链接至标题">¶</a></h2>
-<p>From LLVM 3.5 onwards both the CMake and autoconf/Makefile build systems export
-LLVM libraries as importable CMake targets. This means that clients of LLVM can
-now reliably use CMake to develop their own LLVM-based projects against an
-installed version of LLVM regardless of how it was built.</p>
-<p>Here is a simple example of a CMakeLists.txt file that imports the LLVM libraries
-and uses them to build a simple application <code class="docutils literal"><span class="pre">simple-tool</span></code>.</p>
+<h2><a class="toc-backref" href="#id14">在您的项目中嵌入LLVM</a><a class="headerlink" href="#embedding-llvm-in-your-project" title="永久链接至标题">¶</a></h2>
+<p>从LLVM3.5版开始，CMake和autoconf/Makefile构建系统，都支持讲LLVM库作为一个子项目导入到其他CMake项目中。这意味着LLVM的用户们可以用直接使用CMake来开发自己的基于LLVM的项目，而无需再关心怎么安装适合的LLVM版本的问题。</p>
+<p>这里有个简单的CMakeLists.txt文件实例，是关于导入LLVM库和如何使用LLVM库构建一个简单的小工具 <code class="docutils literal"><span class="pre">simple-tool</span></code> 。</p>
 <div class="highlight-cmake"><div class="highlight"><pre><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span> <span class="s">2.8.8</span><span class="p">)</span>
 <span class="nb">project</span><span class="p">(</span><span class="s">SimpleProject</span><span class="p">)</span>
 
@@ -500,13 +488,8 @@ and uses them to build a simple application <code class="docutils literal"><span
 <span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">simple-tool</span> <span class="o">${</span><span class="nv">llvm_libs</span><span class="o">}</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">find_package(...)</span></code> directive when used in CONFIG mode (as in the above
-example) will look for the <code class="docutils literal"><span class="pre">LLVMConfig.cmake</span></code> file in various locations (see
-cmake manual for details).  It creates a <code class="docutils literal"><span class="pre">LLVM_DIR</span></code> cache entry to save the
-directory where <code class="docutils literal"><span class="pre">LLVMConfig.cmake</span></code> is found or allows the user to specify the
-directory (e.g. by passing <code class="docutils literal"><span class="pre">-DLLVM_DIR=/usr/share/llvm/cmake</span></code> to
-the <code class="docutils literal"><span class="pre">cmake</span></code> command or by setting it directly in <code class="docutils literal"><span class="pre">ccmake</span></code> or <code class="docutils literal"><span class="pre">cmake-gui</span></code>).</p>
-<p>This file is available in two different locations.</p>
+<p>find_package(…) 这条语句在CONFIG模式下（如上面例子中用到的），将会在几个目录下搜索 <code class="docutils literal"><span class="pre">LLVMConfig.cmake</span></code> 这个配置文件（详情请查看CMake文档）。它会创建一个 <code class="docutils literal"><span class="pre">LLVM_DIR</span></code> 缓存项来存储 <code class="docutils literal"><span class="pre">LLVMConfig.cmake</span></code> 所在的目录，或者您可以重写这个变量来制定另外一个LLVM库的安装目录（例如，向 <code class="docutils literal"><span class="pre">cmake</span></code> 传入此参数 <code class="docutils literal"><span class="pre">-DLLVM_DIR=/usr/share/llvm/cmake</span></code> 或者直接在GUI中设定，使用 <code class="docutils literal"><span class="pre">ccmake</span></code> 或 <code class="docutils literal"><span class="pre">cmake-gui</span></code> ）。</p>
+<p>这个文件在以下两个不同目录下均可用。</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">&lt;INSTALL_PREFIX&gt;/share/llvm/cmake/LLVMConfig.cmake</span></code> where
 <code class="docutils literal"><span class="pre">&lt;INSTALL_PREFIX&gt;</span></code> is the install prefix of an installed version of LLVM.
@@ -515,46 +498,31 @@ On Linux typically this is <code class="docutils literal"><span class="pre">/usr
 <code class="docutils literal"><span class="pre">&lt;LLVM_BUILD_ROOT&gt;</span></code> is the root of the LLVM build tree. <strong>Note: this is only
 available when building LLVM with CMake.</strong></li>
 </ul>
-<p>If LLVM is installed in your operating system&#8217;s normal installation prefix (e.g.
-on Linux this is usually <code class="docutils literal"><span class="pre">/usr/</span></code>) <code class="docutils literal"><span class="pre">find_package(LLVM</span> <span class="pre">...)</span></code> will
-automatically find LLVM if it is installed correctly. If LLVM is not installed
-or you wish to build directly against the LLVM build tree you can use
-<code class="docutils literal"><span class="pre">LLVM_DIR</span></code> as previously mentioned.</p>
-<p>The <code class="docutils literal"><span class="pre">LLVMConfig.cmake</span></code> file sets various useful variables. Notable variables
-include</p>
+<p>如果LLVM被安装在了您系统的默认路径下 （如Linux在 <code class="docutils literal"><span class="pre">/usr/</span></code> 下）且被正确安装， <code class="docutils literal"><span class="pre">find_package(LLVM</span> <span class="pre">...)</span></code> 将会自动为您找到 LLVM。如果LLVM没有安装或者您希望直接使用另一个构建好的LLVM库而无需安装，如同刚才提到过的那样，您可以设置 <code class="docutils literal"><span class="pre">LLVM_DIR</span></code> 来指定LLVM库的安装目录。</p>
+<p><code class="docutils literal"><span class="pre">LLVMConfig.cmake</span></code> 配置文件设定了一系列非常有用的CMake变量。值得注意的变量有：</p>
 <dl class="docutils">
 <dt><code class="docutils literal"><span class="pre">LLVM_CMAKE_DIR</span></code></dt>
-<dd>The path to the LLVM CMake directory (i.e. the directory containing
-LLVMConfig.cmake).</dd>
+<dd>LLVM 的 CMake 目录 （包含 LLVMConfig.cmake 的那个目录）</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_DEFINITIONS</span></code></dt>
-<dd>A list of preprocessor defines that should be used when building against LLVM.</dd>
+<dd>一系列构建中要用到的预处理器</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_ENABLE_ASSERTIONS</span></code></dt>
-<dd>This is set to ON if LLVM was built with assertions, otherwise OFF.</dd>
+<dd>如果想构建时启用断言，那么将其设定为ON，否则设为OFF</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_ENABLE_EH</span></code></dt>
-<dd>This is set to ON if LLVM was built with exception handling (EH) enabled,
-otherwise OFF.</dd>
+<dd>是否开启异常处理，设定为ON则开启，否则设为OFF</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_ENABLE_RTTI</span></code></dt>
-<dd>This is set to ON if LLVM was built with run time type information (RTTI),
-otherwise OFF.</dd>
+<dd>启用RTTI支持（run time type information 运行时类型信息）时设定为ON，否则设为OFF</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_INCLUDE_DIRS</span></code></dt>
-<dd>A list of include paths to directories containing LLVM header files.</dd>
+<dd>一系列include目录，包含有所有LLVM的头文件。</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_PACKAGE_VERSION</span></code></dt>
-<dd>The LLVM version. This string can be used with CMake conditionals, e.g., <code class="docutils literal"><span class="pre">if</span>
-<span class="pre">(${LLVM_PACKAGE_VERSION}</span> <span class="pre">VERSION_LESS</span> <span class="pre">&quot;3.5&quot;)</span></code>.</dd>
+<dd>LLVM的版本信息，这个可以被用于CMake条件语句（例如：<code class="docutils literal"><span class="pre">if</span> <span class="pre">(${LLVM_PACKAGE_VERSION}</span> <span class="pre">VERSION_LESS</span> <span class="pre">&quot;3.5&quot;)</span></code>）。</dd>
 <dt><code class="docutils literal"><span class="pre">LLVM_TOOLS_BINARY_DIR</span></code></dt>
-<dd>The path to the directory containing the LLVM tools (e.g. <code class="docutils literal"><span class="pre">llvm-as</span></code>).</dd>
+<dd>这个路径中包含了LLVM的二进制工具链（例如 <a href="#id1"><span class="problematic" id="id2">``</span></a>llvm-as``等）。</dd>
 </dl>
-<p>Notice that in the above example we link <code class="docutils literal"><span class="pre">simple-tool</span></code> against several LLVM
-libraries. The list of libraries is determined by using the
-<code class="docutils literal"><span class="pre">llvm_map_components_to_libnames()</span></code> CMake function. For a list of available
-components look at the output of running <code class="docutils literal"><span class="pre">llvm-config</span> <span class="pre">--components</span></code>.</p>
-<p>Note that for LLVM &lt; 3.5 <code class="docutils literal"><span class="pre">llvm_map_components_to_libraries()</span></code> was
-used instead of <code class="docutils literal"><span class="pre">llvm_map_components_to_libnames()</span></code>. This is now deprecated
-and will be removed in a future version of LLVM.</p>
+<p>需要注意的一点是，在上面的代码示例中，我们链接 <code class="docutils literal"><span class="pre">simple-tool</span></code> 时用到了几个LLVM库。这几个库的名称查找是通过 <code class="docutils literal"><span class="pre">llvm_map_components_to_libnames()</span></code> 这一CMake函数实现的。想了解全部可用的组件名，可用通过运行命令 <a href="#id1"><span class="problematic" id="id2">``</span></a>llvm-config –components``进行查看。</p>
+<p>提醒一点，如果您使用 LLVM &lt; 3.5 等版本，<code class="docutils literal"><span class="pre">llvm_map_components_to_libraries()</span></code> 是 <code class="docutils literal"><span class="pre">llvm_map_components_to_libnames()</span></code> 的原名，目前该函数名已经过时并且将会在新的版本中被移除。</p>
 <div class="section" id="developing-llvm-passes-out-of-source">
-<span id="cmake-out-of-source-pass"></span><h3><a class="toc-backref" href="#id14">Developing LLVM passes out of source</a><a class="headerlink" href="#developing-llvm-passes-out-of-source" title="永久链接至标题">¶</a></h3>
-<p>It is possible to develop LLVM passes out of LLVM&#8217;s source tree (i.e. against an
-installed or built LLVM). An example of a project layout is provided below.</p>
+<span id="cmake-out-of-source-pass"></span><h3><a class="toc-backref" href="#id15">在源码目录外开发LLVM pass</a><a class="headerlink" href="#developing-llvm-passes-out-of-source" title="永久链接至标题">¶</a></h3>
+<p>在LLVM源码目录外开发LLVM pass也是可行的（例如：通过一个已安装的或已编译的LLVM库）。下面展示了一个示例项目的结构：</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>&lt;project dir&gt;/
     |
     CMakeLists.txt
@@ -565,7 +533,7 @@ installed or built LLVM). An example of a project layout is provided below.</p>
         ...
 </pre></div>
 </div>
-<p>Contents of <code class="docutils literal"><span class="pre">&lt;project</span> <span class="pre">dir&gt;/CMakeLists.txt</span></code>:</p>
+<p><code class="docutils literal"><span class="pre">&lt;project</span> <span class="pre">dir&gt;/CMakeLists.txt</span></code> 的内容：</p>
 <div class="highlight-cmake"><div class="highlight"><pre><span></span><span class="nb">find_package</span><span class="p">(</span><span class="s">LLVM</span> <span class="s">REQUIRED</span> <span class="s">CONFIG</span><span class="p">)</span>
 
 <span class="nb">add_definitions</span><span class="p">(</span><span class="o">${</span><span class="nv">LLVM_DEFINITIONS</span><span class="o">}</span><span class="p">)</span>
@@ -574,13 +542,13 @@ installed or built LLVM). An example of a project layout is provided below.</p>
 <span class="nb">add_subdirectory</span><span class="p">(</span><span class="s">&lt;pass</span> <span class="s">name&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Contents of <code class="docutils literal"><span class="pre">&lt;project</span> <span class="pre">dir&gt;/&lt;pass</span> <span class="pre">name&gt;/CMakeLists.txt</span></code>:</p>
+<p><code class="docutils literal"><span class="pre">&lt;project</span> <span class="pre">dir&gt;/&lt;pass</span> <span class="pre">name&gt;/CMakeLists.txt</span></code> 的内容：</p>
 <div class="highlight-cmake"><div class="highlight"><pre><span></span><span class="nb">add_library</span><span class="p">(</span><span class="s">LLVMPassname</span> <span class="s">MODULE</span> <span class="s">Pass.cpp</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Note if you intend for this pass to be merged into the LLVM source tree at some
-point in the future it might make more sense to use LLVM&#8217;s internal
-<code class="docutils literal"><span class="pre">add_llvm_loadable_module</span></code> function instead by...</p>
+point in the future it might make more sense to use LLVM’s internal
+<code class="docutils literal"><span class="pre">add_llvm_loadable_module</span></code> function instead by…</p>
 <p>Adding the following to <code class="docutils literal"><span class="pre">&lt;project</span> <span class="pre">dir&gt;/CMakeLists.txt</span></code> (after
 <code class="docutils literal"><span class="pre">find_package(LLVM</span> <span class="pre">...)</span></code>)</p>
 <div class="highlight-cmake"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="s">APPEND</span> <span class="s">CMAKE_MODULE_PATH</span> <span class="s2">&quot;${LLVM_CMAKE_DIR}&quot;</span><span class="p">)</span>
@@ -603,10 +571,10 @@ into the LLVM source tree. You can achieve it in two easy steps:</p>
 </div>
 </div>
 <div class="section" id="compiler-platform-specific-topics">
-<h2><a class="toc-backref" href="#id15">Compiler/Platform-specific topics</a><a class="headerlink" href="#compiler-platform-specific-topics" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">Compiler/Platform-specific topics</a><a class="headerlink" href="#compiler-platform-specific-topics" title="永久链接至标题">¶</a></h2>
 <p>Notes for specific compilers and/or platforms.</p>
 <div class="section" id="microsoft-visual-c">
-<h3><a class="toc-backref" href="#id16">Microsoft Visual C++</a><a class="headerlink" href="#microsoft-visual-c" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id17">Microsoft Visual C++</a><a class="headerlink" href="#microsoft-visual-c" title="永久链接至标题">¶</a></h3>
 <dl class="docutils">
 <dt><strong>LLVM_COMPILER_JOBS</strong>:STRING</dt>
 <dd>Specifies the maximum number of parallel compiler jobs to use per project
@@ -640,9 +608,9 @@ Studio 2010 CMake generator. 0 means use all processors. Default is 0.</dd>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-06-13.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

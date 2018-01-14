@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LibFuzzer – a library for coverage-guided fuzz testing. &mdash; LLVM 3.8 文档</title>
-    
+    <title>LibFuzzer – a library for coverage-guided fuzz testing. &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="LLVM Alias Analysis Infrastructure" href="AliasAnalysis.html" />
     <link rel="prev" title="LLVM Extensions" href="Extensions.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -74,46 +73,46 @@
           <div class="body" role="main">
             
   <div class="section" id="libfuzzer-a-library-for-coverage-guided-fuzz-testing">
-<h1>LibFuzzer &#8211; a library for coverage-guided fuzz testing.<a class="headerlink" href="#libfuzzer-a-library-for-coverage-guided-fuzz-testing" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<h1>LibFuzzer – a library for coverage-guided fuzz testing.<a class="headerlink" href="#libfuzzer-a-library-for-coverage-guided-fuzz-testing" title="永久链接至标题">¶</a></h1>
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id4">Introduction</a></li>
-<li><a class="reference internal" href="#flags" id="id5">Flags</a></li>
-<li><a class="reference internal" href="#usage-examples" id="id6">Usage examples</a><ul>
-<li><a class="reference internal" href="#toy-example" id="id7">Toy example</a></li>
-<li><a class="reference internal" href="#pcre2" id="id8">PCRE2</a></li>
-<li><a class="reference internal" href="#heartbleed" id="id9">Heartbleed</a></li>
+<li><a class="reference internal" href="#introduction" id="id5">Introduction</a></li>
+<li><a class="reference internal" href="#flags" id="id6">Flags</a></li>
+<li><a class="reference internal" href="#usage-examples" id="id7">Usage examples</a><ul>
+<li><a class="reference internal" href="#toy-example" id="id8">Toy example</a></li>
+<li><a class="reference internal" href="#pcre2" id="id9">PCRE2</a></li>
+<li><a class="reference internal" href="#heartbleed" id="id10">Heartbleed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#advanced-features" id="id10">Advanced features</a><ul>
-<li><a class="reference internal" href="#dictionaries" id="id11">Dictionaries</a></li>
-<li><a class="reference internal" href="#data-flow-guided-fuzzing" id="id12">Data-flow-guided fuzzing</a></li>
-<li><a class="reference internal" href="#afl-compatibility" id="id13">AFL compatibility</a></li>
-<li><a class="reference internal" href="#how-good-is-my-fuzzer" id="id14">How good is my fuzzer?</a></li>
-<li><a class="reference internal" href="#user-supplied-mutators" id="id15">User-supplied mutators</a></li>
+<li><a class="reference internal" href="#advanced-features" id="id11">Advanced features</a><ul>
+<li><a class="reference internal" href="#dictionaries" id="id12">Dictionaries</a></li>
+<li><a class="reference internal" href="#data-flow-guided-fuzzing" id="id13">Data-flow-guided fuzzing</a></li>
+<li><a class="reference internal" href="#afl-compatibility" id="id14">AFL compatibility</a></li>
+<li><a class="reference internal" href="#how-good-is-my-fuzzer" id="id15">How good is my fuzzer?</a></li>
+<li><a class="reference internal" href="#user-supplied-mutators" id="id16">User-supplied mutators</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#fuzzing-components-of-llvm" id="id16">Fuzzing components of LLVM</a><ul>
-<li><a class="reference internal" href="#clang-format-fuzzer" id="id17">clang-format-fuzzer</a></li>
-<li><a class="reference internal" href="#clang-fuzzer" id="id18">clang-fuzzer</a></li>
-<li><a class="reference internal" href="#llvm-as-fuzzer" id="id19">llvm-as-fuzzer</a></li>
-<li><a class="reference internal" href="#llvm-mc-fuzzer" id="id20">llvm-mc-fuzzer</a></li>
-<li><a class="reference internal" href="#buildbot" id="id21">Buildbot</a></li>
-<li><a class="reference internal" href="#pre-fuzzed-test-inputs-in-git" id="id22">Pre-fuzzed test inputs in git</a></li>
+<li><a class="reference internal" href="#fuzzing-components-of-llvm" id="id17">Fuzzing components of LLVM</a><ul>
+<li><a class="reference internal" href="#clang-format-fuzzer" id="id18">clang-format-fuzzer</a></li>
+<li><a class="reference internal" href="#clang-fuzzer" id="id19">clang-fuzzer</a></li>
+<li><a class="reference internal" href="#llvm-as-fuzzer" id="id20">llvm-as-fuzzer</a></li>
+<li><a class="reference internal" href="#llvm-mc-fuzzer" id="id21">llvm-mc-fuzzer</a></li>
+<li><a class="reference internal" href="#buildbot" id="id22">Buildbot</a></li>
+<li><a class="reference internal" href="#pre-fuzzed-test-inputs-in-git" id="id23">Pre-fuzzed test inputs in git</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#faq" id="id23">FAQ</a><ul>
-<li><a class="reference internal" href="#q-why-fuzzer-does-not-use-any-of-the-llvm-support" id="id24">Q. Why Fuzzer does not use any of the LLVM support?</a></li>
-<li><a class="reference internal" href="#q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows" id="id25">Q. What about Windows then? The Fuzzer contains code that does not build on Windows.</a></li>
-<li><a class="reference internal" href="#q-when-this-fuzzer-is-not-a-good-solution-for-a-problem" id="id26">Q. When this Fuzzer is not a good solution for a problem?</a></li>
-<li><a class="reference internal" href="#q-so-what-exactly-this-fuzzer-is-good-for" id="id27">Q. So, what exactly this Fuzzer is good for?</a></li>
+<li><a class="reference internal" href="#faq" id="id24">FAQ</a><ul>
+<li><a class="reference internal" href="#q-why-fuzzer-does-not-use-any-of-the-llvm-support" id="id25">Q. Why Fuzzer does not use any of the LLVM support?</a></li>
+<li><a class="reference internal" href="#q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows" id="id26">Q. What about Windows then? The Fuzzer contains code that does not build on Windows.</a></li>
+<li><a class="reference internal" href="#q-when-this-fuzzer-is-not-a-good-solution-for-a-problem" id="id27">Q. When this Fuzzer is not a good solution for a problem?</a></li>
+<li><a class="reference internal" href="#q-so-what-exactly-this-fuzzer-is-good-for" id="id28">Q. So, what exactly this Fuzzer is good for?</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#trophies" id="id28">Trophies</a></li>
+<li><a class="reference internal" href="#trophies" id="id29">Trophies</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>This library is intended primarily for in-process coverage-guided fuzz testing
 (fuzzing) of other libraries. The typical workflow looks like this:</p>
 <ul class="simple">
@@ -148,7 +147,7 @@ in parallel.</li>
 <p>The Fuzzer is similar in concept to <a class="reference external" href="http://lcamtuf.coredump.cx/afl/">AFL</a>,
 but uses in-process Fuzzing, which is more fragile, more restrictive, but
 potentially much faster as it has no overhead for process start-up.
-It uses LLVM&#8217;s <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html">SanitizerCoverage</a> instrumentation to get in-process
+It uses LLVM’s <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html">SanitizerCoverage</a> instrumentation to get in-process
 coverage-feedback</p>
 <p>The code resides in the LLVM repository, requires the fresh Clang compiler to build
 and is used to fuzz various parts of LLVM,
@@ -156,7 +155,7 @@ but the Fuzzer itself does not (and should not) depend on any
 part of LLVM and can be used for other projects w/o requiring the rest of LLVM.</p>
 </div>
 <div class="section" id="flags">
-<h2><a class="toc-backref" href="#id5">Flags</a><a class="headerlink" href="#flags" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Flags</a><a class="headerlink" href="#flags" title="永久链接至标题">¶</a></h2>
 <p>The most important flags are:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>seed                                  0       Random seed. If 0, seed is generated.
 runs                                  -1      Number of individual test runs (-1 for infinite runs).
@@ -181,10 +180,10 @@ exact_artifact_path                   &quot;&quot;      Write the single artifac
 <p>For the full list of flags run the fuzzer binary with <code class="docutils literal"><span class="pre">-help=1</span></code>.</p>
 </div>
 <div class="section" id="usage-examples">
-<h2><a class="toc-backref" href="#id6">Usage examples</a><a class="headerlink" href="#usage-examples" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Usage examples</a><a class="headerlink" href="#usage-examples" title="永久链接至标题">¶</a></h2>
 <div class="section" id="toy-example">
-<h3><a class="toc-backref" href="#id7">Toy example</a><a class="headerlink" href="#toy-example" title="永久链接至标题">¶</a></h3>
-<p>A simple function that does something interesting if it receives the input &#8220;HI!&#8221;:</p>
+<h3><a class="toc-backref" href="#id8">Toy example</a><a class="headerlink" href="#toy-example" title="永久链接至标题">¶</a></h3>
+<p>A simple function that does something interesting if it receives the input “HI!”:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="n">EOF</span> <span class="o">&gt;&gt;</span> <span class="n">test_fuzzer</span><span class="o">.</span><span class="n">cc</span>
 <span class="c1">#include &lt;stdint.h&gt;</span>
 <span class="c1">#include &lt;stddef.h&gt;</span>
@@ -209,7 +208,7 @@ exact_artifact_path                   &quot;&quot;      Write the single artifac
 <p>You should get <code class="docutils literal"><span class="pre">Illegal</span> <span class="pre">instruction</span> <span class="pre">(core</span> <span class="pre">dumped)</span></code> pretty quickly.</p>
 </div>
 <div class="section" id="pcre2">
-<h3><a class="toc-backref" href="#id8">PCRE2</a><a class="headerlink" href="#pcre2" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">PCRE2</a><a class="headerlink" href="#pcre2" title="永久链接至标题">¶</a></h3>
 <p>Here we show how to use lib/Fuzzer on something real, yet simple: <a class="reference external" href="http://www.pcre.org/">pcre2</a>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>COV_FLAGS=&quot; -fsanitize-coverage=edge,indirect-calls,8bit-counters&quot;
 # Get PCRE2
@@ -302,7 +301,7 @@ by all others.</p>
 <p>If <code class="docutils literal"><span class="pre">-workers=$M</span></code> is not supplied, <code class="docutils literal"><span class="pre">min($N,NumberOfCpuCore/2)</span></code> will be used.</p>
 </div>
 <div class="section" id="heartbleed">
-<h3><a class="toc-backref" href="#id9">Heartbleed</a><a class="headerlink" href="#heartbleed" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Heartbleed</a><a class="headerlink" href="#heartbleed" title="永久链接至标题">¶</a></h3>
 <p>Remember <a class="reference external" href="http://en.wikipedia.org/wiki/Heartbleed">Heartbleed</a>?
 As it was recently <a class="reference external" href="https://blog.hboeck.de/archives/868-How-Heartbleed-couldve-been-found.html">shown</a>,
 fuzzing with AddressSanitizer can find Heartbleed. Indeed, here are the step-by-step instructions
@@ -371,9 +370,9 @@ is now a part of the boringssl source tree.</p>
 </div>
 </div>
 <div class="section" id="advanced-features">
-<h2><a class="toc-backref" href="#id10">Advanced features</a><a class="headerlink" href="#advanced-features" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Advanced features</a><a class="headerlink" href="#advanced-features" title="永久链接至标题">¶</a></h2>
 <div class="section" id="dictionaries">
-<h3><a class="toc-backref" href="#id11">Dictionaries</a><a class="headerlink" href="#dictionaries" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">Dictionaries</a><a class="headerlink" href="#dictionaries" title="永久链接至标题">¶</a></h3>
 <p><em>EXPERIMENTAL</em>.
 LibFuzzer supports user-supplied dictionaries with input language keywords
 or other interesting byte sequences (e.g. multi-byte magic values).
@@ -394,7 +393,7 @@ The dictionary syntax is similar to that used by <a class="reference external" h
 </div>
 </div>
 <div class="section" id="data-flow-guided-fuzzing">
-<h3><a class="toc-backref" href="#id12">Data-flow-guided fuzzing</a><a class="headerlink" href="#data-flow-guided-fuzzing" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id13">Data-flow-guided fuzzing</a><a class="headerlink" href="#data-flow-guided-fuzzing" title="永久链接至标题">¶</a></h3>
 <p><em>EXPERIMENTAL</em>.
 With an additional compiler flag <code class="docutils literal"><span class="pre">-fsanitize-coverage=trace-cmp</span></code> (see <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html#tracing-data-flow">SanitizerCoverageTraceDataFlow</a>)
 and extra run-time flag <code class="docutils literal"><span class="pre">-use_traces=1</span></code> the fuzzer will try to apply <em>data-flow-guided fuzzing</em>.
@@ -404,7 +403,7 @@ It will later use those recorded inputs during mutations.</p>
 <p>This mode can be combined with <a class="reference external" href="http://clang.llvm.org/docs/DataFlowSanitizer.html">DataFlowSanitizer</a> to achieve better sensitivity.</p>
 </div>
 <div class="section" id="afl-compatibility">
-<h3><a class="toc-backref" href="#id13">AFL compatibility</a><a class="headerlink" href="#afl-compatibility" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">AFL compatibility</a><a class="headerlink" href="#afl-compatibility" title="永久链接至标题">¶</a></h3>
 <p>LibFuzzer can be used in parallel with <a class="reference external" href="http://lcamtuf.coredump.cx/afl/">AFL</a> on the same test corpus.
 Both fuzzers expect the test corpus to reside in a directory, one file per input.
 You can run both fuzzers on the same corpus in parallel:</p>
@@ -412,10 +411,10 @@ You can run both fuzzers on the same corpus in parallel:</p>
 <span class="o">./</span><span class="n">llvm</span><span class="o">-</span><span class="n">fuzz</span> <span class="n">testcase_dir</span> <span class="n">findings_dir</span>  <span class="c1"># Will write new tests to testcase_dir</span>
 </pre></div>
 </div>
-<p>Periodically restart both fuzzers so that they can use each other&#8217;s findings.</p>
+<p>Periodically restart both fuzzers so that they can use each other’s findings.</p>
 </div>
 <div class="section" id="how-good-is-my-fuzzer">
-<h3><a class="toc-backref" href="#id14">How good is my fuzzer?</a><a class="headerlink" href="#how-good-is-my-fuzzer" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">How good is my fuzzer?</a><a class="headerlink" href="#how-good-is-my-fuzzer" title="永久链接至标题">¶</a></h3>
 <p>Once you implement your target function <code class="docutils literal"><span class="pre">LLVMFuzzerTestOneInput</span></code> and fuzz it to death,
 you will want to know whether the function or the corpus can be improved further.
 One easy to use metric is, of course, code coverage.
@@ -429,15 +428,15 @@ Then you can subtract the set of covered PCs from the set of all instrumented PC
 see <a class="reference external" href="http://clang.llvm.org/docs/SanitizerCoverage.html">SanitizerCoverage</a> for details.</p>
 </div>
 <div class="section" id="user-supplied-mutators">
-<h3><a class="toc-backref" href="#id15">User-supplied mutators</a><a class="headerlink" href="#user-supplied-mutators" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">User-supplied mutators</a><a class="headerlink" href="#user-supplied-mutators" title="永久链接至标题">¶</a></h3>
 <p>LibFuzzer allows to use custom (user-supplied) mutators,
 see <a class="reference external" href="https://github.com/llvm-mirror/llvm/blob/master/lib/Fuzzer/FuzzerInterface.h">FuzzerInterface.h</a></p>
 </div>
 </div>
 <div class="section" id="fuzzing-components-of-llvm">
-<h2><a class="toc-backref" href="#id16">Fuzzing components of LLVM</a><a class="headerlink" href="#fuzzing-components-of-llvm" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id17">Fuzzing components of LLVM</a><a class="headerlink" href="#fuzzing-components-of-llvm" title="永久链接至标题">¶</a></h2>
 <div class="section" id="clang-format-fuzzer">
-<h3><a class="toc-backref" href="#id17">clang-format-fuzzer</a><a class="headerlink" href="#clang-format-fuzzer" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id18">clang-format-fuzzer</a><a class="headerlink" href="#clang-format-fuzzer" title="永久链接至标题">¶</a></h3>
 <p>The inputs are random pieces of C++-like text.</p>
 <p>Build (make sure to use fresh clang as the host compiler):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cmake</span> <span class="o">-</span><span class="n">GNinja</span>  <span class="o">-</span><span class="n">DCMAKE_C_COMPILER</span><span class="o">=</span><span class="n">clang</span> <span class="o">-</span><span class="n">DCMAKE_CXX_COMPILER</span><span class="o">=</span><span class="n">clang</span><span class="o">++</span> <span class="o">-</span><span class="n">DLLVM_USE_SANITIZER</span><span class="o">=</span><span class="n">Address</span> <span class="o">-</span><span class="n">DLLVM_USE_SANITIZE_COVERAGE</span><span class="o">=</span><span class="n">YES</span> <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">llvm</span>
@@ -450,16 +449,16 @@ see <a class="reference external" href="https://github.com/llvm-mirror/llvm/blob
 <p>Tracking bug: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23052">https://llvm.org/bugs/show_bug.cgi?id=23052</a></p>
 </div>
 <div class="section" id="clang-fuzzer">
-<h3><a class="toc-backref" href="#id18">clang-fuzzer</a><a class="headerlink" href="#clang-fuzzer" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id19">clang-fuzzer</a><a class="headerlink" href="#clang-fuzzer" title="永久链接至标题">¶</a></h3>
 <p>The behavior is very similar to <code class="docutils literal"><span class="pre">clang-format-fuzzer</span></code>.</p>
 <p>Tracking bug: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23057">https://llvm.org/bugs/show_bug.cgi?id=23057</a></p>
 </div>
 <div class="section" id="llvm-as-fuzzer">
-<h3><a class="toc-backref" href="#id19">llvm-as-fuzzer</a><a class="headerlink" href="#llvm-as-fuzzer" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id20">llvm-as-fuzzer</a><a class="headerlink" href="#llvm-as-fuzzer" title="永久链接至标题">¶</a></h3>
 <p>Tracking bug: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=24639">https://llvm.org/bugs/show_bug.cgi?id=24639</a></p>
 </div>
 <div class="section" id="llvm-mc-fuzzer">
-<h3><a class="toc-backref" href="#id20">llvm-mc-fuzzer</a><a class="headerlink" href="#llvm-mc-fuzzer" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id21">llvm-mc-fuzzer</a><a class="headerlink" href="#llvm-mc-fuzzer" title="永久链接至标题">¶</a></h3>
 <p>This tool fuzzes the MC layer. Currently it is only able to fuzz the
 disassembler but it is hoped that assembly, and round-trip verification will be
 added in future.</p>
@@ -475,12 +474,12 @@ similar manner to <code class="docutils literal"><span class="pre">llvm-mc</span
 </div>
 </div>
 <div class="section" id="buildbot">
-<h3><a class="toc-backref" href="#id21">Buildbot</a><a class="headerlink" href="#buildbot" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id22">Buildbot</a><a class="headerlink" href="#buildbot" title="永久链接至标题">¶</a></h3>
 <p>We have a buildbot that runs the above fuzzers for LLVM components
 24/7/365 at <a class="reference external" href="http://lab.llvm.org:8011/builders/sanitizer-x86_64-linux-fuzzer">http://lab.llvm.org:8011/builders/sanitizer-x86_64-linux-fuzzer</a> .</p>
 </div>
 <div class="section" id="pre-fuzzed-test-inputs-in-git">
-<h3><a class="toc-backref" href="#id22">Pre-fuzzed test inputs in git</a><a class="headerlink" href="#pre-fuzzed-test-inputs-in-git" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id23">Pre-fuzzed test inputs in git</a><a class="headerlink" href="#pre-fuzzed-test-inputs-in-git" title="永久链接至标题">¶</a></h3>
 <p>The buildbot occumulates large test corpuses over time.
 The corpuses are stored in git on github and can be used like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">kcc</span><span class="o">/</span><span class="n">fuzzing</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">sanitizers</span><span class="o">.</span><span class="n">git</span>
@@ -492,14 +491,14 @@ The corpuses are stored in git on github and can be used like this:</p>
 </div>
 </div>
 <div class="section" id="faq">
-<h2><a class="toc-backref" href="#id23">FAQ</a><a class="headerlink" href="#faq" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id24">FAQ</a><a class="headerlink" href="#faq" title="永久链接至标题">¶</a></h2>
 <div class="section" id="q-why-fuzzer-does-not-use-any-of-the-llvm-support">
-<h3><a class="toc-backref" href="#id24">Q. Why Fuzzer does not use any of the LLVM support?</a><a class="headerlink" href="#q-why-fuzzer-does-not-use-any-of-the-llvm-support" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id25">Q. Why Fuzzer does not use any of the LLVM support?</a><a class="headerlink" href="#q-why-fuzzer-does-not-use-any-of-the-llvm-support" title="永久链接至标题">¶</a></h3>
 <p>There are two reasons.</p>
 <p>First, we want this library to be used outside of the LLVM w/o users having to
 build the rest of LLVM. This may sound unconvincing for many LLVM folks,
 but in practice the need for building the whole LLVM frightens many potential
-users &#8211; and we want more users to use this code.</p>
+users – and we want more users to use this code.</p>
 <p>Second, there is a subtle technical reason not to rely on the rest of LLVM, or
 any other large body of code (maybe not even STL). When coverage instrumentation
 is enabled, it will also instrument the LLVM support code which will blow up the
@@ -508,12 +507,12 @@ using more external dependencies we will slow down the fuzzer while the main
 reason for it to exist is extreme speed.</p>
 </div>
 <div class="section" id="q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows">
-<h3><a class="toc-backref" href="#id25">Q. What about Windows then? The Fuzzer contains code that does not build on Windows.</a><a class="headerlink" href="#q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">Q. What about Windows then? The Fuzzer contains code that does not build on Windows.</a><a class="headerlink" href="#q-what-about-windows-then-the-fuzzer-contains-code-that-does-not-build-on-windows" title="永久链接至标题">¶</a></h3>
 <p>The sanitizer coverage support does not work on Windows either as of 01/2015.
-Once it&#8217;s there, we&#8217;ll need to re-implement OS-specific parts (I/O, signals).</p>
+Once it’s there, we’ll need to re-implement OS-specific parts (I/O, signals).</p>
 </div>
 <div class="section" id="q-when-this-fuzzer-is-not-a-good-solution-for-a-problem">
-<h3><a class="toc-backref" href="#id26">Q. When this Fuzzer is not a good solution for a problem?</a><a class="headerlink" href="#q-when-this-fuzzer-is-not-a-good-solution-for-a-problem" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id27">Q. When this Fuzzer is not a good solution for a problem?</a><a class="headerlink" href="#q-when-this-fuzzer-is-not-a-good-solution-for-a-problem" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
 <li>If the test inputs are validated by the target library and the validator
 asserts/crashes on invalid inputs, the in-process fuzzer is not applicable
@@ -536,7 +535,7 @@ execution of one test) the fuzzing results will be unreliable.</li>
 </ul>
 </div>
 <div class="section" id="q-so-what-exactly-this-fuzzer-is-good-for">
-<h3><a class="toc-backref" href="#id27">Q. So, what exactly this Fuzzer is good for?</a><a class="headerlink" href="#q-so-what-exactly-this-fuzzer-is-good-for" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id28">Q. So, what exactly this Fuzzer is good for?</a><a class="headerlink" href="#q-so-what-exactly-this-fuzzer-is-good-for" title="永久链接至标题">¶</a></h3>
 <p>This Fuzzer might be a good choice for testing libraries that have relatively
 small inputs, each input takes &lt; 1ms to run, and the library code is not expected
 to crash on invalid inputs.
@@ -544,7 +543,7 @@ Examples: regular expression matchers, text or binary format parsers.</p>
 </div>
 </div>
 <div class="section" id="trophies">
-<h2><a class="toc-backref" href="#id28">Trophies</a><a class="headerlink" href="#trophies" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id29">Trophies</a><a class="headerlink" href="#trophies" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
 <li>GLIBC: <a class="reference external" href="https://sourceware.org/glibc/wiki/FuzzingLibc">https://sourceware.org/glibc/wiki/FuzzingLibc</a></li>
 <li>MUSL LIBC:<ul>
@@ -553,7 +552,7 @@ Examples: regular expression matchers, text or binary format parsers.</p>
 </ul>
 </li>
 <li><a class="reference external" href="https://github.com/zeux/pugixml/issues/39">pugixml</a></li>
-<li>PCRE: Search for &#8220;LLVM fuzzer&#8221; in <a class="reference external" href="http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup">http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup</a>;
+<li>PCRE: Search for “LLVM fuzzer” in <a class="reference external" href="http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup">http://vcs.pcre.org/pcre2/code/trunk/ChangeLog?view=markup</a>;
 also in <a class="reference external" href="https://bugs.exim.org/buglist.cgi?bug_status=__all__&amp;content=libfuzzer&amp;no_redirect=1&amp;order=Importance&amp;product=PCRE&amp;query_format=specific">bugzilla</a></li>
 <li><a class="reference external" href="http://bugs.icu-project.org/trac/ticket/11838">ICU</a></li>
 <li><a class="reference external" href="https://savannah.nongnu.org/search/?words=LibFuzzer&amp;type_of_search=bugs&amp;Search=Search&amp;exact=1#options">Freetype</a></li>
@@ -562,7 +561,7 @@ also in <a class="reference external" href="https://bugs.exim.org/buglist.cgi?bu
 <li><a class="reference external" href="http://bugs.python.org/issue25388">Python</a></li>
 <li>OpenSSL/BoringSSL: <a class="reference external" href="https://boringssl.googlesource.com/boringssl/+/cb852981cd61733a7a1ae4fd8755b7ff950e857d">[1]</a></li>
 <li><a class="reference external" href="https://bugzilla.gnome.org/buglist.cgi?bug_status=__all__&amp;content=libFuzzer&amp;list_id=68957&amp;order=Importance&amp;product=libxml2&amp;query_format=specific">Libxml2</a></li>
-<li><a class="reference external" href="https://github.com/iovisor/bpf-fuzzer">Linux Kernel&#8217;s BPF verifier</a></li>
+<li><a class="reference external" href="https://github.com/iovisor/bpf-fuzzer">Linux Kernel’s BPF verifier</a></li>
 <li>LLVM: <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23057">Clang</a>, <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=23052">Clang-format</a>, <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=24411">libc++</a>, <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=24639">llvm-as</a>, Disassembler: <a class="reference external" href="http://reviews.llvm.org/rL247405">http://reviews.llvm.org/rL247405</a>, <a class="reference external" href="http://reviews.llvm.org/rL247414">http://reviews.llvm.org/rL247414</a>, <a class="reference external" href="http://reviews.llvm.org/rL247416">http://reviews.llvm.org/rL247416</a>, <a class="reference external" href="http://reviews.llvm.org/rL247417">http://reviews.llvm.org/rL247417</a>, <a class="reference external" href="http://reviews.llvm.org/rL247420">http://reviews.llvm.org/rL247420</a>, <a class="reference external" href="http://reviews.llvm.org/rL247422">http://reviews.llvm.org/rL247422</a>.</li>
 </ul>
 </div>
@@ -591,9 +590,9 @@ also in <a class="reference external" href="https://bugs.exim.org/buglist.cgi?bu
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

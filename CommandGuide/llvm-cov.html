@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-cov - emit coverage information &mdash; LLVM 3.8 文档</title>
-    
+    <title>llvm-cov - emit coverage information &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="llvm-profdata - Profile data tool" href="llvm-profdata.html" />
     <link rel="prev" title="llvm-diff - LLVM structural ‘diff’" href="llvm-diff.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -79,13 +77,13 @@
 <h1>llvm-cov - emit coverage information<a class="headerlink" href="#llvm-cov-emit-coverage-information" title="永久链接至标题">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="永久链接至标题">¶</a></h2>
-<p><strong class="program">llvm-cov</strong> <em>command</em> [<em>args...</em>]</p>
+<p><strong class="program">llvm-cov</strong> <em>command</em> [<em>args…</em>]</p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
 <p>The <strong class="program">llvm-cov</strong> tool shows code coverage information for
 programs that are instrumented to emit profile data. It can be used to
-work with <code class="docutils literal"><span class="pre">gcov</span></code>-style coverage or with <code class="docutils literal"><span class="pre">clang</span></code>&#8216;s instrumentation
+work with <code class="docutils literal"><span class="pre">gcov</span></code>-style coverage or with <code class="docutils literal"><span class="pre">clang</span></code>’s instrumentation
 based profiling.</p>
 <p>If the program is invoked with a base name of <code class="docutils literal"><span class="pre">gcov</span></code>, it will behave as if
 the <strong class="program">llvm-cov gcov</strong> command were called. Otherwise, a command should
@@ -151,7 +149,7 @@ as <code class="docutils literal"><span class="pre">#####</span></code>.</p>
 <h3>OPTIONS<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h3>
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-a">
-<span id="cmdoption-llvm-cov-gcov--all-blocks"></span><code class="descname">-a</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--all-blocks</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-a" title="永久链接至目标">¶</a></dt>
+<code class="descname">-a</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--all-blocks</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-a" title="永久链接至目标">¶</a></dt>
 <dd><p>Display all basic blocks. If there are multiple blocks for a single line of
 source code, this option causes llvm-cov to show the count for each block
 instead of just one count for the entire line.</p>
@@ -159,49 +157,49 @@ instead of just one count for the entire line.</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-b">
-<span id="cmdoption-llvm-cov-gcov--branch-probabilities"></span><code class="descname">-b</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--branch-probabilities</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-b" title="永久链接至目标">¶</a></dt>
+<code class="descname">-b</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--branch-probabilities</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-b" title="永久链接至目标">¶</a></dt>
 <dd><p>Display conditional branch probabilities and a summary of branch information.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-c">
-<span id="cmdoption-llvm-cov-gcov--branch-counts"></span><code class="descname">-c</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--branch-counts</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-c" title="永久链接至目标">¶</a></dt>
+<code class="descname">-c</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--branch-counts</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-c" title="永久链接至目标">¶</a></dt>
 <dd><p>Display branch counts instead of probabilities (requires -b).</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-f">
-<span id="cmdoption-llvm-cov-gcov--function-summaries"></span><code class="descname">-f</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--function-summaries</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-f" title="永久链接至目标">¶</a></dt>
+<code class="descname">-f</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--function-summaries</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-f" title="永久链接至目标">¶</a></dt>
 <dd><p>Show a summary of coverage for each function instead of just one summary for
 an entire source file.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-cov-gcov--help">
-<code class="descname">--help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov--help" title="永久链接至目标">¶</a></dt>
-<dd><p>Display available options (&#8211;help-hidden for more).</p>
+<dt id="cmdoption-llvm-cov-gcov-help">
+<code class="descname">--help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-help" title="永久链接至目标">¶</a></dt>
+<dd><p>Display available options (–help-hidden for more).</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-l">
-<span id="cmdoption-llvm-cov-gcov--long-file-names"></span><code class="descname">-l</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--long-file-names</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-l" title="永久链接至目标">¶</a></dt>
+<code class="descname">-l</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--long-file-names</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-l" title="永久链接至目标">¶</a></dt>
 <dd><p>For coverage output of files included from the main source file, add the
 main file name followed by <code class="docutils literal"><span class="pre">##</span></code> as a prefix to the output file names. This
-can be combined with the &#8211;preserve-paths option to use complete paths for
+can be combined with the –preserve-paths option to use complete paths for
 both the main file and the included file.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-n">
-<span id="cmdoption-llvm-cov-gcov--no-output"></span><code class="descname">-n</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--no-output</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-n" title="永久链接至目标">¶</a></dt>
+<code class="descname">-n</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--no-output</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-n" title="永久链接至目标">¶</a></dt>
 <dd><p>Do not output any <code class="docutils literal"><span class="pre">.gcov</span></code> files. Summary information is still
 displayed.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-o">
-<span id="cmdoption-llvm-cov-gcov--object-directory"></span><span id="cmdoption-llvm-cov-gcov--object-file"></span><code class="descname">-o</code><code class="descclassname">=&lt;DIR|FILE&gt;</code><code class="descclassname">, </code><code class="descname">--object-directory</code><code class="descclassname">=&lt;DIR&gt;</code><code class="descclassname">, </code><code class="descname">--object-file</code><code class="descclassname">=&lt;FILE&gt;</code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-o" title="永久链接至目标">¶</a></dt>
-<dd><p>Find objects in DIR or based on FILE&#8217;s path. If you specify a particular
+<code class="descname">-o</code><code class="descclassname">=&lt;DIR|FILE&gt;</code><code class="descclassname">, </code><code class="descname">--object-directory</code><code class="descclassname">=&lt;DIR&gt;</code><code class="descclassname">, </code><code class="descname">--object-file</code><code class="descclassname">=&lt;FILE&gt;</code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-o" title="永久链接至目标">¶</a></dt>
+<dd><p>Find objects in DIR or based on FILE’s path. If you specify a particular
 object file, the coverage data files are expected to have the same base name
 with <code class="docutils literal"><span class="pre">.gcno</span></code> and <code class="docutils literal"><span class="pre">.gcda</span></code> extensions. If you specify a directory, the
 files are expected in that directory with the same base name as the source
@@ -210,19 +208,19 @@ file.</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-p">
-<span id="cmdoption-llvm-cov-gcov--preserve-paths"></span><code class="descname">-p</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--preserve-paths</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-p" title="永久链接至目标">¶</a></dt>
+<code class="descname">-p</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--preserve-paths</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-p" title="永久链接至目标">¶</a></dt>
 <dd><p>Preserve path components when naming the coverage output files. In addition
 to the source file name, include the directories from the path to that
 file. The directories are separate by <code class="docutils literal"><span class="pre">#</span></code> characters, with <code class="docutils literal"><span class="pre">.</span></code> directories
 removed and <code class="docutils literal"><span class="pre">..</span></code> directories replaced by <code class="docutils literal"><span class="pre">^</span></code> characters. When used with
-the &#8211;long-file-names option, this applies to both the main file name and the
+the –long-file-names option, this applies to both the main file name and the
 included file name.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-gcov-u">
-<span id="cmdoption-llvm-cov-gcov--unconditional-branches"></span><code class="descname">-u</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--unconditional-branches</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-u" title="永久链接至目标">¶</a></dt>
-<dd><p>Include unconditional branches in the output for the &#8211;branch-probabilities
+<code class="descname">-u</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--unconditional-branches</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cov-gcov-u" title="永久链接至目标">¶</a></dt>
+<dd><p>Include unconditional branches in the output for the –branch-probabilities
 option.</p>
 </dd></dl>
 
@@ -302,7 +300,7 @@ line, but show the individual regions if there are multiple on the line.</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-cov-show-use-color">
-<code class="descname">-use-color</code><code class="descclassname">[=VALUE]</code><a class="headerlink" href="#cmdoption-llvm-cov-show-use-color" title="永久链接至目标">¶</a></dt>
+<code class="descname">-use-color[</code><code class="descclassname">=VALUE]</code><a class="headerlink" href="#cmdoption-llvm-cov-show-use-color" title="永久链接至目标">¶</a></dt>
 <dd><p>Enable or disable color output. By default this is autodetected.</p>
 </dd></dl>
 
@@ -378,7 +376,7 @@ see <a class="reference internal" href="#llvm-cov-show"><span class="std std-ref
 <h3>OPTIONS<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
 <dl class="option">
 <dt id="cmdoption-llvm-cov-report-use-color">
-<code class="descname">-use-color</code><code class="descclassname">[=VALUE]</code><a class="headerlink" href="#cmdoption-llvm-cov-report-use-color" title="永久链接至目标">¶</a></dt>
+<code class="descname">-use-color[</code><code class="descclassname">=VALUE]</code><a class="headerlink" href="#cmdoption-llvm-cov-report-use-color" title="永久链接至目标">¶</a></dt>
 <dd><p>Enable or disable color output. By default this is autodetected.</p>
 </dd></dl>
 
@@ -415,13 +413,13 @@ non-universal binary.</p>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

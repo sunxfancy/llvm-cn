@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>yaml2obj &mdash; LLVM 3.8 文档</title>
-    
+    <title>yaml2obj &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How to submit an LLVM bug report" href="HowToSubmitABug.html" />
     <link rel="prev" title="How To Add Your Build Configuration To LLVM Buildbot Infrastructure" href="HowToAddABuilder.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -82,7 +81,7 @@ file.</p>
 <p>Outputs the binary to stdout.</p>
 <div class="section" id="coff-syntax">
 <h2>COFF Syntax<a class="headerlink" href="#coff-syntax" title="永久链接至标题">¶</a></h2>
-<p>Here&#8217;s a sample COFF file.</p>
+<p>Here’s a sample COFF file.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">header</span><span class="p p-Indicator">:</span>
   <span class="l l-Scalar l-Scalar-Plain">Machine</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">IMAGE_FILE_MACHINE_I386</span> <span class="c1"># (0x14C)</span>
 
@@ -115,7 +114,7 @@ file.</p>
     <span class="l l-Scalar l-Scalar-Plain">StorageClass</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">IMAGE_SYM_CLASS_EXTERNAL</span> <span class="c1"># (2)</span>
 </pre></div>
 </div>
-<p>Here&#8217;s a simplified <a class="reference external" href="http://www.kuwata-lab.com/kwalify/ruby/users-guide.html">Kwalify</a> schema with an extension to allow alternate types.</p>
+<p>Here’s a simplified <a class="reference external" href="http://www.kuwata-lab.com/kwalify/ruby/users-guide.html">Kwalify</a> schema with an extension to allow alternate types.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">map</span>
   <span class="l l-Scalar l-Scalar-Plain">mapping</span><span class="p p-Indicator">:</span>
     <span class="l l-Scalar l-Scalar-Plain">header</span><span class="p p-Indicator">:</span>
@@ -309,9 +308,9 @@ file.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

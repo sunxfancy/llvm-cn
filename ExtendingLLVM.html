@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Extending LLVM: Adding instructions, intrinsics, types, etc. &mdash; LLVM 3.8 文档</title>
-    
+    <title>Extending LLVM: Adding instructions, intrinsics, types, etc. &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How to set up LLVM-style RTTI for your class hierarchy" href="HowToSetUpLLVMStyleRTTI.html" />
     <link rel="prev" title="Architecture &amp; Platform Information for Compiler Writers" href="CompilerWriterInfo.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -106,14 +105,14 @@ function and then be turned into an instruction if warranted.</p>
 <li><p class="first"><code class="docutils literal"><span class="pre">llvm/docs/LangRef.html</span></code>:</p>
 <p>Document the intrinsic.  Decide whether it is code generator specific and
 what the restrictions are.  Talk to other people about it so that you are
-sure it&#8217;s a good idea.</p>
+sure it’s a good idea.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">llvm/include/llvm/IR/Intrinsics*.td</span></code>:</p>
 <p>Add an entry for your intrinsic.  Describe its memory access characteristics
-for optimization (this controls whether it will be DCE&#8217;d, CSE&#8217;d, etc). Note
+for optimization (this controls whether it will be DCE’d, CSE’d, etc). Note
 that any intrinsic using one of the <code class="docutils literal"><span class="pre">llvm_any*_ty</span></code> types for an argument or
 return type will be deemed by <code class="docutils literal"><span class="pre">tblgen</span></code> as overloaded and the corresponding
-suffix will be required on the intrinsic&#8217;s name.</p>
+suffix will be required on the intrinsic’s name.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">llvm/lib/Analysis/ConstantFolding.cpp</span></code>:</p>
 <p>If it is possible to constant fold your intrinsic, add support to it in the
@@ -160,19 +159,19 @@ of arguments as your new node.</p>
 <li><p class="first"><code class="docutils literal"><span class="pre">lib/CodeGen/SelectionDAG/LegalizeDAG.cpp</span></code>:</p>
 <p>Add code to <a class="reference external" href="CodeGenerator.html#selectiondag_legalize">legalize, promote, and expand</a> the node as necessary.  At a
 minimum, you will need to add a case statement for your node in
-<code class="docutils literal"><span class="pre">LegalizeOp</span></code> which calls LegalizeOp on the node&#8217;s operands, and returns a
+<code class="docutils literal"><span class="pre">LegalizeOp</span></code> which calls LegalizeOp on the node’s operands, and returns a
 new node if any of the operands changed as a result of being legalized.  It
 is likely that not all targets supported by the SelectionDAG framework will
 natively support the new node.  In this case, you must also add code in your
-node&#8217;s case statement in <code class="docutils literal"><span class="pre">LegalizeOp</span></code> to Expand your node into simpler,
+node’s case statement in <code class="docutils literal"><span class="pre">LegalizeOp</span></code> to Expand your node into simpler,
 legal operations.  The case for <code class="docutils literal"><span class="pre">ISD::UREM</span></code> for expanding a remainder into
 a divide, multiply, and a subtract is a good example.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">lib/CodeGen/SelectionDAG/LegalizeDAG.cpp</span></code>:</p>
 <dl class="docutils">
 <dt>If targets may support the new node being added only at certain sizes, you</dt>
-<dd><p class="first last">will also need to add code to your node&#8217;s case statement in <code class="docutils literal"><span class="pre">LegalizeOp</span></code>
-to Promote your node&#8217;s operands to a larger size, and perform the correct
+<dd><p class="first last">will also need to add code to your node’s case statement in <code class="docutils literal"><span class="pre">LegalizeOp</span></code>
+to Promote your node’s operands to a larger size, and perform the correct
 operation.  You will also need to add code to <code class="docutils literal"><span class="pre">PromoteOp</span></code> to do this as
 well.  For a good example, see <code class="docutils literal"><span class="pre">ISD::BSWAP</span></code>, which promotes its operand to
 a wider size, performs the byteswap, and then shifts the correct bytes right
@@ -211,7 +210,7 @@ the list in this file, with the appropriate type constraints. Look at
 <code class="docutils literal"><span class="pre">add</span></code>, <code class="docutils literal"><span class="pre">bswap</span></code>, and <code class="docutils literal"><span class="pre">fadd</span></code> for examples.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">lib/Target/PowerPC/PPCInstrInfo.td</span></code>:</p>
-<p>Each target has a tablegen file that describes the target&#8217;s instruction set.
+<p>Each target has a tablegen file that describes the target’s instruction set.
 For targets that use the DAGToDAG instruction selection framework, add a
 pattern for your new node that uses one or more target nodes.  Documentation
 for this is a bit sparse right now, but there are several decent examples.
@@ -382,9 +381,9 @@ to output the new derived type</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

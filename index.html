@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>概述 &mdash; LLVM 3.8 文档</title>
-    
+    <title>概述 &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="#" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="LLVM 语法参考手册" href="LangRef.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -42,7 +41,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="#">
     <img src="_static/logo.png"
@@ -81,20 +80,15 @@
 </div>
 <dl class="docutils">
 <dt><a class="reference internal" href="LangRef.html"><span class="doc">LLVM 语法参考手册</span></a></dt>
-<dd><p class="first last">LLVM语言参考手册：一些关于LLVM中间表示的相关定义，详细介绍了LLVM字节码的含义和规范</p>
-</dd>
+<dd>LLVM语言参考手册：一些关于LLVM中间表示的相关定义，详细介绍了LLVM字节码的含义和规范</dd>
 <dt><a class="reference external" href="http://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.html">LLVM编译器简介</a></dt>
-<dd><p class="first last">提供对用户的LLVM简介（08年的一份PPT文稿）</p>
-</dd>
+<dd>提供对用户的LLVM简介（08年的一份PPT文稿）</dd>
 <dt><a class="reference external" href="http://www.aosabook.org/en/llvm.html">Intro to LLVM（LLVM介绍）</a></dt>
-<dd><p class="first last">一本介绍LLVM编译器hack技术的书籍</p>
-</dd>
+<dd>一本介绍LLVM编译器hack技术的书籍</dd>
 <dt><a class="reference external" href="http://llvm.org/pubs/2004-01-30-CGO-LLVM.html">LLVM: 为分析转换长生命周期程序而设计的编译器框架</a></dt>
-<dd><p class="first last">设计概览</p>
-</dd>
+<dd>设计概览</dd>
 <dt><a class="reference external" href="http://llvm.org/pubs/2002-12-LattnerMSThesis.html">LLVM: 多级优化的编译器基础设施</a></dt>
-<dd><p class="first last">更多的细节（相当过时的）</p>
-</dd>
+<dd>更多的细节（相当过时的）</dd>
 <dt><a class="reference external" href="http://llvm.org/pubs">提及LLVM的相关出版物</a></dt>
 <dd></dd>
 </dl>
@@ -106,66 +100,46 @@
 <div class="toctree-wrapper compound">
 </div>
 <dl class="docutils">
-<dt><a class="reference internal" href="GettingStarted.html"><span class="doc">LLVM系统入门</span></a></dt>
-<dd><p class="first last">讨论如何开始了解LLVM项目并快速入门，我们将介绍从解压缩到编译整个项目的各种细节问题。</p>
-</dd>
-<dt><a class="reference internal" href="CMake.html"><span class="doc">使用CMake构建LLVM</span></a></dt>
-<dd><p class="first last">使用 <a class="reference external" href="http://www.cmake.org">CMake</a> 构建系统的入门指导补充</p>
-</dd>
+<dt><a class="reference internal" href="GettingStarted.html"><span class="doc">开始使用LLVM系统</span></a></dt>
+<dd>讨论如何开始了解LLVM项目并快速入门，我们将介绍从解压缩到编译整个项目的各种细节问题。</dd>
+<dt><a class="reference internal" href="CMake.html"><span class="doc">使用CMake构建LLVM系统</span></a></dt>
+<dd>使用 <a class="reference external" href="http://www.cmake.org">CMake</a> 构建系统的入门指导补充</dd>
 <dt><a class="reference internal" href="HowToBuildOnARM.html"><span class="doc">How To Build On ARM</span></a></dt>
-<dd><p class="first last">在ARM平台构建和测试LLVM/Clang</p>
-</dd>
+<dd>在ARM平台构建和测试LLVM/Clang</dd>
 <dt><a class="reference internal" href="HowToCrossCompileLLVM.html"><span class="doc">How To Cross-Compile Clang/LLVM using Clang/LLVM</span></a></dt>
-<dd><p class="first last">如何跨平台编译和测试LLVM/Clang</p>
-</dd>
+<dd>如何跨平台编译和测试LLVM/Clang</dd>
 <dt><a class="reference internal" href="GettingStartedVS.html"><span class="doc">Getting Started with the LLVM System using Microsoft Visual Studio</span></a></dt>
-<dd><p class="first last">在Windows平台使用Visual Studio的用户入门指导补充</p>
-</dd>
+<dd>在Windows平台使用Visual Studio的用户入门指导补充</dd>
 <dt><a class="reference internal" href="BuildingLLVMWithAutotools.html"><span class="doc">Building LLVM With Autotools</span></a></dt>
-<dd><p class="first last">入门指南的补充，关于使用LLVM的Autotools构建系统的构建指导</p>
-</dd>
+<dd>入门指南的补充，关于使用LLVM的Autotools构建系统的构建指导</dd>
 <dt><a class="reference internal" href="tutorial/index.html"><span class="doc">LLVM Tutorial: Table of Contents</span></a></dt>
-<dd><p class="first last">使用LLVM项目的教程，包括使用LLVM制作一款个人定制语言的编译器教程。</p>
-</dd>
+<dd>使用LLVM项目的教程，包括使用LLVM制作一款个人定制语言的编译器教程。</dd>
 <dt><a class="reference internal" href="CommandGuide/index.html"><span class="doc">LLVM Command Guide</span></a></dt>
-<dd><p class="first last">LLVM命令行工具的参考手册 （LLVM命令行工具的 &#8220;man&#8221; 文档&#8221;）</p>
-</dd>
-<dt><a class="reference internal" href="Passes.html"><span class="doc">LLVM&#8217;s Analysis and Transform Passes</span></a></dt>
-<dd><p class="first last">LLVM中一系列优化和分析的实现</p>
-</dd>
+<dd>LLVM命令行工具的参考手册 （LLVM命令行工具的 “man” 文档”）</dd>
+<dt><a class="reference internal" href="Passes.html"><span class="doc">LLVM’s Analysis and Transform Passes</span></a></dt>
+<dd>LLVM中一系列优化和分析的实现</dd>
 <dt><a class="reference internal" href="FAQ.html"><span class="doc">Frequently Asked Questions (FAQ)</span></a></dt>
-<dd><p class="first last">一系列常见问题和其解决方案</p>
-</dd>
+<dd>一系列常见问题和其解决方案</dd>
 <dt><a class="reference internal" href="ReleaseNotes.html"><span class="doc">Release notes for the current release</span></a></dt>
-<dd><p class="first last">介绍最新的特性，已知的异常和其他局限性。</p>
-</dd>
+<dd>介绍最新的特性，已知的异常和其他局限性。</dd>
 <dt><a class="reference internal" href="HowToSubmitABug.html"><span class="doc">How to submit an LLVM bug report</span></a></dt>
-<dd><p class="first last">提交LLVM错误信息的相关指导</p>
-</dd>
+<dd>提交LLVM错误信息的相关指导</dd>
 <dt><a class="reference internal" href="SphinxQuickstartTemplate.html"><span class="doc">Sphinx Quickstart Template</span></a></dt>
-<dd><p class="first last">编写Sphinx文档的一个模板，同时也是一份教程，您应该阅读它的源码形式，它可以在LLVM源码的docs目录下找到</p>
-</dd>
+<dd>编写Sphinx文档的一个模板，同时也是一份教程，您应该阅读它的源码形式，它可以在LLVM源码的docs目录下找到</dd>
 <dt><a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a></dt>
-<dd><p class="first last">LLVM测试框架的使用参考手册</p>
-</dd>
+<dd>LLVM测试框架的使用参考手册</dd>
 <dt><a class="reference external" href="http://clang.llvm.org/get_started.html">如何构建 C, C++, ObjC, 和 ObjC++ 的前端</a></dt>
-<dd><p class="first last">从源码构建Clang前端的构建指导</p>
-</dd>
+<dd>从源码构建Clang前端的构建指导</dd>
 <dt><a class="reference internal" href="Lexicon.html"><span class="doc">The LLVM Lexicon</span></a></dt>
-<dd><p class="first last">缩略语，术语和LLVM所用到的概念定义。</p>
-</dd>
+<dd>缩略语，术语和LLVM所用到的概念定义。</dd>
 <dt><a class="reference internal" href="HowToAddABuilder.html"><span class="doc">How To Add Your Build Configuration To LLVM Buildbot Infrastructure</span></a></dt>
-<dd><p class="first last">添加新的构建器到LLVM buildbot master，增加新的自动构建机器人。</p>
-</dd>
+<dd>添加新的构建器到LLVM buildbot master，增加新的自动构建机器人。</dd>
 <dt><a class="reference internal" href="YamlIO.html"><span class="doc">YAML I/O</span></a></dt>
-<dd><p class="first last">使用 LLVM 的 YAML I/O 库的参考指南</p>
-</dd>
+<dd>使用 LLVM 的 YAML I/O 库的参考指南</dd>
 <dt><a class="reference internal" href="GetElementPtr.html"><span class="doc">The Often Misunderstood GEP Instruction</span></a></dt>
-<dd><p class="first last">回答一下对LLVM指令的常见误解，详细介绍GetElementPtr指令的含义和用法</p>
-</dd>
+<dd>回答一下对LLVM指令的常见误解，详细介绍GetElementPtr指令的含义和用法</dd>
 <dt><a class="reference internal" href="Frontend/PerformanceTips.html"><span class="doc">Performance Tips for Frontend Authors</span></a></dt>
-<dd><p class="first last">编译器前端作者的小提醒，关于如何生成高效的LLVM IR</p>
-</dd>
+<dd>编译器前端作者的小提醒，关于如何生成高效的LLVM IR</dd>
 </dl>
 </div>
 <div class="section" id="programming-documentation">
@@ -175,29 +149,21 @@
 </div>
 <dl class="docutils">
 <dt><a class="reference internal" href="LangRef.html"><span class="doc">LLVM Language Reference Manual</span></a></dt>
-<dd><p class="first last">LLVM语言参考手册：一些关于LLVM中间表示的相关定义，详细介绍了LLVM字节码的含义和规范</p>
-</dd>
+<dd>LLVM语言参考手册：一些关于LLVM中间表示的相关定义，详细介绍了LLVM字节码的含义和规范</dd>
 <dt><a class="reference internal" href="Atomics.html"><span class="doc">LLVM Atomic Instructions and Concurrency Guide</span></a></dt>
-<dd><p class="first last">原子指令和并发指南：LLVM并发模型的相关信息</p>
-</dd>
-<dt><a class="reference internal" href="ProgrammersManual.html"><span class="doc">LLVM Programmer&#8217;s Manual</span></a></dt>
-<dd><p class="first last">介绍LLVM源代码的基础部分，重要的类和相关API接口，也包含一些重要的提示和技巧。</p>
-</dd>
+<dd>原子指令和并发指南：LLVM并发模型的相关信息</dd>
+<dt><a class="reference internal" href="ProgrammersManual.html"><span class="doc">LLVM Programmer’s Manual</span></a></dt>
+<dd>介绍LLVM源代码的基础部分，重要的类和相关API接口，也包含一些重要的提示和技巧。</dd>
 <dt><a class="reference internal" href="Extensions.html"><span class="doc">LLVM Extensions</span></a></dt>
-<dd><p class="first last">LLVM特殊的扩展工具和兼容格式</p>
-</dd>
+<dd>LLVM特殊的扩展工具和兼容格式</dd>
 <dt><a class="reference internal" href="CommandLine.html"><span class="doc">CommandLine 2.0 Library Manual</span></a></dt>
-<dd><p class="first last">提供了命令行解析库的相关信息。</p>
-</dd>
+<dd>提供了命令行解析库的相关信息。</dd>
 <dt><a class="reference internal" href="CodingStandards.html"><span class="doc">LLVM Coding Standards</span></a></dt>
-<dd><p class="first last">LLVM代码规范的细节，并且提供了编写高效C++代码的技巧信息</p>
-</dd>
+<dd>LLVM代码规范的细节，并且提供了编写高效C++代码的技巧信息</dd>
 <dt><a class="reference internal" href="HowToSetUpLLVMStyleRTTI.html"><span class="doc">How to set up LLVM-style RTTI for your class hierarchy</span></a></dt>
-<dd><p class="first last">如何让 <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>, <code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>, 等指令可以用在您自定义的类中。</p>
-</dd>
+<dd>如何让 <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>, <code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>, 等指令可以用在您自定义的类中。</dd>
 <dt><a class="reference internal" href="ExtendingLLVM.html"><span class="doc">Extending LLVM: Adding instructions, intrinsics, types, etc.</span></a></dt>
-<dd><p class="first last">这里介绍了如何添加新的LLVM指令，内联函数，内部类型等</p>
-</dd>
+<dd>这里介绍了如何添加新的LLVM指令，内联函数，内部类型等</dd>
 <dt><a class="reference external" href="http://llvm.org/doxygen/">Doxygen generated documentation</a></dt>
 <dd>(<a class="reference external" href="http://llvm.org/doxygen/inherits.html">classes</a>)
 (<a class="reference external" href="http://llvm.org/doxygen/doxygen.tar.gz">tarball</a>)</dd>
@@ -207,114 +173,81 @@
 <dt><a class="reference external" href="http://llvm.org/viewvc/">ViewVC Repository Browser</a></dt>
 <dd></dd>
 <dt><a class="reference internal" href="CompilerWriterInfo.html"><span class="doc">Architecture &amp; Platform Information for Compiler Writers</span></a></dt>
-<dd><p class="first last">一系列关于所支持的架构的相关信息，对于编译器开发者十分必要。</p>
-</dd>
-<dt><a class="reference internal" href="LibFuzzer.html"><span class="doc">LibFuzzer &#8211; a library for coverage-guided fuzz testing.</span></a></dt>
+<dd>一系列关于所支持的架构的相关信息，对于编译器开发者十分必要。</dd>
+<dt><a class="reference internal" href="LibFuzzer.html"><span class="doc">LibFuzzer – a library for coverage-guided fuzz testing.</span></a></dt>
 <dd>A library for writing in-process guided fuzzers.</dd>
 </dl>
 </div>
 <div class="section" id="subsystem-documentation">
 <h1>子系统文档<a class="headerlink" href="#subsystem-documentation" title="永久链接至标题">¶</a></h1>
-<p>适合API客户端和LLVM开发者阅读。</p>
+<p>适合API调用者和LLVM开发者阅读。</p>
 <div class="toctree-wrapper compound">
 </div>
 <dl class="docutils">
 <dt><a class="reference internal" href="WritingAnLLVMPass.html"><span class="doc">Writing an LLVM Pass</span></a></dt>
-<dd><p class="first last">如何去写一个LLVM转换分析过程（一个Pass）的相关信息。</p>
-</dd>
+<dd>如何去写一个LLVM转换分析过程（一个Pass）的相关信息。</dd>
 <dt><a class="reference internal" href="WritingAnLLVMBackend.html"><span class="doc">Writing an LLVM Backend</span></a></dt>
-<dd><p class="first last">关于如何去写一个针对特性目标机型的LLVM的后端。</p>
-</dd>
+<dd>关于如何去写一个针对特性目标机型的LLVM的后端。</dd>
 <dt><a class="reference internal" href="CodeGenerator.html"><span class="doc">The LLVM Target-Independent Code Generator</span></a></dt>
-<dd><p class="first last">LLVM代码生成器的设计与实现，如果你正在重新制作一个新的目标架构，设计一个新的代码生成过程或者修改现有组件，这份文档将会十分有价值。</p>
-</dd>
+<dd>LLVM代码生成器的设计与实现，如果你正在重新制作一个新的目标架构，设计一个新的代码生成过程或者修改现有组件，这份文档将会十分有价值。</dd>
 <dt><a class="reference internal" href="MIRLangRef.html"><span class="doc">Machine IR (MIR) Format Reference Manual</span></a></dt>
-<dd><p class="first last">MIR串行化格式的参考文档，用来测试LLVM的代码生成过程。</p>
-</dd>
+<dd>MIR串行化格式的参考文档，用来测试LLVM的代码生成过程。</dd>
 <dt><a class="reference internal" href="TableGen/index.html"><span class="doc">TableGen</span></a></dt>
-<dd><p class="first last">TableGen工具的介绍，一款LLVM代码生成部分很常用的工具。</p>
-</dd>
+<dd>TableGen工具的介绍，一款LLVM代码生成部分很常用的工具。</dd>
 <dt><a class="reference internal" href="AliasAnalysis.html"><span class="doc">LLVM Alias Analysis Infrastructure</span></a></dt>
-<dd><p class="first last">关于如何给一个新的分析实现或现有实现起别名。</p>
-</dd>
+<dd>关于如何给一个新的分析实现或现有实现起别名。</dd>
 <dt><a class="reference internal" href="GarbageCollection.html"><span class="doc">Garbage Collection with LLVM</span></a></dt>
-<dd><p class="first last">编译器用来实现GC程序的源代码接口。</p>
-</dd>
+<dd>编译器用来实现GC程序的源代码接口。</dd>
 <dt><a class="reference internal" href="SourceLevelDebugging.html"><span class="doc">Source Level Debugging with LLVM</span></a></dt>
-<dd><p class="first last">LLVM 源码级调试器的设计哲学描述文档</p>
-</dd>
+<dd>LLVM 源码级调试器的设计哲学描述文档</dd>
 <dt><a class="reference internal" href="Vectorizers.html"><span class="doc">Auto-Vectorization in LLVM</span></a></dt>
-<dd><p class="first last">这份文档描述了如何将LLVM的当前状态向量化。</p>
-</dd>
+<dd>这份文档描述了如何将LLVM的当前状态向量化。</dd>
 <dt><a class="reference internal" href="ExceptionHandling.html"><span class="doc">Exception Handling in LLVM</span></a></dt>
-<dd><p class="first last">这份文档描述了如何设计和实现在LLVM中的异常处理。</p>
-</dd>
+<dd>这份文档描述了如何设计和实现在LLVM中的异常处理。</dd>
 <dt><a class="reference internal" href="Bugpoint.html"><span class="doc">LLVM bugpoint tool: design and usage</span></a></dt>
-<dd><p class="first last">自动bug跟踪和测试用例减少器的描述和使用信息</p>
-</dd>
+<dd>自动bug跟踪和测试用例减少器的描述和使用信息</dd>
 <dt><a class="reference internal" href="BitCodeFormat.html"><span class="doc">LLVM Bitcode File Format</span></a></dt>
-<dd><p class="first last">这份文档描述了LLVM “.bc” 文件的格式和编码。</p>
-</dd>
+<dd>这份文档描述了LLVM “.bc” 文件的格式和编码。</dd>
 <dt><a class="reference internal" href="SystemLibrary.html"><span class="doc">System Library</span></a></dt>
-<dd><p class="first last">这份文档描述了如何使用LLVM系统库（ <code class="docutils literal"><span class="pre">lib/System</span></code> ），以及如让LLVM源码保持可移植性</p>
-</dd>
+<dd>这份文档描述了如何使用LLVM系统库（ <code class="docutils literal"><span class="pre">lib/System</span></code> ），以及如让LLVM源码保持可移植性</dd>
 <dt><a class="reference internal" href="LinkTimeOptimization.html"><span class="doc">LLVM Link Time Optimization: Design and Implementation</span></a></dt>
-<dd><p class="first last">链接时优化：这份文档描述了LLVM模块内优化器和链接器之间的接口，以及设计思路</p>
-</dd>
+<dd>链接时优化：这份文档描述了LLVM模块内优化器和链接器之间的接口，以及设计思路</dd>
 <dt><a class="reference internal" href="GoldPlugin.html"><span class="doc">The LLVM gold plugin</span></a></dt>
-<dd><p class="first last">如何在Linux平台上，构建你的程序时启用链接时优化。</p>
-</dd>
+<dd>如何在Linux平台上，构建你的程序时启用链接时优化。</dd>
 <dt><a class="reference internal" href="DebuggingJITedCode.html"><span class="doc">Debugging JIT-ed Code With GDB</span></a></dt>
-<dd><p class="first last">如何使用GDB调试Jit引擎中的代码。</p>
-</dd>
+<dd>如何使用GDB调试Jit引擎中的代码。</dd>
 <dt><a class="reference internal" href="MCJITDesignAndImplementation.html"><span class="doc">MCJIT Design and Implementation</span></a></dt>
-<dd><p class="first last">MCJIT执行引擎的内部工作描述</p>
-</dd>
+<dd>MCJIT执行引擎的内部工作描述</dd>
 <dt><a class="reference internal" href="BranchWeightMetadata.html"><span class="doc">LLVM Branch Weight Metadata</span></a></dt>
-<dd><p class="first last">提供了分支预测技术的相关信息</p>
-</dd>
+<dd>提供了分支预测技术的相关信息</dd>
 <dt><a class="reference internal" href="BlockFrequencyTerminology.html"><span class="doc">LLVM Block Frequency Terminology</span></a></dt>
-<dd><p class="first last">提供了一些关于在分析过程中，基本块频率信息（ <code class="docutils literal"><span class="pre">BlockFrequencyInfo</span></code> ）的术语信息</p>
-</dd>
+<dd>提供了一些关于在分析过程中，基本块频率信息（ <code class="docutils literal"><span class="pre">BlockFrequencyInfo</span></code> ）的术语信息</dd>
 <dt><a class="reference internal" href="SegmentedStacks.html"><span class="doc">Segmented Stacks in LLVM</span></a></dt>
-<dd><p class="first last">这份文档描述了分段栈和它是如何在LLVM被使用的。</p>
-</dd>
-<dt><a class="reference internal" href="MarkedUpDisassembly.html"><span class="doc">LLVM&#8217;s Optional Rich Disassembly Output</span></a></dt>
-<dd><p class="first last">这份文档描述了可选富反编译器的输出形式</p>
-</dd>
+<dd>这份文档描述了分段栈和它是如何在LLVM被使用的。</dd>
+<dt><a class="reference internal" href="MarkedUpDisassembly.html"><span class="doc">LLVM’s Optional Rich Disassembly Output</span></a></dt>
+<dd>这份文档描述了可选富反编译器的输出形式</dd>
 <dt><a class="reference internal" href="HowToUseAttributes.html"><span class="doc">How To Use Attributes</span></a></dt>
-<dd><p class="first last">回答一些关于属性指令的相关问题。</p>
-</dd>
+<dd>回答一些关于属性指令的相关问题。</dd>
 <dt><a class="reference internal" href="NVPTXUsage.html"><span class="doc">User Guide for NVPTX Back-end</span></a></dt>
-<dd><p class="first last">这份文档描述使用NVPTX后端去编译到GPU代码的方法。</p>
-</dd>
+<dd>这份文档描述使用NVPTX后端去编译到GPU代码的方法。</dd>
 <dt><a class="reference internal" href="AMDGPUUsage.html"><span class="doc">User Guide for AMDGPU Back-end</span></a></dt>
-<dd><p class="first last">这份代码描述了如何使用AMDGPU后端。</p>
-</dd>
+<dd>这份代码描述了如何使用AMDGPU后端。</dd>
 <dt><a class="reference internal" href="StackMaps.html"><span class="doc">Stack maps and patch points in LLVM</span></a></dt>
-<dd><p class="first last">LLVM对于映射指令地址到变量所在位置的相关支持，</p>
-</dd>
+<dd>LLVM对于映射指令地址到变量所在位置的相关支持，</dd>
 <dt><a class="reference internal" href="BigEndianNEON.html"><span class="doc">Using ARM NEON instructions in big endian mode</span></a></dt>
-<dd><p class="first last">LLVM对于生成NEON instructions在大端ARM目标机型的支持是有点令人费解的，这份文档在解释其实现和基本原理</p>
-</dd>
+<dd>LLVM对于生成NEON instructions在大端ARM目标机型的支持是有点令人费解的，这份文档在解释其实现和基本原理</dd>
 <dt><a class="reference internal" href="CoverageMappingFormat.html"><span class="doc">LLVM Code Coverage Mapping Format</span></a></dt>
-<dd><p class="first last">这份文档描述了LLVM代码覆盖率映射的格式和编码方式。</p>
-</dd>
+<dd>这份文档描述了LLVM代码覆盖率映射的格式和编码方式。</dd>
 <dt><a class="reference internal" href="Statepoints.html"><span class="doc">Garbage Collection Safepoints in LLVM</span></a></dt>
-<dd><p class="first last">这份文档描述了对于垃圾回收机制的支持的一系列额外扩展。</p>
-</dd>
+<dd>这份文档描述了对于垃圾回收机制的支持的一系列额外扩展。</dd>
 <dt><a class="reference internal" href="MergeFunctions.html"><span class="doc">MergeFunctions pass, how it works</span></a></dt>
-<dd><p class="first last">描述了合并功能优化。</p>
-</dd>
+<dd>描述了合并功能优化。</dd>
 <dt><a class="reference internal" href="InAlloca.html"><span class="doc">Design and Usage of the InAlloca Attribute</span></a></dt>
-<dd><p class="first last">描述了 <code class="docutils literal"><span class="pre">inalloca</span></code> 参数属性的相关信息</p>
-</dd>
+<dd>描述了 <code class="docutils literal"><span class="pre">inalloca</span></code> 参数属性的相关信息</dd>
 <dt><a class="reference internal" href="FaultMaps.html"><span class="doc">FaultMaps and implicit checks</span></a></dt>
-<dd><p class="first last">异常图和隐式检查：LLVM对于转换控制流到错误恢复语句的支持</p>
-</dd>
+<dd>异常图和隐式检查：LLVM对于转换控制流到错误恢复语句的支持</dd>
 <dt><a class="reference internal" href="CompileCudaWithLLVM.html"><span class="doc">Compiling CUDA C/C++ with LLVM</span></a></dt>
-<dd><p class="first last">LLVM对于CUDA的支持</p>
-</dd>
+<dd>LLVM对于CUDA的支持</dd>
 </dl>
 </div>
 <div class="section" id="development-process-documentation">
@@ -324,31 +257,24 @@
 </div>
 <dl class="docutils">
 <dt><a class="reference internal" href="DeveloperPolicy.html"><span class="doc">LLVM Developer Policy</span></a></dt>
-<dd><p class="first last">LLVM项目对于开发者和他们贡献的政策</p>
-</dd>
+<dd>LLVM项目对于开发者和他们贡献的政策</dd>
 <dt><a class="reference internal" href="Projects.html"><span class="doc">Creating an LLVM Project</span></a></dt>
 <dd>How-to guide and templates for new projects that <em>use</em> the LLVM
 infrastructure.  The templates (directory organization, Makefiles, and test
 tree) allow the project code to be located outside (or inside) the <code class="docutils literal"><span class="pre">llvm/</span></code>
 tree, while using LLVM header files and libraries.</dd>
 <dt><a class="reference internal" href="LLVMBuild.html"><span class="doc">LLVMBuild Guide</span></a></dt>
-<dd><p class="first last">描述了LLVMBuild 组织和LLVM用到的文件的详细说明</p>
-</dd>
+<dd>描述了LLVMBuild 的结构和LLVM用到的文件的详细说明</dd>
 <dt><a class="reference internal" href="MakefileGuide.html"><span class="doc">LLVM Makefile Guide</span></a></dt>
-<dd><p class="first last">描述了LLVM的Makefiles如何工作以及如何使用它们。</p>
-</dd>
+<dd>描述了LLVM的Makefiles如何工作以及如何使用它们。</dd>
 <dt><a class="reference internal" href="HowToReleaseLLVM.html"><span class="doc">How To Release LLVM To The Public</span></a></dt>
-<dd><p class="first last">这是一份准备LLVM发布版的指导，大多数开发者可以忽略它。</p>
-</dd>
+<dd>这是一份准备LLVM发布版的指导，大多数开发者可以忽略它。</dd>
 <dt><a class="reference internal" href="ReleaseProcess.html"><span class="doc">How To Validate a New Release</span></a></dt>
-<dd><p class="first last">这是一个如何校验新发布版的指导，大多数开发者可以忽略它。</p>
-</dd>
+<dd>这是一个如何校验新发布版的指导，大多数开发者可以忽略它。</dd>
 <dt><a class="reference internal" href="Packaging.html"><span class="doc">Advice on Packaging LLVM</span></a></dt>
-<dd><p class="first last">打包LLVM成分发版的建议。</p>
-</dd>
+<dd>打包LLVM成分发版的建议。</dd>
 <dt><a class="reference internal" href="Phabricator.html"><span class="doc">Code Reviews with Phabricator</span></a></dt>
-<dd><p class="first last">关于如何使用Phabricator代码审阅工具审阅托管在 <a class="reference external" href="http://reviews.llvm.org/">http://reviews.llvm.org/</a> 上的代码，以及相关的命令行接口。——Arcanist</p>
-</dd>
+<dd>关于如何使用Phabricator代码审阅工具审阅托管在 <a class="reference external" href="http://reviews.llvm.org/">http://reviews.llvm.org/</a> 上的代码，以及相关的命令行接口。——Arcanist</dd>
 </dl>
 </div>
 <div class="section" id="community">
@@ -392,7 +318,7 @@ can be found in #llvm on <a class="reference external" href="irc://irc.oftc.net/
 <li>llvmbb - Bot for the main LLVM buildbot master.
 <a class="reference external" href="http://lab.llvm.org:8011/console">http://lab.llvm.org:8011/console</a></li>
 <li>bb-chapuni - An individually run buildbot master. <a class="reference external" href="http://bb.pgr.jp/console">http://bb.pgr.jp/console</a></li>
-<li>smooshlab - Apple&#8217;s internal buildbot master.</li>
+<li>smooshlab - Apple’s internal buildbot master.</li>
 </ul>
 </li>
 <li>robot - Bugzilla linker. %bug &lt;number&gt;</li>
@@ -429,9 +355,9 @@ near-trunk clang instead of gcc.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-06-13.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

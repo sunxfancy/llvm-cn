@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The LLVM gold plugin &mdash; LLVM 3.8 文档</title>
-    
+    <title>The LLVM gold plugin &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="LLVM’s Optional Rich Disassembly Output" href="MarkedUpDisassembly.html" />
     <link rel="prev" title="Debugging JIT-ed Code With GDB" href="DebuggingJITedCode.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -88,10 +87,10 @@ used by the <a class="reference external" href="http://gcc.gnu.org/wiki/LinkTime
 <div class="section" id="how-to-build-it">
 <span id="lto-how-to-build"></span><h2>How to build it<a class="headerlink" href="#how-to-build-it" title="永久链接至标题">¶</a></h2>
 <p>You need to have gold with plugin support and build the LLVMgold plugin.
-Check whether you have gold running <code class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-v</span></code>. It will report &#8220;GNU
-gold&#8221; or else &#8220;GNU ld&#8221; if not. If you have gold, check for plugin support
-by running <code class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-plugin</span></code>. If it complains &#8220;missing argument&#8221; then
-you have plugin support. If not, such as an &#8220;unknown option&#8221; error then you
+Check whether you have gold running <code class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-v</span></code>. It will report “GNU
+gold” or else “GNU ld” if not. If you have gold, check for plugin support
+by running <code class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-plugin</span></code>. If it complains “missing argument” then
+you have plugin support. If not, such as an “unknown option” error then you
 will either need to build gold or install a version with plugin support.</p>
 <ul>
 <li><p class="first">Download, configure and build gold with plugin support:</p>
@@ -120,7 +119,7 @@ path will contain the file <code class="docutils literal"><span class="pre">plug
 the plugin <code class="docutils literal"><span class="pre">.so</span></code> file. To find out what link command <code class="docutils literal"><span class="pre">gcc</span></code>
 would run in a given situation, run <code class="docutils literal"><span class="pre">gcc</span> <span class="pre">-v</span> <span class="pre">[...]</span></code> and
 look for the line where it runs <code class="docutils literal"><span class="pre">collect2</span></code>. Replace that with
-<code class="docutils literal"><span class="pre">ld-new</span> <span class="pre">-plugin</span> <span class="pre">/path/to/LLVMgold.so</span></code> to test it out. Once you&#8217;re
+<code class="docutils literal"><span class="pre">ld-new</span> <span class="pre">-plugin</span> <span class="pre">/path/to/LLVMgold.so</span></code> to test it out. Once you’re
 ready to switch to using gold, backup your existing <code class="docutils literal"><span class="pre">/usr/bin/ld</span></code>
 then replace it with <code class="docutils literal"><span class="pre">ld-new</span></code>.</p>
 <p>You should produce bitcode files from <code class="docutils literal"><span class="pre">clang</span></code> with the option
@@ -128,7 +127,7 @@ then replace it with <code class="docutils literal"><span class="pre">ld-new</sp
 the <code class="docutils literal"><span class="pre">lib</span></code> directory under its prefix and pass the <code class="docutils literal"><span class="pre">-plugin</span></code> option to
 <code class="docutils literal"><span class="pre">ld</span></code>. It will not look for an alternate linker, which is why you need
 gold to be the installed system linker in your path.</p>
-<p><code class="docutils literal"><span class="pre">ar</span></code> and <code class="docutils literal"><span class="pre">nm</span></code> also accept the <code class="docutils literal"><span class="pre">-plugin</span></code> option and it&#8217;s possible to
+<p><code class="docutils literal"><span class="pre">ar</span></code> and <code class="docutils literal"><span class="pre">nm</span></code> also accept the <code class="docutils literal"><span class="pre">-plugin</span></code> option and it’s possible to
 to install <code class="docutils literal"><span class="pre">LLVMgold.so</span></code> to <code class="docutils literal"><span class="pre">/usr/lib/bfd-plugins</span></code> for a seamless setup.
 If you built your own gold, be sure to install the <code class="docutils literal"><span class="pre">ar</span></code> and <code class="docutils literal"><span class="pre">nm-new</span></code> you
 built to <code class="docutils literal"><span class="pre">/usr/bin</span></code>.</p>
@@ -250,9 +249,9 @@ just as much as gold could without the plugin.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

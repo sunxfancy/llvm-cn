@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-extract - extract a function from an LLVM module &mdash; LLVM 3.8 文档</title>
-    
+    <title>llvm-extract - extract a function from an LLVM module &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="llvm-bcanalyzer - LLVM bitcode analyzer" href="llvm-bcanalyzer.html" />
     <link rel="prev" title="bugpoint - automatic test case reduction tool" href="bugpoint.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -79,7 +77,7 @@
 <h1>llvm-extract - extract a function from an LLVM module<a class="headerlink" href="#llvm-extract-extract-a-function-from-an-llvm-module" title="永久链接至标题">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="永久链接至标题">¶</a></h2>
-<p><strong class="program">llvm-extract</strong> [<em>options</em>] <strong>&#8211;func</strong> <em>function-name</em> [<em>filename</em>]</p>
+<p><strong class="program">llvm-extract</strong> [<em>options</em>] <strong>–func</strong> <em>function-name</em> [<em>filename</em>]</p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
@@ -101,20 +99,20 @@ standard output, unless the <strong>-o</strong> option is specified (see below).
 refuse to write raw bitcode output if the output stream is a terminal.  With
 this option, <strong class="program">llvm-extract</strong> will write raw bitcode regardless of the
 output device.</div></blockquote>
-<p><strong>&#8211;func</strong> <em>function-name</em></p>
+<p><strong>–func</strong> <em>function-name</em></p>
 <blockquote>
 <div>Extract the function named <em>function-name</em> from the LLVM bitcode.  May be
 specified multiple times to extract multiple functions at once.</div></blockquote>
-<p><strong>&#8211;rfunc</strong> <em>function-regular-expr</em></p>
+<p><strong>–rfunc</strong> <em>function-regular-expr</em></p>
 <blockquote>
 <div>Extract the function(s) matching <em>function-regular-expr</em> from the LLVM bitcode.
 All functions matching the regular expression will be extracted.  May be
 specified multiple times.</div></blockquote>
-<p><strong>&#8211;glob</strong> <em>global-name</em></p>
+<p><strong>–glob</strong> <em>global-name</em></p>
 <blockquote>
 <div>Extract the global variable named <em>global-name</em> from the LLVM bitcode.  May be
 specified multiple times to extract multiple global variables at once.</div></blockquote>
-<p><strong>&#8211;rglob</strong> <em>glob-regular-expr</em></p>
+<p><strong>–rglob</strong> <em>glob-regular-expr</em></p>
 <blockquote>
 <div>Extract the global variable(s) matching <em>global-regular-expr</em> from the LLVM
 bitcode.  All global variables matching the regular expression will be
@@ -124,7 +122,7 @@ extracted.  May be specified multiple times.</div></blockquote>
 <div>Print a summary of command line options.</div></blockquote>
 <p><strong>-o</strong> <em>filename</em></p>
 <blockquote>
-<div>Specify the output filename.  If filename is &#8220;-&#8221; (the default), then
+<div>Specify the output filename.  If filename is “-” (the default), then
 <strong class="program">llvm-extract</strong> sends its output to standard output.</div></blockquote>
 <p><strong>-S</strong></p>
 <blockquote>
@@ -161,13 +159,13 @@ occurs, it will exit with a non-zero value.</p>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

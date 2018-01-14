@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Debugging JIT-ed Code With GDB &mdash; LLVM 3.8 文档</title>
-    
+    <title>Debugging JIT-ed Code With GDB &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="The LLVM gold plugin" href="GoldPlugin.html" />
     <link rel="prev" title="TableGen Deficiencies" href="TableGen/Deficiencies.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -91,7 +90,7 @@ dynamically generated object files and calls a special function
 GDB attaches to a process, it puts a breakpoint in this function and loads all
 of the object files in the global list.  When MCJIT calls the registration
 function, GDB catches the breakpoint signal, loads the new object file from
-the inferior&#8217;s memory, and resumes the execution.  In this way, GDB can get the
+the inferior’s memory, and resumes the execution.  In this way, GDB can get the
 necessary debug information.</p>
 </div>
 <div class="section" id="gdb-version">
@@ -104,7 +103,7 @@ better option for debugging JIT-ed code on Mac OS X.</p>
 <div class="section" id="debugging-mcjit-ed-code">
 <h2>Debugging MCJIT-ed code<a class="headerlink" href="#debugging-mcjit-ed-code" title="永久链接至标题">¶</a></h2>
 <p>The emerging MCJIT component of LLVM allows full debugging of JIT-ed code with
-GDB.  This is due to MCJIT&#8217;s ability to use the MC emitter to provide full
+GDB.  This is due to MCJIT’s ability to use the MC emitter to provide full
 DWARF debugging information to GDB.</p>
 <p>Note that lli has to be passed the <code class="docutils literal"><span class="pre">-use-mcjit</span></code> flag to JIT the code with
 MCJIT instead of the old JIT.</p>
@@ -139,35 +138,35 @@ easier to follow):</p>
 <p>Here is a sample command line session that shows how to build and run this
 code via <code class="docutils literal"><span class="pre">lli</span></code> inside GDB:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">$BINPATH</span>/clang -cc1 -O0 -g -emit-llvm showdebug.c
-$ gdb --quiet --args <span class="nv">$BINPATH</span>/lli -use-mcjit showdebug.ll 5
+$ gdb --quiet --args <span class="nv">$BINPATH</span>/lli -use-mcjit showdebug.ll <span class="m">5</span>
 Reading symbols from <span class="nv">$BINPATH</span>/lli...done.
 <span class="o">(</span>gdb<span class="o">)</span> b showdebug.c:6
 No <span class="nb">source</span> file named showdebug.c.
 Make breakpoint pending on future shared library load? <span class="o">(</span>y or <span class="o">[</span>n<span class="o">])</span> y
 Breakpoint <span class="m">1</span> <span class="o">(</span>showdebug.c:6<span class="o">)</span> pending.
 <span class="o">(</span>gdb<span class="o">)</span> r
-Starting program: <span class="nv">$BINPATH</span>/lli -use-mcjit showdebug.ll 5
+Starting program: <span class="nv">$BINPATH</span>/lli -use-mcjit showdebug.ll <span class="m">5</span>
 <span class="o">[</span>Thread debugging using libthread_db enabled<span class="o">]</span>
 
-Breakpoint 1, compute_factorial <span class="o">(</span><span class="nv">n</span><span class="o">=</span>5<span class="o">)</span> at showdebug.c:6
+Breakpoint <span class="m">1</span>, compute_factorial <span class="o">(</span><span class="nv">n</span><span class="o">=</span><span class="m">5</span><span class="o">)</span> at showdebug.c:6
 <span class="m">6</span>        int <span class="nv">f</span> <span class="o">=</span> n<span class="p">;</span>
 <span class="o">(</span>gdb<span class="o">)</span> p n
-<span class="nv">$1</span> <span class="o">=</span> 5
+<span class="nv">$1</span> <span class="o">=</span> <span class="m">5</span>
 <span class="o">(</span>gdb<span class="o">)</span> p f
-<span class="nv">$2</span> <span class="o">=</span> 0
+<span class="nv">$2</span> <span class="o">=</span> <span class="m">0</span>
 <span class="o">(</span>gdb<span class="o">)</span> n
-<span class="m">7</span>        <span class="k">while</span> <span class="o">(</span>--n &gt; 1<span class="o">)</span>
+<span class="m">7</span>        <span class="k">while</span> <span class="o">(</span>--n &gt; <span class="m">1</span><span class="o">)</span>
 <span class="o">(</span>gdb<span class="o">)</span> p f
-<span class="nv">$3</span> <span class="o">=</span> 5
+<span class="nv">$3</span> <span class="o">=</span> <span class="m">5</span>
 <span class="o">(</span>gdb<span class="o">)</span> b showdebug.c:9
-Breakpoint <span class="m">2</span> at 0x7ffff7ed404c: file showdebug.c, line 9.
+Breakpoint <span class="m">2</span> at 0x7ffff7ed404c: file showdebug.c, line <span class="m">9</span>.
 <span class="o">(</span>gdb<span class="o">)</span> c
 Continuing.
 
-Breakpoint 2, compute_factorial <span class="o">(</span><span class="nv">n</span><span class="o">=</span>1<span class="o">)</span> at showdebug.c:9
+Breakpoint <span class="m">2</span>, compute_factorial <span class="o">(</span><span class="nv">n</span><span class="o">=</span><span class="m">1</span><span class="o">)</span> at showdebug.c:9
 <span class="m">9</span>        <span class="k">return</span> f<span class="p">;</span>
 <span class="o">(</span>gdb<span class="o">)</span> p f
-<span class="nv">$4</span> <span class="o">=</span> 120
+<span class="nv">$4</span> <span class="o">=</span> <span class="m">120</span>
 <span class="o">(</span>gdb<span class="o">)</span> bt
 <span class="c1">#0  compute_factorial (n=1) at showdebug.c:9</span>
 <span class="c1">#1  0x00007ffff7ed40a9 in main (argc=2, argv=0x16677e0) at showdebug.c:18</span>
@@ -180,19 +179,19 @@ Breakpoint 2, compute_factorial <span class="o">(</span><span class="nv">n</span
 <span class="c1">#7  0x000000000059c583 in main (argc=4, argv=0x7fffffffe018, envp=0x7fffffffe040) at /home/ebenders_test/llvm_svn_rw/tools/lli/lli.cpp:324</span>
 <span class="o">(</span>gdb<span class="o">)</span> finish
 Run till <span class="nb">exit</span> from <span class="c1">#0  compute_factorial (n=1) at showdebug.c:9</span>
-0x00007ffff7ed40a9 in main <span class="o">(</span><span class="nv">argc</span><span class="o">=</span>2, <span class="nv">argv</span><span class="o">=</span>0x16677e0<span class="o">)</span> at showdebug.c:18
+0x00007ffff7ed40a9 in main <span class="o">(</span><span class="nv">argc</span><span class="o">=</span><span class="m">2</span>, <span class="nv">argv</span><span class="o">=</span>0x16677e0<span class="o">)</span> at showdebug.c:18
 <span class="m">18</span>       int <span class="nv">result</span> <span class="o">=</span> compute_factorial<span class="o">(</span>firstletter - <span class="s1">&#39;0&#39;</span><span class="o">)</span><span class="p">;</span>
-Value returned is <span class="nv">$5</span> <span class="o">=</span> 120
+Value returned is <span class="nv">$5</span> <span class="o">=</span> <span class="m">120</span>
 <span class="o">(</span>gdb<span class="o">)</span> p result
-<span class="nv">$6</span> <span class="o">=</span> 23406408
+<span class="nv">$6</span> <span class="o">=</span> <span class="m">23406408</span>
 <span class="o">(</span>gdb<span class="o">)</span> n
 <span class="m">21</span>       <span class="k">return</span> result<span class="p">;</span>
 <span class="o">(</span>gdb<span class="o">)</span> p result
-<span class="nv">$7</span> <span class="o">=</span> 120
+<span class="nv">$7</span> <span class="o">=</span> <span class="m">120</span>
 <span class="o">(</span>gdb<span class="o">)</span> c
 Continuing.
 
-Program exited with code 0170.
+Program exited with code <span class="m">0170</span>.
 <span class="o">(</span>gdb<span class="o">)</span>
 </pre></div>
 </div>
@@ -223,9 +222,9 @@ Program exited with code 0170.
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

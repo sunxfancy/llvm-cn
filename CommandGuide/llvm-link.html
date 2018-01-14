@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-link - LLVM bitcode linker &mdash; LLVM 3.8 文档</title>
-    
+    <title>llvm-link - LLVM bitcode linker &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="llvm-ar - LLVM archiver" href="llvm-ar.html" />
     <link rel="prev" title="lli - directly execute programs from LLVM bitcode" href="lli.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -79,7 +77,7 @@
 <h1>llvm-link - LLVM bitcode linker<a class="headerlink" href="#llvm-link-llvm-bitcode-linker" title="永久链接至标题">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="永久链接至标题">¶</a></h2>
-<p><strong class="program">llvm-link</strong> [<em>options</em>] <em>filename ...</em></p>
+<p><strong class="program">llvm-link</strong> [<em>options</em>] <em>filename …</em></p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
@@ -101,13 +99,13 @@ device.</p>
 <dl class="option">
 <dt id="cmdoption-o">
 <code class="descname">-o</code><code class="descclassname"> filename</code><a class="headerlink" href="#cmdoption-o" title="永久链接至目标">¶</a></dt>
-<dd><p>Specify the output file name.  If <code class="docutils literal"><span class="pre">filename</span></code> is &#8220;<code class="docutils literal"><span class="pre">-</span></code>&#8221;, then
+<dd><p>Specify the output file name.  If <code class="docutils literal"><span class="pre">filename</span></code> is “<code class="docutils literal"><span class="pre">-</span></code>“, then
 <strong class="program">llvm-link</strong> will write its output to standard output.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-S">
-<code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-S" title="永久链接至目标">¶</a></dt>
+<dt id="cmdoption-s">
+<code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-s" title="永久链接至目标">¶</a></dt>
 <dd><p>Write output in LLVM intermediate language (instead of bitcode).</p>
 </dd></dl>
 
@@ -160,13 +158,13 @@ occurs, it will exit with a non-zero value.</p>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

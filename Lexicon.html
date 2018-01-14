@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The LLVM Lexicon &mdash; LLVM 3.8 文档</title>
-    
+    <title>The LLVM Lexicon &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How To Add Your Build Configuration To LLVM Buildbot Infrastructure" href="HowToAddABuilder.html" />
     <link rel="prev" title="Frequently Asked Questions (FAQ)" href="FAQ.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -88,15 +87,15 @@
 <dd>Aggressive Dead Code Elimination</dd>
 <dt><strong>AST</strong></dt>
 <dd><p class="first">Abstract Syntax Tree.</p>
-<p>Due to Clang&#8217;s influence (mostly the fact that parsing and semantic
+<p>Due to Clang’s influence (mostly the fact that parsing and semantic
 analysis are so intertwined for C and especially C++), the typical
-working definition of AST in the LLVM community is roughly &#8220;the
-compiler&#8217;s first complete symbolic (as opposed to textual)
-representation of an input program&#8221;.
-As such, an &#8220;AST&#8221; might be a more general graph instead of a &#8220;tree&#8221;
-(consider the symbolic representation for the type of a typical &#8220;linked
-list node&#8221;). This working definition is closer to what some authors
-call an &#8220;annotated abstract syntax tree&#8221;.</p>
+working definition of AST in the LLVM community is roughly “the
+compiler’s first complete symbolic (as opposed to textual)
+representation of an input program”.
+As such, an “AST” might be a more general graph instead of a “tree”
+(consider the symbolic representation for the type of a typical “linked
+list node”). This working definition is closer to what some authors
+call an “annotated abstract syntax tree”.</p>
 <p class="last">Consult your favorite compiler book or search engine for more details.</p>
 </dd>
 </dl>
@@ -107,7 +106,7 @@ call an &#8220;annotated abstract syntax tree&#8221;.</p>
 <dt><strong>BB Vectorization</strong></dt>
 <dd>Basic-Block Vectorization</dd>
 <dt><strong>BURS</strong></dt>
-<dd>Bottom Up Rewriting System &#8212; A method of instruction selection for code
+<dd>Bottom Up Rewriting System — A method of instruction selection for code
 generation.  An example is the <a class="reference external" href="http://www.program-transformation.org/Transform/BURG">BURG</a> tool.</dd>
 </dl>
 </div>
@@ -125,7 +124,7 @@ the FDEs.  Each FDE then points to its CIE.</dd>
 <dd>Common Subexpression Elimination. An optimization that removes common
 subexpression compuation. For example <code class="docutils literal"><span class="pre">(a+b)*(a+b)</span></code> has two subexpressions
 that are the same: <code class="docutils literal"><span class="pre">(a+b)</span></code>. This optimization would perform the addition
-only once and then perform the multiply (but only if it&#8217;s computationally
+only once and then perform the multiply (but only if it’s computationally
 correct/safe).</dd>
 </dl>
 </div>
@@ -135,8 +134,8 @@ correct/safe).</dd>
 <dt><strong>DAG</strong></dt>
 <dd>Directed Acyclic Graph</dd>
 </dl>
-<dl class="docutils" id="derived-pointers">
-<span id="derived-pointer"></span><dt><strong>Derived Pointer</strong></dt>
+<span id="derived-pointer"></span><dl class="docutils" id="derived-pointers">
+<dt><strong>Derived Pointer</strong></dt>
 <dd>A pointer to the interior of an object, such that a garbage collector is
 unable to use the pointer for reachability analysis. While a derived pointer
 is live, the corresponding object pointer must be kept in a root, otherwise
@@ -194,14 +193,14 @@ that occurs between procedures, functions or compilation units (modules).</dd>
 <dt><strong>LCSSA</strong></dt>
 <dd>Loop-Closed Static Single Assignment Form</dd>
 <dt><strong>LGTM</strong></dt>
-<dd>&#8220;Looks Good To Me&#8221;. In a review thread, this indicates that the
+<dd>“Looks Good To Me”. In a review thread, this indicates that the
 reviewer thinks that the patch is okay to commit.</dd>
 <dt><strong>LICM</strong></dt>
 <dd>Loop Invariant Code Motion</dd>
 <dt><strong>LSDA</strong></dt>
-<dd>Language Specific Data Area.  C++ &#8220;zero cost&#8221; unwinding is built on top a
+<dd>Language Specific Data Area.  C++ “zero cost” unwinding is built on top a
 generic unwinding mechanism.  As the unwinder walks each frame, it calls
-a &#8220;personality&#8221; function to do language specific analysis.  Each function&#8217;s
+a “personality” function to do language specific analysis.  Each function’s
 FDE points to an optional LSDA which is passed to the personality function.
 For C++, the LSDA contain info about the type and location of catch
 statements in that function.</dd>
@@ -222,7 +221,7 @@ statements in that function.</dd>
 <h3>N<a class="headerlink" href="#n" title="永久链接至标题">¶</a></h3>
 <dl class="docutils">
 <dt><strong>NFC</strong></dt>
-<dd>&#8220;No functional change&#8221;. Used in a commit message to indicate that a patch
+<dd>“No functional change”. Used in a commit message to indicate that a patch
 is a pure refactoring/cleanup.
 Usually used in the first line, so it is visible without opening the
 actual commit email.</dd>
@@ -230,8 +229,8 @@ actual commit email.</dd>
 </div>
 <div class="section" id="o">
 <h3>O<a class="headerlink" href="#o" title="永久链接至标题">¶</a></h3>
-<dl class="docutils" id="object-pointers">
-<span id="object-pointer"></span><dt><strong>Object Pointer</strong></dt>
+<span id="object-pointer"></span><dl class="docutils" id="object-pointers">
+<dt><strong>Object Pointer</strong></dt>
 <dd>A pointer to an object such that the garbage collector is able to trace
 references contained within the object. This term is used in opposition to
 <a class="reference internal" href="#derived-pointer">derived pointer</a>.</dd>
@@ -260,11 +259,11 @@ also <a class="reference external" href="ProgrammersManual.html#iterating-over-d
 and other optimization.  For example, changing <code class="docutils literal"><span class="pre">(A+B-A)</span></code> into <code class="docutils literal"><span class="pre">(B+A-A)</span></code>,
 permitting it to be optimized into <code class="docutils literal"><span class="pre">(B+0)</span></code> then <code class="docutils literal"><span class="pre">(B)</span></code>.</dd>
 </dl>
-<dl class="docutils" id="stack-roots">
-<span id="roots"></span><dt><strong>Root</strong></dt>
+<span id="roots"></span><dl class="docutils" id="stack-roots">
+<dt><strong>Root</strong></dt>
 <dd>In garbage collection, a pointer variable lying outside of the <a class="reference internal" href="#heap">heap</a> from
 which the collector begins its reachability analysis. In the context of code
-generation, &#8220;root&#8221; almost always refers to a &#8220;stack root&#8221; &#8212; a local or
+generation, “root” almost always refers to a “stack root” — a local or
 temporary variable within an executing function.</dd>
 <dt><strong>RPO</strong></dt>
 <dd>Reverse postorder</dd>
@@ -330,9 +329,9 @@ identifies <a class="reference internal" href="#roots">roots</a> within the stac
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

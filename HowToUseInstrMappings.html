@@ -1,32 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>How To Use Instruction Mappings &mdash; LLVM 3.8 文档</title>
-    
+    <title>How To Use Instruction Mappings &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
-    <link rel="up" title="Writing an LLVM Backend" href="WritingAnLLVMBackend.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Garbage Collection with LLVM" href="GarbageCollection.html" />
     <link rel="prev" title="Writing an LLVM Backend" href="WritingAnLLVMBackend.html" />
 <style type="text/css">
@@ -44,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -66,7 +64,7 @@
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="WritingAnLLVMBackend.html" accesskey="U">Writing an LLVM Backend</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="WritingAnLLVMBackend.html" accesskey="U">Writing an LLVM Backend</a> &#187;</li> 
       </ul>
     </div>
 
@@ -77,17 +75,17 @@
             
   <div class="section" id="how-to-use-instruction-mappings">
 <h1>How To Use Instruction Mappings<a class="headerlink" href="#how-to-use-instruction-mappings" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
-<li><a class="reference internal" href="#instrmapping-class-overview" id="id2"><code class="docutils literal"><span class="pre">InstrMapping</span></code> Class Overview</a><ul>
-<li><a class="reference internal" href="#sample-example" id="id3">Sample Example</a></li>
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#instrmapping-class-overview" id="id3"><code class="docutils literal"><span class="pre">InstrMapping</span></code> Class Overview</a><ul>
+<li><a class="reference internal" href="#sample-example" id="id4">Sample Example</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p>This document contains information about adding instruction mapping support
 for a target. The motivation behind this feature comes from the need to switch
 between different instruction formats during various optimizations. One approach
@@ -99,7 +97,7 @@ accordingly. Instead, the same functionality could be achieved with TableGen and
 some support from the .td files for a fraction of maintenance cost.</p>
 </div>
 <div class="section" id="instrmapping-class-overview">
-<h2><a class="toc-backref" href="#id2"><code class="docutils literal"><span class="pre">InstrMapping</span></code> Class Overview</a><a class="headerlink" href="#instrmapping-class-overview" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3"><code class="docutils literal"><span class="pre">InstrMapping</span></code> Class Overview</a><a class="headerlink" href="#instrmapping-class-overview" title="永久链接至标题">¶</a></h2>
 <p>TableGen uses relationship models to map instructions with each other. These
 models are described using <code class="docutils literal"><span class="pre">InstrMapping</span></code> class as a base. Each model sets
 various fields of the <code class="docutils literal"><span class="pre">InstrMapping</span></code> class such that they can uniquely
@@ -135,8 +133,8 @@ is the definition of <code class="docutils literal"><span class="pre">InstrMappi
 </pre></div>
 </div>
 <div class="section" id="sample-example">
-<h3><a class="toc-backref" href="#id3">Sample Example</a><a class="headerlink" href="#sample-example" title="永久链接至标题">¶</a></h3>
-<p>Let&#8217;s say that we want to have a function
+<h3><a class="toc-backref" href="#id4">Sample Example</a><a class="headerlink" href="#sample-example" title="永久链接至标题">¶</a></h3>
+<p>Let’s say that we want to have a function
 <code class="docutils literal"><span class="pre">int</span> <span class="pre">getPredOpcode(uint16_t</span> <span class="pre">Opcode,</span> <span class="pre">enum</span> <span class="pre">PredSense</span> <span class="pre">inPredSense)</span></code> which
 takes a non-predicated instruction and returns its predicated true or false form
 depending on some input flag, <code class="docutils literal"><span class="pre">inPredSense</span></code>. The first step in the process is
@@ -237,7 +235,7 @@ def ADD_Pf : PredRel, ALU32_rr&lt;(outs IntRegs:$dst),
 This is extremely important since TableGen uses it as a filter for selecting
 instructions for <code class="docutils literal"><span class="pre">getPredOpcode</span></code> model. Any instruction not derived from
 <code class="docutils literal"><span class="pre">PredRel</span></code> is excluded from the analysis. <code class="docutils literal"><span class="pre">BaseOpcode</span></code> is another important
-field. Since it&#8217;s selected as a <code class="docutils literal"><span class="pre">RowFields</span></code> of the model, it is required
+field. Since it’s selected as a <code class="docutils literal"><span class="pre">RowFields</span></code> of the model, it is required
 to have the same value for all 3 instructions in order to be related. Next,
 <code class="docutils literal"><span class="pre">PredSense</span></code> is used to determine their column positions by comparing its value
 with <code class="docutils literal"><span class="pre">KeyCol</span></code> and <code class="docutils literal"><span class="pre">ValueCols</span></code>. If an instruction sets its <code class="docutils literal"><span class="pre">PredSense</span></code>
@@ -267,13 +265,13 @@ a column in the relation table.</p>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="WritingAnLLVMBackend.html" >Writing an LLVM Backend</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="WritingAnLLVMBackend.html" >Writing an LLVM Backend</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

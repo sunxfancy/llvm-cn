@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM bugpoint tool: design and usage &mdash; LLVM 3.8 文档</title>
-    
+    <title>LLVM bugpoint tool: design and usage &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="The LLVM Target-Independent Code Generator" href="CodeGenerator.html" />
     <link rel="prev" title="LLVM Branch Weight Metadata" href="BranchWeightMetadata.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,22 +74,22 @@
             
   <div class="section" id="llvm-bugpoint-tool-design-and-usage">
 <h1>LLVM bugpoint tool: design and usage<a class="headerlink" href="#llvm-bugpoint-tool-design-and-usage" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#description" id="id4">Description</a></li>
-<li><a class="reference internal" href="#design-philosophy" id="id5">Design Philosophy</a><ul>
-<li><a class="reference internal" href="#automatic-debugger-selection" id="id6">Automatic Debugger Selection</a></li>
-<li><a class="reference internal" href="#crash-debugger" id="id7">Crash debugger</a></li>
-<li><a class="reference internal" href="#code-generator-debugger" id="id8">Code generator debugger</a></li>
-<li><a class="reference internal" href="#miscompilation-debugger" id="id9">Miscompilation debugger</a></li>
+<li><a class="reference internal" href="#description" id="id5">Description</a></li>
+<li><a class="reference internal" href="#design-philosophy" id="id6">Design Philosophy</a><ul>
+<li><a class="reference internal" href="#automatic-debugger-selection" id="id7">Automatic Debugger Selection</a></li>
+<li><a class="reference internal" href="#crash-debugger" id="id8">Crash debugger</a></li>
+<li><a class="reference internal" href="#code-generator-debugger" id="id9">Code generator debugger</a></li>
+<li><a class="reference internal" href="#miscompilation-debugger" id="id10">Miscompilation debugger</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#advice-for-using-bugpoint" id="id10">Advice for using bugpoint</a></li>
-<li><a class="reference internal" href="#what-to-do-when-bugpoint-isn-t-enough" id="id11">What to do when bugpoint isn&#8217;t enough</a></li>
+<li><a class="reference internal" href="#advice-for-using-bugpoint" id="id11">Advice for using bugpoint</a></li>
+<li><a class="reference internal" href="#what-to-do-when-bugpoint-isn-t-enough" id="id12">What to do when bugpoint isn’t enough</a></li>
 </ul>
 </div>
 <div class="section" id="description">
-<h2><a class="toc-backref" href="#id4">Description</a><a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Description</a><a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">bugpoint</span></code> narrows down the source of problems in LLVM tools and passes.  It
 can be used to debug three types of failures: optimizer crashes, miscompilations
 by optimizers, or bad native code generation (including problems in the static
@@ -102,10 +101,10 @@ the file down to a small example which triggers the crash.</p>
 generators, see <a class="reference internal" href="HowToSubmitABug.html"><span class="doc">How to submit an LLVM bug report</span></a>.</p>
 </div>
 <div class="section" id="design-philosophy">
-<h2><a class="toc-backref" href="#id5">Design Philosophy</a><a class="headerlink" href="#design-philosophy" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Design Philosophy</a><a class="headerlink" href="#design-philosophy" title="永久链接至标题">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">bugpoint</span></code> is designed to be a useful tool without requiring any hooks into
 the LLVM infrastructure at all.  It works with any and all LLVM passes and code
-generators, and does not need to &#8220;know&#8221; how they work.  Because of this, it may
+generators, and does not need to “know” how they work.  Because of this, it may
 appear to do stupid things or miss obvious simplifications.  <code class="docutils literal"><span class="pre">bugpoint</span></code> is
 also designed to trade off programmer time for computer time in the
 compiler-debugging process; consequently, it may take a long period of
@@ -113,14 +112,14 @@ compiler-debugging process; consequently, it may take a long period of
 that <code class="docutils literal"><span class="pre">bugpoint</span></code> is generally very quick unless debugging a miscompilation
 where each test of the program (which requires executing it) takes a long time.</p>
 <div class="section" id="automatic-debugger-selection">
-<h3><a class="toc-backref" href="#id6">Automatic Debugger Selection</a><a class="headerlink" href="#automatic-debugger-selection" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Automatic Debugger Selection</a><a class="headerlink" href="#automatic-debugger-selection" title="永久链接至标题">¶</a></h3>
 <p><code class="docutils literal"><span class="pre">bugpoint</span></code> reads each <code class="docutils literal"><span class="pre">.bc</span></code> or <code class="docutils literal"><span class="pre">.ll</span></code> file specified on the command line
 and links them together into a single module, called the test program.  If any
 LLVM passes are specified on the command line, it runs these passes on the test
 program.  If any of the passes crash, or if they produce malformed output (which
 causes the verifier to abort), <code class="docutils literal"><span class="pre">bugpoint</span></code> starts the <a class="reference internal" href="#crash-debugger">crash debugger</a>.</p>
 <p>Otherwise, if the <code class="docutils literal"><span class="pre">-output</span></code> option was not specified, <code class="docutils literal"><span class="pre">bugpoint</span></code> runs the
-test program with the &#8220;safe&#8221; backend (which is assumed to generate good code) to
+test program with the “safe” backend (which is assumed to generate good code) to
 generate a reference output.  Once <code class="docutils literal"><span class="pre">bugpoint</span></code> has a reference output for the
 test program, it tries executing it with the selected code generator.  If the
 selected code generator crashes, <code class="docutils literal"><span class="pre">bugpoint</span></code> starts the <a class="reference internal" href="#crash-debugger">crash debugger</a> on
@@ -135,7 +134,7 @@ the difference resulted from a failure in one of the LLVM passes, and enters the
 debug.</p>
 </div>
 <div class="section" id="crash-debugger">
-<span id="id1"></span><h3><a class="toc-backref" href="#id7">Crash debugger</a><a class="headerlink" href="#crash-debugger" title="永久链接至标题">¶</a></h3>
+<span id="id2"></span><h3><a class="toc-backref" href="#id8">Crash debugger</a><a class="headerlink" href="#crash-debugger" title="永久链接至标题">¶</a></h3>
 <p>If an optimizer or code generator crashes, <code class="docutils literal"><span class="pre">bugpoint</span></code> will try as hard as it
 can to reduce the list of passes (for optimizer crashes) and the size of the
 test program.  First, <code class="docutils literal"><span class="pre">bugpoint</span></code> figures out which combination of optimizer
@@ -152,21 +151,21 @@ bitcode file, and give you instructions on how to reproduce the failure with
 <code class="docutils literal"><span class="pre">opt</span></code> or <code class="docutils literal"><span class="pre">llc</span></code>.</p>
 </div>
 <div class="section" id="code-generator-debugger">
-<span id="id2"></span><h3><a class="toc-backref" href="#id8">Code generator debugger</a><a class="headerlink" href="#code-generator-debugger" title="永久链接至标题">¶</a></h3>
+<span id="id3"></span><h3><a class="toc-backref" href="#id9">Code generator debugger</a><a class="headerlink" href="#code-generator-debugger" title="永久链接至标题">¶</a></h3>
 <p>The code generator debugger attempts to narrow down the amount of code that is
 being miscompiled by the selected code generator.  To do this, it takes the test
 program and partitions it into two pieces: one piece which it compiles with the
-&#8220;safe&#8221; backend (into a shared object), and one piece which it runs with either
+“safe” backend (into a shared object), and one piece which it runs with either
 the JIT or the static LLC compiler.  It uses several techniques to reduce the
 amount of code pushed through the LLVM code generator, to reduce the potential
 scope of the problem.  After it is finished, it emits two bitcode files (called
-&#8220;test&#8221; [to be compiled with the code generator] and &#8220;safe&#8221; [to be compiled with
-the &#8220;safe&#8221; backend], respectively), and instructions for reproducing the
-problem.  The code generator debugger assumes that the &#8220;safe&#8221; backend produces
+“test” [to be compiled with the code generator] and “safe” [to be compiled with
+the “safe” backend], respectively), and instructions for reproducing the
+problem.  The code generator debugger assumes that the “safe” backend produces
 good code.</p>
 </div>
 <div class="section" id="miscompilation-debugger">
-<span id="id3"></span><h3><a class="toc-backref" href="#id9">Miscompilation debugger</a><a class="headerlink" href="#miscompilation-debugger" title="永久链接至标题">¶</a></h3>
+<span id="id4"></span><h3><a class="toc-backref" href="#id10">Miscompilation debugger</a><a class="headerlink" href="#miscompilation-debugger" title="永久链接至标题">¶</a></h3>
 <p>The miscompilation debugger works similarly to the code generator debugger.  It
 works by splitting the test program into two pieces, running the optimizations
 specified on one piece, linking the two pieces back together, and then executing
@@ -177,13 +176,13 @@ the selected code generator is working properly.</p>
 </div>
 </div>
 <div class="section" id="advice-for-using-bugpoint">
-<h2><a class="toc-backref" href="#id10">Advice for using bugpoint</a><a class="headerlink" href="#advice-for-using-bugpoint" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Advice for using bugpoint</a><a class="headerlink" href="#advice-for-using-bugpoint" title="永久链接至标题">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">bugpoint</span></code> can be a remarkably useful tool, but it sometimes works in
 non-obvious ways.  Here are some hints and tips:</p>
 <ul>
 <li><p class="first">In the code generator and miscompilation debuggers, <code class="docutils literal"><span class="pre">bugpoint</span></code> only works
 with programs that have deterministic output.  Thus, if the program outputs
-<code class="docutils literal"><span class="pre">argv[0]</span></code>, the date, time, or any other &#8220;random&#8221; data, <code class="docutils literal"><span class="pre">bugpoint</span></code> may
+<code class="docutils literal"><span class="pre">argv[0]</span></code>, the date, time, or any other “random” data, <code class="docutils literal"><span class="pre">bugpoint</span></code> may
 misinterpret differences in these data, when output, as the result of a
 miscompilation.  Programs should be temporarily modified to disable outputs
 that are likely to vary from run to run.</p>
@@ -203,11 +202,11 @@ in the C shell, you can run:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> bugpoint  ... <span class="p">|&amp;</span> tee bugpoint.log
 </pre></div>
 </div>
-<p>to get a copy of <code class="docutils literal"><span class="pre">bugpoint</span></code>&#8216;s output in the file <code class="docutils literal"><span class="pre">bugpoint.log</span></code>, as well
+<p>to get a copy of <code class="docutils literal"><span class="pre">bugpoint</span></code>’s output in the file <code class="docutils literal"><span class="pre">bugpoint.log</span></code>, as well
 as on your terminal.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">bugpoint</span></code> cannot debug problems with the LLVM linker. If <code class="docutils literal"><span class="pre">bugpoint</span></code>
-crashes before you see its &#8220;All input ok&#8221; message, you might try <code class="docutils literal"><span class="pre">llvm-link</span>
+crashes before you see its “All input ok” message, you might try <code class="docutils literal"><span class="pre">llvm-link</span>
 <span class="pre">-v</span></code> on the same set of input files. If that also crashes, you may be
 experiencing a linker bug.</p>
 </li>
@@ -219,7 +218,7 @@ repeat until a bug is found or the user kills <code class="docutils literal"><sp
 </ul>
 </div>
 <div class="section" id="what-to-do-when-bugpoint-isn-t-enough">
-<h2><a class="toc-backref" href="#id11">What to do when bugpoint isn&#8217;t enough</a><a class="headerlink" href="#what-to-do-when-bugpoint-isn-t-enough" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id12">What to do when bugpoint isn’t enough</a><a class="headerlink" href="#what-to-do-when-bugpoint-isn-t-enough" title="永久链接至标题">¶</a></h2>
 <p>Sometimes, <code class="docutils literal"><span class="pre">bugpoint</span></code> is not enough. In particular, InstCombine and
 TargetLowering both have visitor structured code with lots of potential
 transformations.  If the process of using bugpoint has left you with still too
@@ -227,20 +226,20 @@ much code to figure out and the problem seems to be in instcombine, the
 following steps may help.  These same techniques are useful with TargetLowering
 as well.</p>
 <p>Turn on <code class="docutils literal"><span class="pre">-debug-only=instcombine</span></code> and see which transformations within
-instcombine are firing by selecting out lines with &#8220;<code class="docutils literal"><span class="pre">IC</span></code>&#8221; in them.</p>
+instcombine are firing by selecting out lines with “<code class="docutils literal"><span class="pre">IC</span></code>” in them.</p>
 <p>At this point, you have a decision to make.  Is the number of transformations
 small enough to step through them using a debugger?  If so, then try that.</p>
 <p>If there are too many transformations, then a source modification approach may
 be helpful.  In this approach, you can modify the source code of instcombine to
 disable just those transformations that are being performed on your test input
 and perform a binary search over the set of transformations.  One set of places
-to modify are the &#8220;<code class="docutils literal"><span class="pre">visit*</span></code>&#8221; methods of <code class="docutils literal"><span class="pre">InstCombiner</span></code> (<em>e.g.</em>
-<code class="docutils literal"><span class="pre">visitICmpInst</span></code>) by adding a &#8220;<code class="docutils literal"><span class="pre">return</span> <span class="pre">false</span></code>&#8221; as the first line of the
+to modify are the “<code class="docutils literal"><span class="pre">visit*</span></code>” methods of <code class="docutils literal"><span class="pre">InstCombiner</span></code> (<em>e.g.</em>
+<code class="docutils literal"><span class="pre">visitICmpInst</span></code>) by adding a “<code class="docutils literal"><span class="pre">return</span> <span class="pre">false</span></code>” as the first line of the
 method.</p>
-<p>If that still doesn&#8217;t remove enough, then change the caller of
+<p>If that still doesn’t remove enough, then change the caller of
 <code class="docutils literal"><span class="pre">InstCombiner::DoOneIteration</span></code>, <code class="docutils literal"><span class="pre">InstCombiner::runOnFunction</span></code> to limit the
 number of iterations.</p>
-<p>You may also find it useful to use &#8220;<code class="docutils literal"><span class="pre">-stats</span></code>&#8221; now to see what parts of
+<p>You may also find it useful to use “<code class="docutils literal"><span class="pre">-stats</span></code>” now to see what parts of
 instcombine are firing.  This can guide where to put additional reporting code.</p>
 <p>At this point, if the amount of transformations is still too large, then
 inserting code to limit whether or not to execute the body of the code in the
@@ -261,15 +260,15 @@ desired ranges.  For example:</p>
 </div>
 <p>could be added to <code class="docutils literal"><span class="pre">visitXOR</span></code> to limit <code class="docutils literal"><span class="pre">visitXor</span></code> to being applied only to
 calls 212 and 217. This is from an actual test case and raises an important
-point&#8212;a simple binary search may not be sufficient, as transformations that
+point—a simple binary search may not be sufficient, as transformations that
 interact may require isolating more than one call.  In TargetLowering, use
 <code class="docutils literal"><span class="pre">return</span> <span class="pre">SDNode();</span></code> instead of <code class="docutils literal"><span class="pre">return</span> <span class="pre">false;</span></code>.</p>
 <p>Now that the number of transformations is down to a manageable number, try
 examining the output to see if you can figure out which transformations are
 being done.  If that can be figured out, then do the usual debugging.  If which
-code corresponds to the transformation being performed isn&#8217;t obvious, set a
+code corresponds to the transformation being performed isn’t obvious, set a
 breakpoint after the call count based disabling and step through the code.
-Alternatively, you can use &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221; style debugging to report waypoints.</p>
+Alternatively, you can use “<code class="docutils literal"><span class="pre">printf</span></code>” style debugging to report waypoints.</p>
 </div>
 </div>
 
@@ -296,9 +295,9 @@ Alternatively, you can use &#8220;<code class="docutils literal"><span class="pr
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

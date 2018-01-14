@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Building LLVM With Autotools &mdash; LLVM 3.8 文档</title>
-    
+    <title>Building LLVM With Autotools &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Frequently Asked Questions (FAQ)" href="FAQ.html" />
     <link rel="prev" title="Getting Started with the LLVM System using Microsoft Visual Studio" href="GettingStartedVS.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -75,14 +74,14 @@
             
   <div class="section" id="building-llvm-with-autotools">
 <h1>Building LLVM With Autotools<a class="headerlink" href="#building-llvm-with-autotools" title="永久链接至标题">¶</a></h1>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#overview" id="id2">Overview</a><ul>
-<li><a class="reference internal" href="#a-quick-summary" id="id3">A Quick Summary</a></li>
-<li><a class="reference internal" href="#local-llvm-configuration" id="id4">Local LLVM Configuration</a></li>
-<li><a class="reference internal" href="#compiling-the-llvm-suite-source-code" id="id5">Compiling the LLVM Suite Source Code</a></li>
-<li><a class="reference internal" href="#cross-compiling-llvm" id="id6">Cross-Compiling LLVM</a></li>
-<li><a class="reference internal" href="#the-location-of-llvm-object-files" id="id7">The Location of LLVM Object Files</a></li>
+<li><a class="reference internal" href="#overview" id="id3">Overview</a><ul>
+<li><a class="reference internal" href="#a-quick-summary" id="id4">A Quick Summary</a></li>
+<li><a class="reference internal" href="#local-llvm-configuration" id="id5">Local LLVM Configuration</a></li>
+<li><a class="reference internal" href="#compiling-the-llvm-suite-source-code" id="id6">Compiling the LLVM Suite Source Code</a></li>
+<li><a class="reference internal" href="#cross-compiling-llvm" id="id7">Cross-Compiling LLVM</a></li>
+<li><a class="reference internal" href="#the-location-of-llvm-object-files" id="id8">The Location of LLVM Object Files</a></li>
 </ul>
 </li>
 </ul>
@@ -94,12 +93,12 @@ system will be removed in 3.9. Please migrate to using CMake. For more
 information see: <a class="reference external" href="CMake.html">Building LLVM with CMake</a></p>
 </div>
 <div class="section" id="overview">
-<h2><a class="toc-backref" href="#id2">Overview</a><a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Overview</a><a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
 <p>This document details how to use the LLVM autotools based build system to
 configure and build LLVM from source. The normal developer process using CMake
 is detailed <a class="reference external" href="GettingStarted.html#check-here">here</a>.</p>
 <div class="section" id="a-quick-summary">
-<h3><a class="toc-backref" href="#id3">A Quick Summary</a><a class="headerlink" href="#a-quick-summary" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id4">A Quick Summary</a><a class="headerlink" href="#a-quick-summary" title="永久链接至标题">¶</a></h3>
 <ol class="arabic simple">
 <li>Configure and build LLVM and Clang:<ul>
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-to-build-llvm</span></code></li>
@@ -107,29 +106,29 @@ is detailed <a class="reference external" href="GettingStarted.html#check-here">
 <li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">build</span></code></li>
 <li><code class="docutils literal"><span class="pre">../llvm/configure</span> <span class="pre">[options]</span></code>
 Some common options:<ul>
-<li><code class="docutils literal"><span class="pre">--prefix=directory</span></code> &#8212; Specify for <em>directory</em> the full pathname of
+<li><code class="docutils literal"><span class="pre">--prefix=directory</span></code> — Specify for <em>directory</em> the full pathname of
 where you want the LLVM tools and libraries to be installed (default
 <code class="docutils literal"><span class="pre">/usr/local</span></code>).</li>
-<li><code class="docutils literal"><span class="pre">--enable-optimized</span></code> &#8212; Compile with optimizations enabled (default
+<li><code class="docutils literal"><span class="pre">--enable-optimized</span></code> — Compile with optimizations enabled (default
 is NO).</li>
-<li><code class="docutils literal"><span class="pre">--enable-assertions</span></code> &#8212; Compile with assertion checks enabled
+<li><code class="docutils literal"><span class="pre">--enable-assertions</span></code> — Compile with assertion checks enabled
 (default is YES).</li>
 </ul>
 </li>
-<li><code class="docutils literal"><span class="pre">make</span> <span class="pre">[-j]</span></code> &#8212; The <code class="docutils literal"><span class="pre">-j</span></code> specifies the number of jobs (commands) to run
+<li><code class="docutils literal"><span class="pre">make</span> <span class="pre">[-j]</span></code> — The <code class="docutils literal"><span class="pre">-j</span></code> specifies the number of jobs (commands) to run
 simultaneously.  This builds both LLVM and Clang for Debug+Asserts mode.
 The <code class="docutils literal"><span class="pre">--enable-optimized</span></code> configure option is used to specify a Release
 build.</li>
-<li><code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code> &#8212; This run the regression tests to ensure everything
+<li><code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code> — This run the regression tests to ensure everything
 is in working order.</li>
-<li>If you get an &#8220;internal compiler error (ICE)&#8221; or test failures, see
+<li>If you get an “internal compiler error (ICE)” or test failures, see
 <a class="reference external" href="GettingStarted.html#check-here">here</a>.</li>
 </ul>
 </li>
 </ol>
 </div>
 <div class="section" id="local-llvm-configuration">
-<h3><a class="toc-backref" href="#id4">Local LLVM Configuration</a><a class="headerlink" href="#local-llvm-configuration" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">Local LLVM Configuration</a><a class="headerlink" href="#local-llvm-configuration" title="永久链接至标题">¶</a></h3>
 <p>Once checked out from the Subversion repository, the LLVM suite source code must
 be configured via the <code class="docutils literal"><span class="pre">configure</span></code> script.  This script sets variables in the
 various <code class="docutils literal"><span class="pre">*.in</span></code> files, most notably <code class="docutils literal"><span class="pre">llvm/Makefile.config</span></code> and
@@ -152,13 +151,13 @@ configure the build system:</p>
 <td>Tells <code class="docutils literal"><span class="pre">configure</span></code> which C compiler to use.  By default,
 <code class="docutils literal"><span class="pre">configure</span></code> will check <code class="docutils literal"><span class="pre">PATH</span></code> for <code class="docutils literal"><span class="pre">clang</span></code> and GCC C
 compilers (in this order).  Use this variable to override
-<code class="docutils literal"><span class="pre">configure</span></code>&#8216;s  default behavior.</td>
+<code class="docutils literal"><span class="pre">configure</span></code>’s  default behavior.</td>
 </tr>
 <tr class="row-odd"><td>CXX</td>
 <td>Tells <code class="docutils literal"><span class="pre">configure</span></code> which C++ compiler to use.  By
 default, <code class="docutils literal"><span class="pre">configure</span></code> will check <code class="docutils literal"><span class="pre">PATH</span></code> for
 <code class="docutils literal"><span class="pre">clang++</span></code> and GCC C++ compilers (in this order).  Use
-this variable to override  <code class="docutils literal"><span class="pre">configure</span></code>&#8216;s default
+this variable to override  <code class="docutils literal"><span class="pre">configure</span></code>’s default
 behavior.</td>
 </tr>
 </tbody>
@@ -182,8 +181,8 @@ explicitly enable it if you want it.</div></blockquote>
 <p><code class="docutils literal"><span class="pre">--enable-targets=target-option</span></code></p>
 <blockquote>
 <div><p>Controls which targets will be built and linked into llc. The default value
-for <code class="docutils literal"><span class="pre">target_options</span></code> is &#8220;all&#8221; which builds and links all available targets.
-The &#8220;host&#8221; target is selected as the target of the build host. You can also
+for <code class="docutils literal"><span class="pre">target_options</span></code> is “all” which builds and links all available targets.
+The “host” target is selected as the target of the build host. You can also
 specify a comma separated list of target names that you want available in llc.
 The target names use all lower case. The current set of targets is:</p>
 <blockquote>
@@ -211,7 +210,7 @@ megabytes of output.</div></blockquote>
 </ol>
 </div>
 <div class="section" id="compiling-the-llvm-suite-source-code">
-<h3><a class="toc-backref" href="#id5">Compiling the LLVM Suite Source Code</a><a class="headerlink" href="#compiling-the-llvm-suite-source-code" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Compiling the LLVM Suite Source Code</a><a class="headerlink" href="#compiling-the-llvm-suite-source-code" title="永久链接至标题">¶</a></h3>
 <p>Once you have configured LLVM, you can build it.  There are three types of
 builds:</p>
 <p>Debug Builds</p>
@@ -266,9 +265,9 @@ defaults to <code class="docutils literal"><span class="pre">/usr/local</span></
 <p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">-C</span> <span class="pre">runtime</span> <span class="pre">install-bytecode</span></code></p>
 <blockquote>
 <div>Assuming you built LLVM into $OBJDIR, when this command is run, it will
-install bitcode libraries into the GCC front end&#8217;s bitcode library directory.
+install bitcode libraries into the GCC front end’s bitcode library directory.
 If you need to update your bitcode libraries, this is the target to use once
-you&#8217;ve built them.</div></blockquote>
+you’ve built them.</div></blockquote>
 <p>Please see the <a class="reference external" href="MakefileGuide.html">Makefile Guide</a> for further details on
 these <code class="docutils literal"><span class="pre">make</span></code> targets and descriptions of other targets available.</p>
 <p>It is also possible to override default values from <code class="docutils literal"><span class="pre">configure</span></code> by declaring
@@ -297,7 +296,7 @@ any subdirectories that it contains.  Entering any directory inside the LLVM
 object tree and typing <code class="docutils literal"><span class="pre">gmake</span></code> should rebuild anything in or below that
 directory that is out of date.</p>
 <p>This does not apply to building the documentation.
-LLVM&#8217;s (non-Doxygen) documentation is produced with the
+LLVM’s (non-Doxygen) documentation is produced with the
 <a class="reference external" href="http://sphinx-doc.org/">Sphinx</a> documentation generation system.
 There are some HTML documents that have not yet been converted to the new
 system (which uses the easy-to-read and easy-to-write
@@ -321,7 +320,7 @@ For example, <code class="docutils literal"><span class="pre">_build/html/Sphinx
 The <a class="reference internal" href="SphinxQuickstartTemplate.html"><span class="doc">Sphinx Quickstart Template</span></a> is useful when creating a new document.</p>
 </div>
 <div class="section" id="cross-compiling-llvm">
-<h3><a class="toc-backref" href="#id6">Cross-Compiling LLVM</a><a class="headerlink" href="#cross-compiling-llvm" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Cross-Compiling LLVM</a><a class="headerlink" href="#cross-compiling-llvm" title="永久链接至标题">¶</a></h3>
 <p>It is possible to cross-compile LLVM itself. That is, you can create LLVM
 executables and libraries to be hosted on a platform different from the platform
 where they are built (a Canadian Cross build). To configure a cross-compile,
@@ -329,12 +328,12 @@ supply the configure script with <code class="docutils literal"><span class="pre
 different. The values of these options must be legal target triples that your
 GCC compiler supports.</p>
 <p>The result of such a build is executables that are not runnable on on the build
-host (&#8211;build option) but can be executed on the compile host (&#8211;host option).</p>
+host (–build option) but can be executed on the compile host (–host option).</p>
 <p>Check <a class="reference internal" href="HowToCrossCompileLLVM.html"><span class="doc">How To Cross-Compile Clang/LLVM using Clang/LLVM</span></a> and <a class="reference external" href="http://clang.llvm.org/docs/CrossCompilation.html">Clang docs on how to cross-compile in general</a> for more information
 about cross-compiling.</p>
 </div>
 <div class="section" id="the-location-of-llvm-object-files">
-<h3><a class="toc-backref" href="#id7">The Location of LLVM Object Files</a><a class="headerlink" href="#the-location-of-llvm-object-files" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">The Location of LLVM Object Files</a><a class="headerlink" href="#the-location-of-llvm-object-files" title="永久链接至标题">¶</a></h3>
 <p>The LLVM build system is capable of sharing a single LLVM source tree among
 several LLVM builds.  Hence, it is possible to build LLVM for several different
 platforms or configurations using the same source tree.</p>
@@ -407,9 +406,9 @@ the build type:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>

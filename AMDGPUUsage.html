@@ -1,31 +1,30 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>User Guide for AMDGPU Back-end &mdash; LLVM 3.8 文档</title>
-    
+    <title>User Guide for AMDGPU Back-end &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
-    <link rel="top" title="LLVM 3.8 文档" href="index.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Stack maps and patch points in LLVM" href="StackMaps.html" />
     <link rel="prev" title="User Guide for NVPTX Back-end" href="NVPTXUsage.html" />
 <style type="text/css">
@@ -43,7 +42,7 @@
 </script>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -167,7 +166,7 @@ in an entry of the .note section.</p>
 <p><em>major</em>, <em>minor</em>, and <em>stepping</em> are all integers that describe the instruction
 set architecture (ISA) version of the assembly program.</p>
 <p><em>vendor</em> and <em>arch</em> are quoted strings.  <em>vendor</em> should always be equal to
-&#8220;AMD&#8221; and <em>arch</em> should always be equal to &#8220;AMDGPU&#8221;.</p>
+“AMD” and <em>arch</em> should always be equal to “AMDGPU”.</p>
 <p>If no arguments are specified, then the assembler will derive the ISA version,
 <em>vendor</em>, and <em>arch</em> from the value of the -mcpu option that is passed to the
 assembler.</p>
@@ -254,9 +253,9 @@ hello_world:
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; 版权所有 2003-2016, LLVM Project.
-      最后更新于 2016-05-22.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1 创建。
+        &#169; Copyright 2003-2018, LLVM Project.
+      最后更新于 2018-01-13.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
 </html>
