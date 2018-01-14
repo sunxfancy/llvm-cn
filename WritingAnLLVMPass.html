@@ -219,7 +219,7 @@ are to be compiled and linked together into a shared object
 <strong class="program">opt</strong> or <strong class="program">bugpoint</strong> tools via their <a class="reference internal" href="CommandGuide/opt.html#cmdoption-load"><code class="xref std std-option docutils literal"><span class="pre">-load</span></code></a> options.
 If your operating system uses a suffix other than <code class="docutils literal"><span class="pre">.so</span></code> (such as Windows or Mac
 OS X), the appropriate extension will be used.</p>
-<p>If you are used CMake to build LLVM, see <a class="reference internal" href="CMake.html#cmake-out-of-source-pass"><span class="std std-ref">Developing LLVM passes out of source</span></a>.</p>
+<p>If you are used CMake to build LLVM, see <a class="reference internal" href="CMake.html#cmake-out-of-source-pass"><span class="std std-ref">在源码目录外开发LLVM pass</span></a>.</p>
 <p>Now that we have the build scripts set up, we just need to write the code for
 the pass itself.</p>
 </div>
@@ -328,7 +328,7 @@ can have them) to be useful.</p>
 <strong class="program">opt</strong> command to run an LLVM program through your pass.  Because you
 registered your pass with <code class="docutils literal"><span class="pre">RegisterPass</span></code>, you will be able to use the
 <strong class="program">opt</strong> tool to access it, once loaded.</p>
-<p>To test it, follow the example at the end of the <a class="reference internal" href="GettingStarted.html"><span class="doc">Getting Started with the LLVM System</span></a> to
+<p>To test it, follow the example at the end of the <a class="reference internal" href="GettingStarted.html"><span class="doc">开始使用LLVM系统</span></a> to
 compile “Hello World” to LLVM.  We can now run the bitcode file (hello.bc) for
 the program through our transformation like this (or course, any bitcode file
 will work):</p>

@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/translations.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="How To Build On ARM" href="HowToBuildOnARM.html" />
+    <link rel="next" title="如何在ARM平台上构建" href="HowToBuildOnARM.html" />
     <link rel="prev" title="LLVM 语法参考手册" href="LangRef.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -56,7 +56,7 @@
           <a href="genindex.html" title="总目录"
              accesskey="I">索引</a></li>
         <li class="right" >
-          <a href="HowToBuildOnARM.html" title="How To Build On ARM"
+          <a href="HowToBuildOnARM.html" title="如何在ARM平台上构建"
              accesskey="N">下一页</a> |</li>
         <li class="right" >
           <a href="LangRef.html" title="LLVM 语法参考手册"
@@ -79,13 +79,13 @@
 <li><a class="reference internal" href="#introduction" id="id6">简介</a></li>
 <li><a class="reference internal" href="#quick-start" id="id7">快速入门</a></li>
 <li><a class="reference internal" href="#usage" id="id8">CMake基本用法</a></li>
-<li><a class="reference internal" href="#options-and-variables" id="id9">Options and variables</a><ul>
-<li><a class="reference internal" href="#frequently-used-cmake-variables" id="id10">Frequently-used CMake variables</a></li>
-<li><a class="reference internal" href="#llvm-specific-variables" id="id11">LLVM-specific variables</a></li>
+<li><a class="reference internal" href="#options-and-variables" id="id9">选项和变量</a><ul>
+<li><a class="reference internal" href="#frequently-used-cmake-variables" id="id10">常用的CMake变量</a></li>
+<li><a class="reference internal" href="#llvm-specific-variables" id="id11">LLVM项目设定的变量</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#executing-the-test-suite" id="id12">运行测试套件</a></li>
-<li><a class="reference internal" href="#cross-compiling" id="id13">Cross compiling</a></li>
+<li><a class="reference internal" href="#cross-compiling" id="id13">交叉编译</a></li>
 <li><a class="reference internal" href="#embedding-llvm-in-your-project" id="id14">在您的项目中嵌入LLVM</a><ul>
 <li><a class="reference internal" href="#developing-llvm-passes-out-of-source" id="id15">在源码目录外开发LLVM pass</a></li>
 </ul>
@@ -99,17 +99,17 @@
 <div class="section" id="introduction">
 <h2><a class="toc-backref" href="#id6">简介</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <p><a class="reference external" href="http://www.cmake.org/">CMake</a> 是一款跨平台构建生成系统。虽然CMake本身并不负责项目构建，但它能够生成其他构建工具 (例如 GNU make, Visual Studio 等) 必要的配置项，来构建LLVM。</p>
-<p>如果您担心没法顺利构建一个实用的LLVM系统，请先阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。如果您从未使用过CMake构建工具，请先从 <a class="reference internal" href="#basic-cmake-usage">Basic CMake usage</a> 开始读起，然后阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。<a class="reference internal" href="#options-and-variables">Options and variables</a> 一节是一份自定义构建的参考，您可以获取如何定制化构建LLVM的相关信息。如果您已经很熟悉CMake构建工具，那么推荐您直接阅读 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节。</p>
+<p>如果您急于构建一个可用的LLVM，请参见 <a class="reference internal" href="#quick-start">Quick start</a> 一节。如果您从未使用过CMake构建工具，请先从 <a class="reference internal" href="#basic-cmake-usage">Basic CMake usage</a> 开始读起，然后再返回阅读 <a class="reference internal" href="#quick-start">Quick start</a> 一节。<a class="reference internal" href="#options-and-variables">Options and variables</a> 一节是一份关于自定义构建的参考资料，您可以获取如何定制化构建LLVM的相关信息。如果您已经很熟悉CMake构建工具，那么推荐您直接阅读 <a class="reference internal" href="#options-and-variables">Options and variables</a> 一节。</p>
 </div>
 <div class="section" id="quick-start">
 <span id="id2"></span><h2><a class="toc-backref" href="#id7">快速入门</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
-<p>我们将使用CMake的命令行工具，而非GUI接口。</p>
+<p>我们将使用CMake的命令行工具，而非GUI界面。</p>
 <ol class="arabic">
 <li><p class="first">首先下载 <a class="reference external" href="http://www.cmake.org/cmake/resources/software.html">Download</a>  并安装CMake工具。最低可用版本是 2.8.8, 但如果您还使用Ninja构建工具，则必须使用 CMake v3.2或更新版本，才能在运行  <a class="reference internal" href="CommandGuide/lit.html"><span class="doc">Lit</span></a> 时得到 <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20141117/244797.html">交互式输出</a> 。（译者注：ninja构建工具是一套快速构建C/C++项目的构建套件，类似于GNU Make，对于LLVM这类代码量大的项目，相比make能够明显提升构建速度。使用时只需将CMake的生成目标设定为ninja即可。命令为：cmake -G “Ninjapath/to/llvm/source）</p>
 </li>
 <li><p class="first">打开命令行。您的开发工具必须能从该命令行中访问到，换言之，应该将工具链添加到PATH路径中。</p>
 </li>
-<li><p class="first">创建一个build文件夹。在源码路径中构建LLVM是不支持的， 需要先cd到这个构建目录中。</p>
+<li><p class="first">创建一个build文件夹。在源码路径中构建LLVM是不支持的， 需要先用cd指令转到这个构建目录中。</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mkdir mybuilddir
 <span class="gp">$</span> <span class="nb">cd</span> mybuilddir
 </pre></div>
@@ -144,175 +144,102 @@
 <div class="section" id="usage">
 <span id="basic-cmake-usage"></span><span id="id3"></span><h2><a class="toc-backref" href="#id8">CMake基本用法</a><a class="headerlink" href="#usage" title="永久链接至标题">¶</a></h2>
 <p>这一节主要讲解了Cmake的基本使用方法，以及最常用的指令。</p>
-<p>CMake comes with extensive documentation, in the form of html files, and as
-online help accessible via the <code class="docutils literal"><span class="pre">cmake</span></code> executable itself. Execute <code class="docutils literal"><span class="pre">cmake</span>
-<span class="pre">--help</span></code> for further help options.</p>
-<p>CMake allows you to specify a build tool (e.g., GNU make, Visual Studio,
-or Xcode). If not specified on the command line, CMake tries to guess which
-build tool to use, based on your environment. Once it has identified your
-build tool, CMake uses the corresponding <em>Generator</em> to create files for your
-build tool (e.g., Makefiles or Visual Studio or Xcode project files). You can
-explicitly specify the generator with the command line option <code class="docutils literal"><span class="pre">-G</span> <span class="pre">&quot;Name</span> <span class="pre">of</span> <span class="pre">the</span>
-<span class="pre">generator&quot;</span></code>. To see a list of the available generators on your system, execute</p>
+<p>CMake 拥有大量Html形式的帮助文档，并且可以通过 <code class="docutils literal"><span class="pre">cmake</span></code> 命令本身访问在线帮助。执行 <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help</span></code> 进一步了解帮助选项。</p>
+<p>CMake的允许您指定构建工具（如GNU Make，Visual Studio或Xcode）。如果在命令行上没有指定，CMake会根据您的环境，尝试猜测您在使用哪个构建工具。一旦自动检测到您的构建工具，CMake使用相应 <em>生成器</em> 为您创建构建工具的配置文件（例如，Makefiles或Visual Studio的sln文件或Xcode项目文件）。您可以用命令行选项显式指定生成器 <code class="docutils literal"><span class="pre">-G</span> <span class="pre">&quot;构建工具名称&quot;</span></code>。要查看系统上的可用生成器列表，请执行：</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake --help
 </pre></div>
 </div>
-<p>This will list the generator names at the end of the help text.</p>
-<p>Generators’ names are case-sensitive, and may contain spaces. For this reason,
-you should enter them exactly as they are listed in the <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help</span></code>
-output, in quotes. For example, to generate project files specifically for
-Visual Studio 12, you can execute:</p>
+<p>这个命令会在帮助文档的末尾列出生成器的名字。</p>
+<p>生成器的名字是大小写敏感的，可能包含空格。出于这个原因，您应该准确输入生成器的完整名称，同 <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help</span></code> 命令输出的完全一致，并加上引号。例如：要生成Visual Studio 12的项目配置，您需要执行：</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake -G <span class="s2">&quot;Visual Studio 12&quot;</span> path/to/llvm/source/root
 </pre></div>
 </div>
-<p>For a given development platform there can be more than one adequate
-generator. If you use Visual Studio, “NMake Makefiles” is a generator you can use
-for building with NMake. By default, CMake chooses the most specific generator
-supported by your development environment. If you want an alternative generator,
-you must tell this to CMake with the <code class="docutils literal"><span class="pre">-G</span></code> option.</p>
+<p>对于一个给定的开发平台可以有一个以上的生成器。如果您使用Visual Studio， “NMake Makefiles” 是可以用于NMAKE构建的生成器。默认情况下，CMake会选择你开发环境支持的最合适的生成器。如果你想要一个特别指定的生成器，你必须用 <code class="docutils literal"><span class="pre">-G</span></code> 选项告诉CMake。</p>
 </div>
 <div class="section" id="options-and-variables">
-<span id="id4"></span><h2><a class="toc-backref" href="#id9">Options and variables</a><a class="headerlink" href="#options-and-variables" title="永久链接至标题">¶</a></h2>
-<p>Variables customize how the build will be generated. Options are boolean
-variables, with possible values ON/OFF. Options and variables are defined on the
-CMake command line like this:</p>
+<span id="id4"></span><h2><a class="toc-backref" href="#id9">选项和变量</a><a class="headerlink" href="#options-and-variables" title="永久链接至标题">¶</a></h2>
+<p>选项和变量能够方便您进行自定义构建。选项一般是布尔变量，可能为ON / OFF。选项和变量可以像这样在CMake命令行上定义：</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake -DVARIABLE<span class="o">=</span>value path/to/llvm/source
 </pre></div>
 </div>
-<p>You can set a variable after the initial CMake invocation to change its
-value. You can also undefine a variable:</p>
+<p>您可以在初始CMake的调用之后设置一个变量来改变其值。您也可以取消一个变量的定义</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake -UVARIABLE path/to/llvm/source
 </pre></div>
 </div>
-<p>Variables are stored in the CMake cache. This is a file named <code class="docutils literal"><span class="pre">CMakeCache.txt</span></code>
-stored at the root of your build directory that is generated by <code class="docutils literal"><span class="pre">cmake</span></code>.
-Editing it yourself is not recommended.</p>
-<p>Variables are listed in the CMake cache and later in this document with
-the variable name and type separated by a colon. You can also specify the
-variable and type on the CMake command line:</p>
+<p>变量被存储在CMake的高速缓存中。这是一个名为 <code class="docutils literal"><span class="pre">CMakeCache.txt</span></code> 的存储文件，它放置在由 <code class="docutils literal"><span class="pre">cmake</span></code> 产生的构建根目录中。不建议您自己编辑。</p>
+<p>变量在CMake的缓存变量名称中有列出，变量名和类型用冒号隔开。您也可以指定CMake的命令行变量类型：</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cmake -DVARIABLE:TYPE<span class="o">=</span>value path/to/llvm/source
 </pre></div>
 </div>
 <div class="section" id="frequently-used-cmake-variables">
-<h3><a class="toc-backref" href="#id10">Frequently-used CMake variables</a><a class="headerlink" href="#frequently-used-cmake-variables" title="永久链接至标题">¶</a></h3>
-<p>Here are some of the CMake variables that are used often, along with a
-brief explanation and LLVM-specific notes. For full documentation, consult the
-CMake manual, or execute <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help-variable</span> <span class="pre">VARIABLE_NAME</span></code>.</p>
+<h3><a class="toc-backref" href="#id10">常用的CMake变量</a><a class="headerlink" href="#frequently-used-cmake-variables" title="永久链接至标题">¶</a></h3>
+<p>下面是一些经常使用的CMake的变量，带有简短的解释和具体的LLVM注释。想查看完整的文档，请查阅CMake手册，或执行 <code class="docutils literal"><span class="pre">cmake</span> <span class="pre">--help-variable</span> <span class="pre">VARIABLE_NAME</span></code> 。</p>
 <dl class="docutils">
 <dt><strong>CMAKE_BUILD_TYPE</strong>:STRING</dt>
-<dd>Sets the build type for <code class="docutils literal"><span class="pre">make</span></code>-based generators. Possible values are
-Release, Debug, RelWithDebInfo and MinSizeRel. If you are using an IDE such as
-Visual Studio, you should use the IDE settings to set the build type.</dd>
+<dd>设置构建类型。可用的值有Release，Debug，RelWithDebInfo和MinSizeRel。如果您使用IDE如Visual Studio，你应该使用IDE的设置来设置构建类型。</dd>
 <dt><strong>CMAKE_INSTALL_PREFIX</strong>:PATH</dt>
-<dd>Path where LLVM will be installed if “make install” is invoked or the
-“install” target is built.</dd>
+<dd>LLVM的安装路径，如”make install”调用时或执行安装时，安装路径即为此。</dd>
 <dt><strong>LLVM_LIBDIR_SUFFIX</strong>:STRING</dt>
-<dd>Extra suffix to append to the directory where libraries are to be
-installed. On a 64-bit architecture, one could use <code class="docutils literal"><span class="pre">-DLLVM_LIBDIR_SUFFIX=64</span></code>
-to install libraries to <code class="docutils literal"><span class="pre">/usr/lib64</span></code>.</dd>
+<dd>额外的后缀追加到库要安装的目录。对于64位架构，经常使用 <code class="docutils literal"><span class="pre">-DLLVM_LIBDIR_SUFFIX=64</span></code> 来安装到 <code class="docutils literal"><span class="pre">/usr/lib64</span></code> 目录下。</dd>
 <dt><strong>CMAKE_C_FLAGS</strong>:STRING</dt>
-<dd>Extra flags to use when compiling C source files.</dd>
+<dd>编译C源文件时，可以添加额外的flags。</dd>
 <dt><strong>CMAKE_CXX_FLAGS</strong>:STRING</dt>
-<dd>Extra flags to use when compiling C++ source files.</dd>
+<dd>编译C++源文件时，可以添加额外的flags。</dd>
 </dl>
 </div>
 <div class="section" id="llvm-specific-variables">
-<span id="id5"></span><h3><a class="toc-backref" href="#id11">LLVM-specific variables</a><a class="headerlink" href="#llvm-specific-variables" title="永久链接至标题">¶</a></h3>
+<span id="id5"></span><h3><a class="toc-backref" href="#id11">LLVM项目设定的变量</a><a class="headerlink" href="#llvm-specific-variables" title="永久链接至标题">¶</a></h3>
 <dl class="docutils">
 <dt><strong>LLVM_TARGETS_TO_BUILD</strong>:STRING</dt>
-<dd>Semicolon-separated list of targets to build, or <em>all</em> for building all
-targets. Case-sensitive. Defaults to <em>all</em>. Example:
-<code class="docutils literal"><span class="pre">-DLLVM_TARGETS_TO_BUILD=&quot;X86;PowerPC&quot;</span></code>.</dd>
+<dd>要构建的目标列表，用分号分隔的，或名为 <em>all</em> 的目标。区分大小写。默认为 <em>all</em> ，例如： <code class="docutils literal"><span class="pre">-DLLVM_TARGETS_TO_BUILD=&quot;X86;PowerPC&quot;</span></code> 。</dd>
 <dt><strong>LLVM_BUILD_TOOLS</strong>:BOOL</dt>
-<dd>Build LLVM tools. Defaults to ON. Targets for building each tool are generated
-in any case. You can build a tool separately by invoking its target. For
-example, you can build <em>llvm-as</em> with a Makefile-based system by executing <em>make
-llvm-as</em> at the root of your build directory.</dd>
+<dd>构建LLVM工具。默认为ON。构建目标不区分大小写，均为工具的名字。您可以通过调用它的构建目标来单独构建一个工具。例如，您可以通过执行 <em>make llvm-as</em> 来构建 <em>llvm-as</em> ，如果您正在使用基于Makefile的构建系统。（译者注：更通用的指令是 cmake –build . –target=”llvm-as”）</dd>
 <dt><strong>LLVM_INCLUDE_TOOLS</strong>:BOOL</dt>
-<dd>Generate build targets for the LLVM tools. Defaults to ON. You can use this
-option to disable the generation of build targets for the LLVM tools.</dd>
+<dd>生成的LLVM工具的构建目标。默认为ON。您可以使用此选项来禁用产生LLVM工具的构建目标。（译者注：关闭后您将无法执行 <em>make llvm-as</em>，上面只是设定是否默认自动构建，这里关掉后将无法再支持手动构建）</dd>
 <dt><strong>LLVM_BUILD_EXAMPLES</strong>:BOOL</dt>
-<dd>Build LLVM examples. Defaults to OFF. Targets for building each example are
-generated in any case. See documentation for <em>LLVM_BUILD_TOOLS</em> above for more
-details.</dd>
+<dd>构建LLVM的例子。默认为关闭。各个例子的构建目标名称是大小写不敏感的例子名称。以上详细内容见文档 <em>LLVM_BUILD_TOOLS</em> 。</dd>
 <dt><strong>LLVM_INCLUDE_EXAMPLES</strong>:BOOL</dt>
-<dd>Generate build targets for the LLVM examples. Defaults to ON. You can use this
-option to disable the generation of build targets for the LLVM examples.</dd>
+<dd>生成的LVM的例子构建目标。默认为ON。您可以使用此选项来禁用产生LLVM例子的构建目标。</dd>
 <dt><strong>LLVM_BUILD_TESTS</strong>:BOOL</dt>
-<dd>Build LLVM unit tests. Defaults to OFF. Targets for building each unit test
-are generated in any case. You can build a specific unit test using the
-targets defined under <em>unittests</em>, such as ADTTests, IRTests, SupportTests,
-etc. (Search for <code class="docutils literal"><span class="pre">add_llvm_unittest</span></code> in the subdirectories of <em>unittests</em>
-for a complete list of unit tests.) It is possible to build all unit tests
-with the target <em>UnitTests</em>.</dd>
+<dd>LLVM构建单元测试。默认为OFF。用于构建每个单元的测试目标无视大小写。您可以使用下列目标名称，定义在*unittests*里面的名称，如ADTTests，IRTests，SupportTests等（在 <em>unittests</em> 子目录下搜索 <code class="docutils literal"><span class="pre">add_llvm_unittest</span></code> 来获取完整的单元测试名称列表）。它可以自动构建所有*UnitTests*目标下的单元测试。</dd>
 <dt><strong>LLVM_INCLUDE_TESTS</strong>:BOOL</dt>
-<dd>Generate build targets for the LLVM unit tests. Defaults to ON. You can use
-this option to disable the generation of build targets for the LLVM unit
-tests.</dd>
+<dd>生成的LLVM单元测试构建目标。默认为ON。您可以使用此选项来禁用产生LLVM单元测试的构建目标</dd>
 <dt><strong>LLVM_APPEND_VC_REV</strong>:BOOL</dt>
-<dd>Append version control revision info (svn revision number or Git revision id)
-to LLVM version string (stored in the PACKAGE_VERSION macro). For this to work
-cmake must be invoked before the build. Defaults to OFF.</dd>
+<dd>追加版本控制修订信息（SVN版本号或Git的版本ID）来LLVM版本字符串（存储在PACKAGE_VERSION宏）。对于这项工作，必须的CMake构建之前被调用。默认为OFF。</dd>
 <dt><strong>LLVM_ENABLE_THREADS</strong>:BOOL</dt>
-<dd>Build with threads support, if available. Defaults to ON.</dd>
+<dd>在可用的情况下构建带有线程支持的版本。默认为ON。</dd>
 <dt><strong>LLVM_ENABLE_CXX1Y</strong>:BOOL</dt>
-<dd>Build in C++1y mode, if available. Defaults to OFF.</dd>
+<dd>在可用的情况下用C++1y标准来构建C++代码。默认为OFF。</dd>
 <dt><strong>LLVM_ENABLE_ASSERTIONS</strong>:BOOL</dt>
-<dd>Enables code assertions. Defaults to ON if and only if <code class="docutils literal"><span class="pre">CMAKE_BUILD_TYPE</span></code>
-is <em>Debug</em>.</dd>
+<dd>启用代码断言。当且仅当 <code class="docutils literal"><span class="pre">CMAKE_BUILD_TYPE</span></code> 是*Debug*模式时，才会默认设为ON。</dd>
 <dt><strong>LLVM_ENABLE_EH</strong>:BOOL</dt>
-<dd>Build LLVM with exception-handling support. This is necessary if you wish to
-link against LLVM libraries and make use of C++ exceptions in your own code
-that need to propagate through LLVM code. Defaults to OFF.</dd>
+<dd>LLVM构建具有异常处理的支持。如果你想针对LLVM库链接，并在自己的代码中使用C++异常，且需要通过LLVM代码调用您自己的代码，这将是非常必要的。默认为关闭。（译者注：这会开启LLVM捕捉异常，尤其是LLVM回调您项目中的代码时，您的代码可能会抛出异常，这种情况则必须开启此支持。）</dd>
 <dt><strong>LLVM_ENABLE_PIC</strong>:BOOL</dt>
-<dd>Add the <code class="docutils literal"><span class="pre">-fPIC</span></code> flag to the compiler command-line, if the compiler supports
-this flag. Some systems, like Windows, do not need this flag. Defaults to ON.</dd>
+<dd>如果编译器支持时，将 <code class="docutils literal"><span class="pre">-fPIC</span></code> 标志添加到编译器命令行。一些系统，如Windows，不需要此标志。默认为ON。（译者注：-fPIC 是构建位置无关代码的重要参数，在Mac和Linux系统的动态库构建中，必须使用）</dd>
 <dt><strong>LLVM_ENABLE_RTTI</strong>:BOOL</dt>
-<dd>Build LLVM with run-time type information. Defaults to OFF.</dd>
+<dd>让LLVM支持运行时类型信息。默认为关闭。</dd>
 <dt><strong>LLVM_ENABLE_WARNINGS</strong>:BOOL</dt>
-<dd>Enable all compiler warnings. Defaults to ON.</dd>
+<dd>启用所有的编译器警告。默认为ON。</dd>
 <dt><strong>LLVM_ENABLE_PEDANTIC</strong>:BOOL</dt>
-<dd>Enable pedantic mode. This disables compiler-specific extensions, if
-possible. Defaults to ON.</dd>
+<dd>启用迂腐模式（pedantic mode）。如果可用的话，这将禁用特定编译器的扩展。默认为ON。</dd>
 <dt><strong>LLVM_ENABLE_WERROR</strong>:BOOL</dt>
-<dd>Stop and fail the build, if a compiler warning is triggered. Defaults to OFF.</dd>
+<dd>如果一个编译器警告被触发时，立即停止并构建失败。默认为关闭。</dd>
 <dt><strong>LLVM_ABI_BREAKING_CHECKS</strong>:STRING</dt>
-<dd>Used to decide if LLVM should be built with ABI breaking checks or
-not.  Allowed values are <cite>WITH_ASSERTS</cite> (default), <cite>FORCE_ON</cite> and
-<cite>FORCE_OFF</cite>.  <cite>WITH_ASSERTS</cite> turns on ABI breaking checks in an
-assertion enabled build.  <cite>FORCE_ON</cite> (<cite>FORCE_OFF</cite>) turns them on
-(off) irrespective of whether normal (<cite>NDEBUG</cite>-based) assertions are
-enabled or not.  A version of LLVM built with ABI breaking checks
-is not ABI compatible with a version built without it.</dd>
+<dd>用来决定LLVM是否应打开ABI损坏检测。允许的值是 <cite>WITH_ASSERTS</cite> （默认值）， <cite>FORCE_ON</cite> 和 <cite>FORCE_OFF</cite> 。 <cite>WITH_ASSERTS</cite> 将打开ABI损坏检测的断言。 <cite>FORCE_ON`（`FORCE_OFF</cite>）把它们强制打开（关闭），不论 <cite>NDEBUG</cite> 断言是否启用。带有ABI损坏检测的LLVM版本，不能与没有它的版本实现ABI兼容。</dd>
 <dt><strong>LLVM_BUILD_32_BITS</strong>:BOOL</dt>
-<dd>Build 32-bit executables and libraries on 64-bit systems. This option is
-available only on some 64-bit Unix systems. Defaults to OFF.</dd>
+<dd>构建64位系统下的32位可执行文件和库。此选项仅适用于某些64位Unix系统。默认为关闭。</dd>
 <dt><strong>LLVM_TARGET_ARCH</strong>:STRING</dt>
-<dd>LLVM target to use for native code generation. This is required for JIT
-generation. It defaults to “host”, meaning that it shall pick the architecture
-of the machine where LLVM is being built. If you are cross-compiling, set it
-to the target architecture name.</dd>
+<dd>LLVM目标使用本地代码生成。这是必需的JIT生成。它默认为 “host”，这意味着它应自动选择正在构建LLVM的机器的架构。如果你是交叉编译，应将其设置为目标架构名称。</dd>
 <dt><strong>LLVM_TABLEGEN</strong>:STRING</dt>
-<dd>Full path to a native TableGen executable (usually named <code class="docutils literal"><span class="pre">llvm-tblgen</span></code>). This is
-intended for cross-compiling: if the user sets this variable, no native
-TableGen will be created.</dd>
+<dd>本机可执行的TableGen的完整路径（通常命名为 <code class="docutils literal"><span class="pre">llvm-tblgen</span></code> ）。这是为了方便进行交叉编译：如果用户设置这个变量，Native TableGen将不被创建。</dd>
 <dt><strong>LLVM_LIT_ARGS</strong>:STRING</dt>
 <dd>Arguments given to lit.  <code class="docutils literal"><span class="pre">make</span> <span class="pre">check</span></code> and <code class="docutils literal"><span class="pre">make</span> <span class="pre">clang-test</span></code> are affected.
 By default, <code class="docutils literal"><span class="pre">'-sv</span> <span class="pre">--no-progress-bar'</span></code> on Visual C++ and Xcode, <code class="docutils literal"><span class="pre">'-sv'</span></code> on
 others.</dd>
 <dt><strong>LLVM_LIT_TOOLS_DIR</strong>:PATH</dt>
-<dd>The path to GnuWin32 tools for tests. Valid on Windows host.  Defaults to
-the empty string, in which case lit will look for tools needed for tests
-(e.g. <code class="docutils literal"><span class="pre">grep</span></code>, <code class="docutils literal"><span class="pre">sort</span></code>, etc.) in your %PATH%. If GnuWin32 is not in your
-%PATH%, then you can set this variable to the GnuWin32 directory so that
-lit can find tools needed for tests in that directory.</dd>
+<dd>用于测试的GnuWin32工具的路径。Windows主机上有效。默认为空字符串，在这种情况下，lit将在您的％PATH％路径下寻找所需的测试工具（例如 <code class="docutils literal"><span class="pre">grep</span></code> ， <code class="docutils literal"><span class="pre">sort</span></code> 等）。如果GnuWin32不在您的％PATH％中，那么你可以将GnuWin32的目录加入到％PATH％中，以便之后可以找到需要在该目录中用的测试工具。</dd>
 <dt><strong>LLVM_ENABLE_FFI</strong>:BOOL</dt>
-<dd>Indicates whether the LLVM Interpreter will be linked with the Foreign Function
-Interface library (libffi) in order to enable calling external functions.
-If the library or its headers are installed in a custom
-location, you can also set the variables FFI_INCLUDE_DIR and
-FFI_LIBRARY_DIR to the directories where ffi.h and libffi.so can be found,
-respectively. Defaults to OFF.</dd>
+<dd>指示是否LLVM解释器将与以使调用外部函数外部函数接口库（libffi）链接。如果库或它的头被安装在一个自定义位置，还可以设置变量FFI_INCLUDE_DIR和FFI_LIBRARY_DIR到ffi.h和libffi.so可以分别找到的目录。默认为关闭</dd>
 <dt><strong>LLVM_EXTERNAL_{CLANG,LLD,POLLY}_SOURCE_DIR</strong>:PATH</dt>
 <dd>These variables specify the path to the source directory for the external
 LLVM projects Clang, lld, and Polly, respectively, relative to the top-level
@@ -321,46 +248,30 @@ exists (e.g., llvm/tools/clang for Clang), then the corresponding variable
 will not be used.  If the variable for an external project does not point
 to a valid path, then that project will not be built.</dd>
 <dt><strong>LLVM_USE_OPROFILE</strong>:BOOL</dt>
-<dd>Enable building OProfile JIT support. Defaults to OFF.</dd>
+<dd>启用构建OProfile的JIT支持。默认为关闭。</dd>
 <dt><strong>LLVM_PROFDATA_FILE</strong>:PATH</dt>
 <dd>Path to a profdata file to pass into clang’s -fprofile-instr-use flag. This
 can only be specified if you’re building with clang.</dd>
 <dt><strong>LLVM_USE_INTEL_JITEVENTS</strong>:BOOL</dt>
-<dd>Enable building support for Intel JIT Events API. Defaults to OFF.</dd>
+<dd>构建启用英特尔JIT Event API支持。默认为关闭。</dd>
 <dt><strong>LLVM_ENABLE_ZLIB</strong>:BOOL</dt>
-<dd>Enable building with zlib to support compression/uncompression in LLVM tools.
-Defaults to ON.</dd>
+<dd>启用带zlib的构建，以支持压缩/解压缩的LLVM工具。默认为ON。</dd>
 <dt><strong>LLVM_USE_SANITIZER</strong>:STRING</dt>
 <dd>Define the sanitizer used to build LLVM binaries and tests. Possible values
 are <code class="docutils literal"><span class="pre">Address</span></code>, <code class="docutils literal"><span class="pre">Memory</span></code>, <code class="docutils literal"><span class="pre">MemoryWithOrigins</span></code>, <code class="docutils literal"><span class="pre">Undefined</span></code>, <code class="docutils literal"><span class="pre">Thread</span></code>,
 and <code class="docutils literal"><span class="pre">Address;Undefined</span></code>. Defaults to empty string.</dd>
 <dt><strong>LLVM_PARALLEL_COMPILE_JOBS</strong>:STRING</dt>
-<dd>Define the maximum number of concurrent compilation jobs.</dd>
+<dd>定义并行编译作业的最大job数量。</dd>
 <dt><strong>LLVM_PARALLEL_LINK_JOBS</strong>:STRING</dt>
-<dd>Define the maximum number of concurrent link jobs.</dd>
+<dd>定义并行链接作业的最大job数量。</dd>
 <dt><strong>LLVM_BUILD_DOCS</strong>:BOOL</dt>
-<dd>Enables all enabled documentation targets (i.e. Doxgyen and Sphinx targets) to
-be built as part of the normal build. If the <code class="docutils literal"><span class="pre">install</span></code> target is run then
-this also enables all built documentation targets to be installed. Defaults to
-OFF.</dd>
+<dd>启用所有可用的文档构建（即Doxgyen和Sphinx的目标）作为默认构建项目。如果 <code class="docutils literal"><span class="pre">install</span></code> 目标运行，那么这也会安装所有构建好的文档。默认为关闭。</dd>
 <dt><strong>LLVM_ENABLE_DOXYGEN</strong>:BOOL</dt>
-<dd>Enables the generation of browsable HTML documentation using doxygen.
-Defaults to OFF.</dd>
+<dd>启用构建doxygen生成的HTML文档。默认为关闭。</dd>
 <dt><strong>LLVM_ENABLE_DOXYGEN_QT_HELP</strong>:BOOL</dt>
-<dd>Enables the generation of a Qt Compressed Help file. Defaults to OFF.
-This affects the make target <code class="docutils literal"><span class="pre">doxygen-llvm</span></code>. When enabled, apart from
-the normal HTML output generated by doxygen, this will produce a QCH file
-named <code class="docutils literal"><span class="pre">org.llvm.qch</span></code>. You can then load this file into Qt Creator.
-This option is only useful in combination with <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN=ON</span></code>;
-otherwise this has no effect.</dd>
+<dd>启用一个Qt压缩帮助文件的生成。默认为关闭。这会影响make目标 <code class="docutils literal"><span class="pre">doxygen-llvm</span></code> 。当启用时，由doxygen的产生正常的HTML输出，同时将产生一个名为``org.llvm.qch``一个QCH文件。然后，您可以加载此文件到Qt Creator。此选项仅可和 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN=ON</span></code> 组合使用，否则没有任何影响。</dd>
 <dt><strong>LLVM_DOXYGEN_QCH_FILENAME</strong>:STRING</dt>
-<dd>The filename of the Qt Compressed Help file that will be generated when
-<code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN=ON</span></code> and
-<code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code> are given. Defaults to
-<code class="docutils literal"><span class="pre">org.llvm.qch</span></code>.
-This option is only useful in combination with
-<code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code>;
-otherwise it has no effect.</dd>
+<dd>设置Qt的压缩帮助文件的文件名，启用了 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN=ON</span></code> 和 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code> 时，默认为 <code class="docutils literal"><span class="pre">org.llvm.qch</span></code> 。此选项仅可和 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code> 组合使用，否则没有任何效果。</dd>
 <dt><strong>LLVM_DOXYGEN_QHP_NAMESPACE</strong>:STRING</dt>
 <dd>Namespace under which the intermediate Qt Help Project file lives. See <a class="reference external" href="http://qt-project.org/doc/qt-4.8/qthelpproject.html#custom-filters">Qt
 Help Project</a>
@@ -383,14 +294,11 @@ otherwise it has no effect.</dd>
 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code>; otherwise it has no
 effect.</dd>
 <dt><strong>LLVM_DOXYGEN_SVG</strong>:BOOL</dt>
-<dd>Uses .svg files instead of .png files for graphs in the Doxygen output.
-Defaults to OFF.</dd>
+<dd>在输出Doxygen图时使用.svg文件，而不是.png文件。默认为关闭。</dd>
 <dt><strong>LLVM_ENABLE_SPHINX</strong>:BOOL</dt>
-<dd>If enabled CMake will search for the <code class="docutils literal"><span class="pre">sphinx-build</span></code> executable and will make
-the <code class="docutils literal"><span class="pre">SPHINX_OUTPUT_HTML</span></code> and <code class="docutils literal"><span class="pre">SPHINX_OUTPUT_MAN</span></code> CMake options available.
-Defaults to OFF.</dd>
+<dd>开启sphinx文档构建，如果启用，CMake将搜索 <code class="docutils literal"><span class="pre">sphinx-build</span></code> 命令，并会使得 <code class="docutils literal"><span class="pre">SPHINX_OUTPUT_HTML</span></code> 和 <code class="docutils literal"><span class="pre">SPHINX_OUTPUT_MAN</span></code> 成为可用选项。默认为关闭。</dd>
 <dt><strong>SPHINX_EXECUTABLE</strong>:STRING</dt>
-<dd>The path to the <code class="docutils literal"><span class="pre">sphinx-build</span></code> executable detected by CMake.</dd>
+<dd><code class="docutils literal"><span class="pre">sphinx-build</span></code> 的可执行文件路径，由CMake自动检测</dd>
 <dt><strong>SPHINX_OUTPUT_HTML</strong>:BOOL</dt>
 <dd>If enabled (and <code class="docutils literal"><span class="pre">LLVM_ENABLE_SPHINX</span></code> is enabled) then the targets for
 building the documentation as html are added (but not built by default unless
@@ -398,13 +306,9 @@ building the documentation as html are added (but not built by default unless
 source tree that uses sphinx (e.g.  <code class="docutils literal"><span class="pre">docs-llvm-html</span></code>, <code class="docutils literal"><span class="pre">docs-clang-html</span></code>
 and <code class="docutils literal"><span class="pre">docs-lld-html</span></code>). Defaults to ON.</dd>
 <dt><strong>SPHINX_OUTPUT_MAN</strong>:BOOL</dt>
-<dd>If enabled (and <code class="docutils literal"><span class="pre">LLVM_ENABLE_SPHINX</span></code> is enabled) the targets for building
-the man pages are added (but not built by default unless <code class="docutils literal"><span class="pre">LLVM_BUILD_DOCS</span></code>
-is enabled). Currently the only target added is <code class="docutils literal"><span class="pre">docs-llvm-man</span></code>. Defaults
-to ON.</dd>
+<dd>如果启用（并且 <code class="docutils literal"><span class="pre">LLVM_ENABLE_SPHINX</span></code> 启用）构建man页面的目标将被添加（但除非 <code class="docutils literal"><span class="pre">LLVM_BUILD_DOCS</span></code> 设定为OFF）。目前添加的唯一目标就是 <code class="docutils literal"><span class="pre">docs-llvm-man</span></code> 。默认为ON。</dd>
 <dt><strong>SPHINX_WARNINGS_AS_ERRORS</strong>:BOOL</dt>
-<dd>If enabled then sphinx documentation warnings will be treated as
-errors. Defaults to ON.</dd>
+<dd>如果启用然后SPHINX的文件警告将被视为错误。默认为ON。</dd>
 <dt><strong>LLVM_CREATE_XCODE_TOOLCHAIN</strong>:BOOL</dt>
 <dd>OS X Only: If enabled CMake will generate a target named
 ‘install-xcode-toolchain’. This target will create a directory at
@@ -448,7 +352,7 @@ using Makefiles, execute this command in the root of your build directory:</p>
 For more information about testing, see the <a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a>.</p>
 </div>
 <div class="section" id="cross-compiling">
-<h2><a class="toc-backref" href="#id13">Cross compiling</a><a class="headerlink" href="#cross-compiling" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">交叉编译</a><a class="headerlink" href="#cross-compiling" title="永久链接至标题">¶</a></h2>
 <p>See <a class="reference external" href="http://www.vtk.org/Wiki/CMake_Cross_Compiling">this wiki page</a> for
 generic instructions on how to cross-compile with CMake. It goes into detailed
 explanations and may seem daunting, but it is not. On the wiki page there are
@@ -597,7 +501,7 @@ Studio 2010 CMake generator. 0 means use all processors. Default is 0.</dd>
           <a href="genindex.html" title="总目录"
              >索引</a></li>
         <li class="right" >
-          <a href="HowToBuildOnARM.html" title="How To Build On ARM"
+          <a href="HowToBuildOnARM.html" title="如何在ARM平台上构建"
              >下一页</a> |</li>
         <li class="right" >
           <a href="LangRef.html" title="LLVM 语法参考手册"

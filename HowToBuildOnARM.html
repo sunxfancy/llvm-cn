@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>How To Build On ARM &#8212; LLVM 3.8 文档</title>
+    <title>如何在ARM平台上构建 &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -26,7 +26,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="How To Cross-Compile Clang/LLVM using Clang/LLVM" href="HowToCrossCompileLLVM.html" />
-    <link rel="prev" title="Building LLVM with CMake" href="CMake.html" />
+    <link rel="prev" title="使用CMake构建LLVM系统" href="CMake.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
@@ -59,7 +59,7 @@
           <a href="HowToCrossCompileLLVM.html" title="How To Cross-Compile Clang/LLVM using Clang/LLVM"
              accesskey="N">下一页</a> |</li>
         <li class="right" >
-          <a href="CMake.html" title="Building LLVM with CMake"
+          <a href="CMake.html" title="使用CMake构建LLVM系统"
              accesskey="P">上一页</a> |</li>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>
@@ -73,36 +73,23 @@
           <div class="body" role="main">
             
   <div class="section" id="how-to-build-on-arm">
-<h1>How To Build On ARM<a class="headerlink" href="#how-to-build-on-arm" title="永久链接至标题">¶</a></h1>
+<h1>如何在ARM平台上构建<a class="headerlink" href="#how-to-build-on-arm" title="永久链接至标题">¶</a></h1>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
-<p>This document contains information about building/testing LLVM and
-Clang on an ARM machine.</p>
-<p>This document is <em>NOT</em> tailored to help you cross-compile LLVM/Clang
-to ARM on another architecture, for example an x86_64 machine. To find
-out more about cross-compiling, please check <a class="reference internal" href="HowToCrossCompileLLVM.html"><span class="doc">How To Cross-Compile Clang/LLVM using Clang/LLVM</span></a>.</p>
+<h2>简介<a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p>本文档包含在ARM机器上构建/测试LLVM和Clang的信息。</p>
+<p>这份文档 <em>不</em> 是帮助您了解在其他系统上（例如x86_64的机器）交叉编译LLVM / Clang到ARM上的。要了解更多关于交叉编译，请检查 <a class="reference internal" href="HowToCrossCompileLLVM.html"><span class="doc">How To Cross-Compile Clang/LLVM using Clang/LLVM</span></a> 。</p>
 </div>
 <div class="section" id="notes-on-building-llvm-clang-on-arm">
-<h2>Notes On Building LLVM/Clang on ARM<a class="headerlink" href="#notes-on-building-llvm-clang-on-arm" title="永久链接至标题">¶</a></h2>
-<p>Here are some notes on building/testing LLVM/Clang on ARM. Note that
-ARM encompasses a wide variety of CPUs; this advice is primarily based
-on the ARMv6 and ARMv7 architectures and may be inapplicable to older chips.</p>
+<h2>在ARM上构建LLVM / Clang的注意事项<a class="headerlink" href="#notes-on-building-llvm-clang-on-arm" title="永久链接至标题">¶</a></h2>
+<p>这里是在ARM上构建/测试LLVM / Clang的一些注意事项。需要注意的是ARM涵盖了各种各样的CPU;目前这个文档主要是基于ARMv6和ARMv7体系结构，可能不适用某些较旧的芯片。</p>
 <ol class="arabic">
-<li><p class="first">The most popular Linaro/Ubuntu OS’s for ARM boards, e.g., the
-Pandaboard, have become hard-float platforms. There are a number of
-choices when using CMake. Autoconf usage is deprecated as of 3.8.</p>
-<p>Building LLVM/Clang in <code class="docutils literal"><span class="pre">Relese</span></code> mode is preferred since it consumes
-a lot less memory. Otherwise, the building process will very likely
-fail due to insufficient memory. It’s also a lot quicker to only build
-the relevant back-ends (ARM and AArch64), since it’s very unlikely that
-you’ll use an ARM board to cross-compile to other arches. If you’re
-running Compiler-RT tests, also include the x86 back-end, or some tests
-will fail.</p>
+<li><p class="first">最流行的Linaro/Ubuntu的操作系统的ARM板，例如，Pandaboard，已经成为难以替换的平台。使用CMake您将有许多选择。而Autoconf构建系统已在LLVM3.8被废弃。</p>
+<p>用 <code class="docutils literal"><span class="pre">Relese</span></code> 模式构建LLVM / Clang将是首选，因为它消耗更少的内存。否则，构建过程很可能会由于由于内存不足而失败。当然，由于只构建较少的后端（ARM和AArch64），构建过程也快了很多。不支持其他后端是因为，大多数人不太可能会使用ARM板交叉编译到其他的系统架构上。如果你运行Compiler-RT的测试（包括x86后端测试），其中某些测试将会失败。</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>cmake <span class="nv">$LLVM_SRC_DIR</span> -DCMAKE_BUILD_TYPE<span class="o">=</span>Release <span class="se">\</span>
                     -DLLVM_TARGETS_TO_BUILD<span class="o">=</span><span class="s2">&quot;ARM;X86;AArch64&quot;</span>
 </pre></div>
 </div>
-<p>Other options you can use are:</p>
+<p>您可以使用其他选项是：</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>Use Ninja instead of Make: <span class="s2">&quot;-G Ninja&quot;</span>
 Build with assertions on: <span class="s2">&quot;-DLLVM_ENABLE_ASSERTIONS=True&quot;</span>
 Force Python2: <span class="s2">&quot;-DPYTHON_EXECUTABLE=/usr/bin/python2&quot;</span>
@@ -110,41 +97,25 @@ Local <span class="o">(</span>non-sudo<span class="o">)</span> install path: <sp
 CPU flags: <span class="s2">&quot;DCMAKE_C_FLAGS=-mcpu=cortex-a15&quot;</span> <span class="o">(</span>same <span class="k">for</span> CXX_FLAGS<span class="o">)</span>
 </pre></div>
 </div>
-<p>After that, just typing <code class="docutils literal"><span class="pre">make</span> <span class="pre">-jN</span></code> or <code class="docutils literal"><span class="pre">ninja</span></code> will build everything.
-<code class="docutils literal"><span class="pre">make</span> <span class="pre">-jN</span> <span class="pre">check-all</span></code> or <code class="docutils literal"><span class="pre">ninja</span> <span class="pre">check-all</span></code> will run all compiler tests. For
-running the test suite, please refer to <a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a>.</p>
+<p>之后，只需输入 <code class="docutils literal"><span class="pre">make</span> <span class="pre">-jN</span></code> or <code class="docutils literal"><span class="pre">ninja</span></code> 将会开始构建。 <code class="docutils literal"><span class="pre">make</span> <span class="pre">-jN</span> <span class="pre">check-all</span></code> or <code class="docutils literal"><span class="pre">ninja</span> <span class="pre">check-all</span></code> 将运行所有的编译器测试。对于运行测试套件，请参考 <a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a> 。</p>
 </li>
-<li><p class="first">If you are building LLVM/Clang on an ARM board with 1G of memory or less,
-please use <code class="docutils literal"><span class="pre">gold</span></code> rather then GNU <code class="docutils literal"><span class="pre">ld</span></code>. In any case it is probably a good
-idea to set up a swap partition, too.</p>
+<li><p class="first">如果您是在内存少于1G的ARM板上构建LLVM / Clang的，请使用 <code class="docutils literal"><span class="pre">gold</span></code> 而不是GNU <code class="docutils literal"><span class="pre">ld</span></code> 。大多数情况下，建立一个交换分区将是一个不错的主意。</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo ln -sf /usr/bin/ld /usr/bin/ld.gold
 </pre></div>
 </div>
 </li>
-<li><p class="first">ARM development boards can be unstable and you may experience that cores
-are disappearing, caches being flushed on every big.LITTLE switch, and
-other similar issues.  To help ease the effect of this, set the Linux
-scheduler to “performance” on <strong>all</strong> cores using this little script:</p>
+<li><p class="first">ARM开发板可能是不稳定的，您可能会遇到内核消失，big.LITTLE切换时刷新缓存，和其它类似的问题。为了帮助缓解这样的问题，可以对**全部**使用该脚本的内核设置Linux scheduler到 “performance”。</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># The code below requires the package &#39;cpufrequtils&#39; to be installed.</span>
 <span class="k">for</span> <span class="o">((</span><span class="nv">cpu</span><span class="o">=</span><span class="m">0</span><span class="p">;</span> cpu&lt;<span class="sb">`</span>grep -c proc /proc/cpuinfo<span class="sb">`</span><span class="p">;</span> cpu++<span class="o">))</span><span class="p">;</span> <span class="k">do</span>
     sudo cpufreq-set -c <span class="nv">$cpu</span> -g performance
 <span class="k">done</span>
 </pre></div>
 </div>
-<p>Remember to turn that off after the build, or you may risk burning your
-CPU. Most modern kernels don’t need that, so only use it if you have
-problems.</p>
+<p>记得把它们关掉，否则构建结束后，长时间运行可能会烧毁这款CPU。大多数现代的内核并不需要这样做，所以只有当你遇到类似问题时再进行这样的设置。</p>
 </li>
-<li><p class="first">Running the build on SD cards is ok, but they are more prone to failures
-than good quality USB sticks, and those are more prone to failures than
-external hard-drives (those are also a lot faster). So, at least, you
-should consider to buy a fast USB stick.  On systems with a fast eMMC,
-that’s a good option too.</p>
+<li><p class="first">在SD卡上运行构建是没问题的，但相比质量好的USB记忆棒，SD卡更容易出现错误，甚至比外部硬盘驱动器更容易出错（这些也更快）。所以，至少，你应该考虑买一个快速的USB记忆棒。在一个快速的eMMC系统，也是一个很好的选择。</p>
 </li>
-<li><p class="first">Make sure you have a decent power supply (dozens of dollars worth) that can
-provide <em>at least</em> 4 amperes, this is especially important if you use USB
-devices with your board. Externally powered USB/SATA harddrives are even
-better than having a good power supply.</p>
+<li><p class="first">请确保你有一个高质量的电源（几十美元的）可以提供 <em>至少</em> 4安培，这一点在你还需要同时使用其他USB设备（如移动硬盘）时显得尤其重要。当然，使用外部供电的USB / SATA硬盘，这可能比有一个好的电源更加有效。</p>
 </li>
 </ol>
 </div>
@@ -165,7 +136,7 @@ better than having a good power supply.</p>
           <a href="HowToCrossCompileLLVM.html" title="How To Cross-Compile Clang/LLVM using Clang/LLVM"
              >下一页</a> |</li>
         <li class="right" >
-          <a href="CMake.html" title="Building LLVM with CMake"
+          <a href="CMake.html" title="使用CMake构建LLVM系统"
              >上一页</a> |</li>
   <li><a href="http://llvm.org/">LLVM 官网</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">LLVM 中文文档</a>&raquo;</li>

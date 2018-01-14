@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Garbage Collection with LLVM &#8212; LLVM 3.8 文档</title>
+    <title>垃圾收集与LLVM &#8212; LLVM 3.8 文档</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -73,270 +73,159 @@
           <div class="body" role="main">
             
   <div class="section" id="garbage-collection-with-llvm">
-<h1>Garbage Collection with LLVM<a class="headerlink" href="#garbage-collection-with-llvm" title="永久链接至标题">¶</a></h1>
+<h1>垃圾收集与LLVM<a class="headerlink" href="#garbage-collection-with-llvm" title="永久链接至标题">¶</a></h1>
 <div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
-<li><a class="reference internal" href="#quick-start" id="id3">Quick Start</a></li>
-<li><a class="reference internal" href="#introduction" id="id4">Introduction</a><ul>
-<li><a class="reference internal" href="#what-is-garbage-collection" id="id5">What is Garbage Collection?</a></li>
-<li><a class="reference internal" href="#goals-and-non-goals" id="id6">Goals and non-goals</a></li>
+<li><a class="reference internal" href="#abstract" id="id2">摘要</a></li>
+<li><a class="reference internal" href="#quick-start" id="id3">快速开始</a></li>
+<li><a class="reference internal" href="#introduction" id="id4">导言</a><ul>
+<li><a class="reference internal" href="#what-is-garbage-collection" id="id5">什么是垃圾收集？</a></li>
+<li><a class="reference internal" href="#goals-and-non-goals" id="id6">目标和非目标</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#llvm-ir-features" id="id7">LLVM IR Features</a><ul>
-<li><a class="reference internal" href="#specifying-gc-code-generation-gc" id="id8">Specifying GC code generation: <code class="docutils literal"><span class="pre">gc</span> <span class="pre">&quot;...&quot;</span></code></a></li>
-<li><a class="reference internal" href="#gcroot" id="id9">Identifying GC roots on the stack</a><ul>
-<li><a class="reference internal" href="#using-gc-statepoint" id="id10">Using <code class="docutils literal"><span class="pre">gc.statepoint</span></code></a></li>
-<li><a class="reference internal" href="#using-llvm-gcwrite" id="id11">Using <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a></li>
+<li><a class="reference internal" href="#llvm-ir-features" id="id7">LLVM IR特性</a><ul>
+<li><a class="reference internal" href="#specifying-gc-code-generation-gc" id="id8">指定GC代码的生成: <code class="docutils literal"><span class="pre">gc</span> <span class="pre">&quot;...&quot;</span></code></a></li>
+<li><a class="reference internal" href="#gcroot" id="id9">在栈上识别GC根</a><ul>
+<li><a class="reference internal" href="#using-gc-statepoint" id="id10">使用 <code class="docutils literal"><span class="pre">gc.statepoint</span></code></a></li>
+<li><a class="reference internal" href="#using-llvm-gcwrite" id="id11">使用 <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#reading-and-writing-references-in-the-heap" id="id12">Reading and writing references in the heap</a><ul>
-<li><a class="reference internal" href="#write-barrier-llvm-gcwrite" id="id13">Write barrier: <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a></li>
-<li><a class="reference internal" href="#read-barrier-llvm-gcread" id="id14">Read barrier: <code class="docutils literal"><span class="pre">llvm.gcread</span></code></a></li>
+<li><a class="reference internal" href="#reading-and-writing-references-in-the-heap" id="id12">在堆中读取和写入引用</a><ul>
+<li><a class="reference internal" href="#write-barrier-llvm-gcwrite" id="id13">写屏障： <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a></li>
+<li><a class="reference internal" href="#read-barrier-llvm-gcread" id="id14">读障碍： <code class="docutils literal"><span class="pre">llvm.gcread</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#built-in-gc-strategies" id="id15">Built In GC Strategies</a><ul>
-<li><a class="reference internal" href="#the-shadow-stack-gc" id="id16">The Shadow Stack GC</a></li>
+<li><a class="reference internal" href="#built-in-gc-strategies" id="id15">建于GC策略</a><ul>
+<li><a class="reference internal" href="#the-shadow-stack-gc" id="id16">影子堆栈GC（Shadow Stack GC）</a></li>
 <li><a class="reference internal" href="#the-erlang-and-ocaml-gcs" id="id17">The ‘Erlang’ and ‘Ocaml’ GCs</a></li>
-<li><a class="reference internal" href="#the-statepoint-example-gc" id="id18">The Statepoint Example GC</a></li>
-<li><a class="reference internal" href="#the-coreclr-gc" id="id19">The CoreCLR GC</a></li>
+<li><a class="reference internal" href="#the-statepoint-example-gc" id="id18">Statepoint示例GC</a></li>
+<li><a class="reference internal" href="#the-coreclr-gc" id="id19">CoreCLR GC</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#custom-gc-strategies" id="id20">Custom GC Strategies</a><ul>
-<li><a class="reference internal" href="#collector-requirements" id="id21">Collector Requirements</a></li>
-<li><a class="reference internal" href="#implementing-a-collector-plugin" id="id22">Implementing a collector plugin</a></li>
-<li><a class="reference internal" href="#overview-of-available-features" id="id23">Overview of available features</a></li>
-<li><a class="reference internal" href="#computing-stack-maps" id="id24">Computing stack maps</a></li>
-<li><a class="reference internal" href="#initializing-roots-to-null-initroots" id="id25">Initializing roots to null: <code class="docutils literal"><span class="pre">InitRoots</span></code></a></li>
-<li><a class="reference internal" href="#custom-lowering-of-intrinsics-customroots-customreadbarriers-and-customwritebarriers" id="id26">Custom lowering of intrinsics: <code class="docutils literal"><span class="pre">CustomRoots</span></code>, <code class="docutils literal"><span class="pre">CustomReadBarriers</span></code>, and <code class="docutils literal"><span class="pre">CustomWriteBarriers</span></code></a></li>
-<li><a class="reference internal" href="#generating-safe-points-neededsafepoints" id="id27">Generating safe points: <code class="docutils literal"><span class="pre">NeededSafePoints</span></code></a></li>
-<li><a class="reference internal" href="#emitting-assembly-code-gcmetadataprinter" id="id28">Emitting assembly code: <code class="docutils literal"><span class="pre">GCMetadataPrinter</span></code></a></li>
+<li><a class="reference internal" href="#custom-gc-strategies" id="id20">自定义GC策略</a><ul>
+<li><a class="reference internal" href="#collector-requirements" id="id21">垃圾收集器要求</a></li>
+<li><a class="reference internal" href="#implementing-a-collector-plugin" id="id22">实现一个收集器插件</a></li>
+<li><a class="reference internal" href="#overview-of-available-features" id="id23">可用特性概述</a></li>
+<li><a class="reference internal" href="#computing-stack-maps" id="id24">计算堆栈映射</a></li>
+<li><a class="reference internal" href="#initializing-roots-to-null-initroots" id="id25">将根初始化为null：<code class="docutils literal"><span class="pre">InitRoots</span></code></a></li>
+<li><a class="reference internal" href="#custom-lowering-of-intrinsics-customroots-customreadbarriers-and-customwritebarriers" id="id26">自定义降级内部函数：<code class="docutils literal"><span class="pre">CustomRoots</span></code>, <code class="docutils literal"><span class="pre">CustomReadBarriers</span></code>, and <code class="docutils literal"><span class="pre">CustomWriteBarriers</span></code></a></li>
+<li><a class="reference internal" href="#generating-safe-points-neededsafepoints" id="id27">生成安全点: <code class="docutils literal"><span class="pre">NeededSafePoints</span></code></a></li>
+<li><a class="reference internal" href="#emitting-assembly-code-gcmetadataprinter" id="id28">生成汇编代码： <code class="docutils literal"><span class="pre">GCMetadataPrinter</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#references" id="id29">References</a></li>
+<li><a class="reference internal" href="#references" id="id29">参考文献</a></li>
 </ul>
 </div>
 <div class="section" id="abstract">
-<h2><a class="toc-backref" href="#id2">Abstract</a><a class="headerlink" href="#abstract" title="永久链接至标题">¶</a></h2>
-<p>This document covers how to integrate LLVM into a compiler for a language which
-supports garbage collection.  <strong>Note that LLVM itself does not provide a
-garbage collector.</strong>  You must provide your own.</p>
+<h2><a class="toc-backref" href="#id2">摘要</a><a class="headerlink" href="#abstract" title="永久链接至标题">¶</a></h2>
+<p>本文介绍了如何为LLVM集成一个编译器，构建支持垃圾收集的语言。 <strong>请注意，LLVM本身不提供垃圾收集器</strong> ，您必须自行提供。</p>
 </div>
 <div class="section" id="quick-start">
-<h2><a class="toc-backref" href="#id3">Quick Start</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
-<p>First, you should pick a collector strategy.  LLVM includes a number of built
-in ones, but you can also implement a loadable plugin with a custom definition.
-Note that the collector strategy is a description of how LLVM should generate
-code such that it interacts with your collector and runtime, not a description
-of the collector itself.</p>
-<p>Next, mark your generated functions as using your chosen collector strategy.
-From c++, you can call:</p>
+<h2><a class="toc-backref" href="#id3">快速开始</a><a class="headerlink" href="#quick-start" title="永久链接至标题">¶</a></h2>
+<p>首先，你应该选择一个垃圾收集策略。 LLVM包括许多内置的，但你也可以实现一个自定义的可加载插件。注意，垃圾收集器的策略是在描述LLVM应该如何生成代码，使得生成的代码与垃圾收集器和运行时正确交互，并不是垃圾收集器本身的描述。</p>
+<p>接下来，用你选择的收集策略标记您生成的函数。从C++代码中，您可以调用：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">.</span><span class="n">setGC</span><span class="p">(</span><span class="o">&lt;</span><span class="n">collector</span> <span class="n">description</span> <span class="n">name</span><span class="o">&gt;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>This will produce IR like the following fragment:</p>
+<p>这将产生像下面的中间代码片段：</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="kt">void</span> <span class="vg">@foo</span><span class="p">()</span> <span class="k">gc</span> <span class="s">&quot;&lt;collector description name&gt;&quot;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
 </pre></div>
 </div>
-<p>When generating LLVM IR for your functions, you will need to:</p>
+<p>当为你的函数生成LLVM IR时，你将需要：</p>
 <ul class="simple">
-<li>Use <code class="docutils literal"><span class="pre">&#64;llvm.gcread</span></code> and/or <code class="docutils literal"><span class="pre">&#64;llvm.gcwrite</span></code> in place of standard load and
-store instructions.  These intrinsics are used to represent load and store
-barriers.  If you collector does not require such barriers, you can skip
-this step.</li>
-<li>Use the memory allocation routines provided by your garbage collector’s
-runtime library.</li>
-<li>If your collector requires them, generate type maps according to your
-runtime’s binary interface.  LLVM is not involved in the process.  In
-particular, the LLVM type system is not suitable for conveying such
-information though the compiler.</li>
-<li>Insert any coordination code required for interacting with your collector.
-Many collectors require running application code to periodically check a
-flag and conditionally call a runtime function.  This is often referred to
-as a safepoint poll.</li>
+<li>使用 <code class="docutils literal"><span class="pre">&#64;</span> <span class="pre">llvm.gcread</span></code> 和/或 <code class="docutils literal"><span class="pre">&#64;</span> <span class="pre">llvm.gcwrite</span></code> 代替标准的加载和存储指令。这些内部函数用于表示加载和存储的barriers。如果你收集器不需要这样的barriers，你可以跳过这一步。</li>
+<li>使用您的垃圾收集器的运行时库提供的内存分配程序</li>
+<li>如果您的垃圾收集器需要它们，可以根据您的运行时的二进制接口生成类型映射。 LLVM不参与这个过程。特别是，LLVM类型系统不适合通过编译器传送这些信息。</li>
+<li>插入与垃圾收集器交互所需的任何协调代码。许多收集器需要运行某些代码来定期检查flags并有条件地调用运行时功能。这通常被称为safepoint轮询。（译者注：safepoint的概念是进行垃圾收集动作时，可以安全执行的位置，通常是函数开始前后，所有寄存器中的指针都被保存到栈中时，这时对栈中适当位置扫描，即可获取所有引用的入口点。）</li>
 </ul>
-<p>You will need to identify roots (i.e. references to heap objects your collector
-needs to know about) in your generated IR, so that LLVM can encode them into
-your final stack maps.  Depending on the collector strategy chosen, this is
-accomplished by using either the <code class="docutils literal"><span class="pre">&#64;llvm.gcroot</span></code> intrinsics or an
-<code class="docutils literal"><span class="pre">gc.statepoint</span></code> relocation sequence.</p>
-<p>Don’t forget to create a root for each intermediate value that is generated when
-evaluating an expression.  In <code class="docutils literal"><span class="pre">h(f(),</span> <span class="pre">g())</span></code>, the result of <code class="docutils literal"><span class="pre">f()</span></code> could
-easily be collected if evaluating <code class="docutils literal"><span class="pre">g()</span></code> triggers a collection.</p>
-<p>Finally, you need to link your runtime library with the generated program
-executable (for a static compiler) or ensure the appropriate symbols are
-available for the runtime linker (for a JIT compiler).</p>
+<p>您将需要在生成的IR中确定根（例如：引用堆对象的收集器需要知道），让LLVM可以把他们编码进你最终的栈映射表。根据选择的收集器策略，这是可以通过使用  <code class="docutils literal"><span class="pre">&#64;</span> <span class="pre">llvm.gcroot</span></code> 内部函数或 <code class="docutils literal"><span class="pre">gc.statepoint</span></code> 重定位序列来实现。</p>
+<p>不要忘记为计算表达式时生成的每个中间值创建一个根。在  <code class="docutils literal"><span class="pre">h(f(),</span> <span class="pre">g())</span></code> 表达式中，如果 <code class="docutils literal"><span class="pre">g()</span></code> 触发了一个收集动作，那么 <code class="docutils literal"><span class="pre">f()</span></code> 的结果也应该可以很容易地被收集。</p>
+<p>最后，你需要你的运行时库与生成的可执行程序（对于静态编译）链接或保证对应的符号可以在运行时被链接（对于JIT编译器）。</p>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">导言</a><a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
 <div class="section" id="what-is-garbage-collection">
-<h3><a class="toc-backref" href="#id5">What is Garbage Collection?</a><a class="headerlink" href="#what-is-garbage-collection" title="永久链接至标题">¶</a></h3>
-<p>Garbage collection is a widely used technique that frees the programmer from
-having to know the lifetimes of heap objects, making software easier to produce
-and maintain.  Many programming languages rely on garbage collection for
-automatic memory management.  There are two primary forms of garbage collection:
-conservative and accurate.</p>
-<p>Conservative garbage collection often does not require any special support from
-either the language or the compiler: it can handle non-type-safe programming
-languages (such as C/C++) and does not require any special information from the
-compiler.  The <a class="reference external" href="http://www.hpl.hp.com/personal/Hans_Boehm/gc/">Boehm collector</a> is an example of a
-state-of-the-art conservative collector.</p>
-<p>Accurate garbage collection requires the ability to identify all pointers in the
-program at run-time (which requires that the source-language be type-safe in
-most cases).  Identifying pointers at run-time requires compiler support to
-locate all places that hold live pointer variables at run-time, including the
-<a class="reference internal" href="#gcroot"><span class="std std-ref">processor stack and registers</span></a>.</p>
-<p>Conservative garbage collection is attractive because it does not require any
-special compiler support, but it does have problems.  In particular, because the
-conservative garbage collector cannot <em>know</em> that a particular word in the
-machine is a pointer, it cannot move live objects in the heap (preventing the
-use of compacting and generational GC algorithms) and it can occasionally suffer
-from memory leaks due to integer values that happen to point to objects in the
-program.  In addition, some aggressive compiler transformations can break
-conservative garbage collectors (though these seem rare in practice).</p>
-<p>Accurate garbage collectors do not suffer from any of these problems, but they
-can suffer from degraded scalar optimization of the program.  In particular,
-because the runtime must be able to identify and update all pointers active in
-the program, some optimizations are less effective.  In practice, however, the
-locality and performance benefits of using aggressive garbage collection
-techniques dominates any low-level losses.</p>
-<p>This document describes the mechanisms and interfaces provided by LLVM to
-support accurate garbage collection.</p>
+<h3><a class="toc-backref" href="#id5">什么是垃圾收集？</a><a class="headerlink" href="#what-is-garbage-collection" title="永久链接至标题">¶</a></h3>
+<p>垃圾收集是一种广泛应用的技术，允许开发者不必关心堆对象的生存期，使得软件更容易构建和维护。许多编程语言依赖垃圾回收的自动内存管理特性。垃圾收集器有以下两种主要形式：保守的和准确的。</p>
+<p>保守垃圾收集往往不需要从任一语言或编译的任何特殊的支持：它可以处理非类型安全的编程语言（例如C / C++），并且不需要从编译器获取任何特殊的信息。这款 <a class="reference external" href="http://www.hpl.hp.com/personal/Hans_Boehm/gc/">Boehm collector</a> 是一个最先进的保守收集器的例子。</p>
+<p>准确垃圾收集需要在运行时（这需要源语言是类型安全在大多数情况下），以确定在程序中的所有指针的能力。在运行时确定的指针，需要编译器的支持，以找到在运行时保持住指针变量的所有地方，包括：<a class="reference internal" href="#gcroot"><span class="std std-ref">processor stack and registers</span></a>。</p>
+<p>保守的垃圾收集是有吸引力的，因为它不需要任何特殊的编译器的支持，但它确实有问题。特别是，由于保守的垃圾收集器不能*知道*，在机器一个特定的word可能是一个指针，它不能在堆中移动活动对象（导致不能使用压缩和世代GC算法），它可能偶尔发生内存泄漏，因为某些整数值可能恰好等于某个指针地址。此外，一些激进的编译器转换可能打破保守的垃圾收集器（虽然这些似乎在实践中罕见）。（译者注：保守的垃圾收集器将栈中所有可能的值都当做假想的指针，如果某个不是指针的数字被当做指针，那么将会导致某些可以被回收的元素一直不被回收，如果恰好是某个比较大的树结构的根，则会有大量内存泄露。不过这种收集器之所以实用，就是因为发生特殊情况的概率非常小。）</p>
+<p>准确的垃圾收集器不会受到这些问题的困扰，但他们可能会在标量优化时受到影响。特别是，由于在运行时必须能够识别和更新所有在程序中的活指针，一些优化会变得不太有效。然而在实践中，采用积极的垃圾收集技术的局部性和性能优势要胜过任何底层优化的损失。</p>
+<p>本文档描述了由LLVM提供支持和维护的准确垃圾收集器的机制和接口。</p>
 </div>
 <div class="section" id="goals-and-non-goals">
-<h3><a class="toc-backref" href="#id6">Goals and non-goals</a><a class="headerlink" href="#goals-and-non-goals" title="永久链接至标题">¶</a></h3>
-<p>LLVM’s intermediate representation provides <a class="reference internal" href="#gc-intrinsics"><span class="std std-ref">garbage collection intrinsics</span></a> that offer support for a broad class of collector models.  For
-instance, the intrinsics permit:</p>
+<h3><a class="toc-backref" href="#id6">目标和非目标</a><a class="headerlink" href="#goals-and-non-goals" title="永久链接至标题">¶</a></h3>
+<p>LLVM的中间表示为 <a class="reference internal" href="#gc-intrinsics"><span class="std std-ref">garbage collection intrinsics</span></a> 等很多收集器模型提供支持。例如，这些内置的收集器模型被支持：</p>
 <ul class="simple">
-<li>semi-space collectors</li>
-<li>mark-sweep collectors</li>
-<li>generational collectors</li>
-<li>incremental collectors</li>
-<li>concurrent collectors</li>
-<li>cooperative collectors</li>
-<li>reference counting</li>
+<li>半空间垃圾收集器</li>
+<li>标记 - 清除垃圾收集器</li>
+<li>世代垃圾收集</li>
+<li>增量式垃圾收集器</li>
+<li>并发垃圾收集器</li>
+<li>合作式垃圾收集器</li>
+<li>参考计数</li>
 </ul>
-<p>We hope that the support built into the LLVM IR is sufficient to support a
-broad class of garbage collected languages including Scheme, ML, Java, C#,
-Perl, Python, Lua, Ruby, other scripting languages, and more.</p>
-<p>Note that LLVM <strong>does not itself provide a garbage collector</strong> — this should
-be part of your language’s runtime library.  LLVM provides a framework for
-describing the garbage collectors requirements to the compiler.  In particular,
-LLVM provides support for generating stack maps at call sites, polling for a
-safepoint, and emitting load and store barriers.  You can also extend LLVM -
-possibly through a loadable <a class="reference internal" href="#plugin"><span class="std std-ref">code generation plugins</span></a> - to
-generate code and data structures which conforms to the <em>binary interface</em>
-specified by the <em>runtime library</em>.  This is similar to the relationship between
-LLVM and DWARF debugging info, for example.  The difference primarily lies in
-the lack of an established standard in the domain of garbage collection — thus
-the need for a flexible extension mechanism.</p>
-<p>The aspects of the binary interface with which LLVM’s GC support is
-concerned are:</p>
+<p>我们希望在LLVM IR上建立对垃圾收集的支持，使其能够支持一大类需要垃圾回收的语言，包括 Scheme，ML，Java，C#，Perl，Python，Lua，Ruby，其他脚本语言等。</p>
+<p>需要注意的是LLVM <strong>本身不提供垃圾回收</strong> — 这应该是你的语言的运行时库的一部分。 LLVM提供了描述垃圾收集要求编译器的框架。特别是，LLVM提供用于产生调用堆栈的结构表，轮询safepoint，并发读写屏障（barriers）的支持。您还可以扩展LLVM  - 可以通过一个可加载的 <a class="reference internal" href="#plugin"><span class="std std-ref">code generation plugins</span></a> - 生成一套符合 <em>二进制接口</em> 和 <em>运行时库</em> 的指定代码和数据结构。这类似于，如LLVM和DWARF调试信息之间的关系。所不同的，主要在于缺乏垃圾收集的领域标准—因此需要一个灵活的扩展机制。</p>
+<p>与LLVM的GC支持有关的二进制接口有：</p>
 <ul class="simple">
-<li>Creation of GC safepoints within code where collection is allowed to execute
-safely.</li>
-<li>Computation of the stack map.  For each safe point in the code, object
-references within the stack frame must be identified so that the collector may
-traverse and perhaps update them.</li>
-<li>Write barriers when storing object references to the heap.  These are commonly
-used to optimize incremental scans in generational collectors.</li>
-<li>Emission of read barriers when loading object references.  These are useful
-for interoperating with concurrent collectors.</li>
+<li>在可以安全执行收集代码的位置创建GC safepoints</li>
+<li>堆栈映射表的计算。为代码中的每个安全点，堆栈帧中的对象的引用必须确定，使得收集器可以遍历和或许更新它们。</li>
+<li>存储堆对象引用的时候发出Write barriers。这些都是世代收集，增量扫描常用的操作。</li>
+<li>加载对象引用的时候发出Read barriers。这些对并发收集器交互操作非常有用。</li>
 </ul>
-<p>There are additional areas that LLVM does not directly address:</p>
+<p>还有其他方面的LLVM不能直接解决：</p>
 <ul class="simple">
-<li>Registration of global roots with the runtime.</li>
-<li>Registration of stack map entries with the runtime.</li>
-<li>The functions used by the program to allocate memory, trigger a collection,
-etc.</li>
-<li>Computation or compilation of type maps, or registration of them with the
-runtime.  These are used to crawl the heap for object references.</li>
+<li>运行时全局根的注册。</li>
+<li>运行时栈映射表的注册。</li>
+<li>分配内存时使用的函数，触发垃圾收集等。</li>
+<li>类型映射表的计算或编译，或在运行时注册该表。这些都是在堆中爬取对象引用所必要的信息。（译者注：类型表对于GC非常重要，因为在堆中，所有内存都是一片连续的数据，你必须能够知道其中哪些是指针，哪些不是，所以必须有所有类型的元数据）</li>
 </ul>
-<p>In general, LLVM’s support for GC does not include features which can be
-adequately addressed with other features of the IR and does not specify a
-particular binary interface.  On the plus side, this means that you should be
-able to integrate LLVM with an existing runtime.  On the other hand, it can
-have the effect of leaving a lot of work for the developer of a novel
-language.  We try to mitigate this by providing built in collector strategy
-descriptions that can work with many common collector designs and easy
-extension points.  If you don’t already have a specific binary interface
-you need to support, we recommend trying to use one of these built in collector
-strategies.</p>
+<p>一般情况下，LLVM对GC支持不包括可充分解决与IR的其他功能，并且不指定一个特定的二进制接口功能。从有利的一面，这意味着你应该能够LLVM与现有的运行时集成。另一方面，它为新语言的开发者留下了很多工作。我们试图通过提供内置的收集策略的描述，可以与许多常见设计的收集器易于扩展整合，以减轻这部分工作量。如果你还没有，你需要支持特定的二进制接口，我们建议您尝试使用这些内置在收集策略之一。</p>
 </div>
 </div>
 <div class="section" id="llvm-ir-features">
-<span id="gc-intrinsics"></span><h2><a class="toc-backref" href="#id7">LLVM IR Features</a><a class="headerlink" href="#llvm-ir-features" title="永久链接至标题">¶</a></h2>
-<p>This section describes the garbage collection facilities provided by the
-<a class="reference internal" href="LangRef.html"><span class="doc">LLVM intermediate representation</span></a>.  The exact behavior of these
-IR features is specified by the selected <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy description</span></a>.</p>
+<span id="gc-intrinsics"></span><h2><a class="toc-backref" href="#id7">LLVM IR特性</a><a class="headerlink" href="#llvm-ir-features" title="永久链接至标题">¶</a></h2>
+<p>本节介绍所提供的垃圾收集设施 <a class="reference internal" href="LangRef.html"><span class="doc">LLVM intermediate representation</span></a>。 选定的这些IR的确切行为可以参考这里： <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy description</span></a>。</p>
 <div class="section" id="specifying-gc-code-generation-gc">
-<h3><a class="toc-backref" href="#id8">Specifying GC code generation: <code class="docutils literal"><span class="pre">gc</span> <span class="pre">&quot;...&quot;</span></code></a><a class="headerlink" href="#specifying-gc-code-generation-gc" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">指定GC代码的生成: <code class="docutils literal"><span class="pre">gc</span> <span class="pre">&quot;...&quot;</span></code></a><a class="headerlink" href="#specifying-gc-code-generation-gc" title="永久链接至标题">¶</a></h3>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span>define &lt;returntype&gt; @name(...) gc &quot;name&quot; { ... }
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">gc</span></code> function attribute is used to specify the desired GC strategy to the
-compiler.  Its programmatic equivalent is the <code class="docutils literal"><span class="pre">setGC</span></code> method of <code class="docutils literal"><span class="pre">Function</span></code>.</p>
-<p>Setting <code class="docutils literal"><span class="pre">gc</span> <span class="pre">&quot;name&quot;</span></code> on a function triggers a search for a matching subclass
-of GCStrategy.  Some collector strategies are built in.  You can add others
-using either the loadable plugin mechanism, or by patching your copy of LLVM.
-It is the selected GC strategy which defines the exact nature of the code
-generated to support GC.  If none is found, the compiler will raise an error.</p>
-<p>Specifying the GC style on a per-function basis allows LLVM to link together
-programs that use different garbage collection algorithms (or none at all).</p>
+<p>该 <code class="docutils literal"><span class="pre">gc</span></code> 功能属性用于指定所需的GC策略编译器。其方案相当于是 <code class="docutils literal"><span class="pre">Function</span></code> 的 <code class="docutils literal"><span class="pre">setGC</span></code> 方法。</p>
+<p>在一个函数上设置  <code class="docutils literal"><span class="pre">gc</span> <span class="pre">&quot;name&quot;</span></code>  会触发搜索来尝试匹配GCStrategy的子类。一些收集器的策略是内置的。您可以添加其他的策略或者使用可加载插件机制，或者直接编写Patching修改LLVM。是被选的GC策略定义了支持GC的代码的确切性质。如果没有找到，编译器会产生一个错误。</p>
+<p>指定的GC，在每个函数的基础上，允许LLVM使用不同的垃圾收集算法（或没有）</p>
 </div>
 <div class="section" id="gcroot">
-<span id="identifying-gc-roots-on-the-stack"></span><h3><a class="toc-backref" href="#id9">Identifying GC roots on the stack</a><a class="headerlink" href="#gcroot" title="永久链接至标题">¶</a></h3>
-<p>LLVM currently supports two different mechanisms for describing references in
-compiled code at safepoints.  <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> is the older mechanism;
-<code class="docutils literal"><span class="pre">gc.statepoint</span></code> has been added more recently.  At the moment, you can choose
-either implementation (on a per <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a> basis).  Longer
-term, we will probably either migrate away from <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> entirely, or
-substantially merge their implementations. Note that most new development
-work is focused on <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.</p>
+<span id="identifying-gc-roots-on-the-stack"></span><h3><a class="toc-backref" href="#id9">在栈上识别GC根</a><a class="headerlink" href="#gcroot" title="永久链接至标题">¶</a></h3>
+<p>LLVM目前支持在safepoints描述编译代码引用两种不同的机制。 <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> 是旧的机制; <code class="docutils literal"><span class="pre">gc.statepoint</span></code> 已经成为最新特性。目前，您可以选择执行（以 <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a>  为基础）。从长期来看，我们可能要么远离 <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> 实现完全迁移或实质上合并它们的实现。请注意，大多数新的开发工作主要集中在 <code class="docutils literal"><span class="pre">gc.statepoint</span></code> 。</p>
 <div class="section" id="using-gc-statepoint">
-<h4><a class="toc-backref" href="#id10">Using <code class="docutils literal"><span class="pre">gc.statepoint</span></code></a><a class="headerlink" href="#using-gc-statepoint" title="永久链接至标题">¶</a></h4>
-<p><a class="reference internal" href="Statepoints.html"><span class="doc">This page</span></a> contains detailed documentation for
-<code class="docutils literal"><span class="pre">gc.statepoint</span></code>.</p>
+<h4><a class="toc-backref" href="#id10">使用 <code class="docutils literal"><span class="pre">gc.statepoint</span></code></a><a class="headerlink" href="#using-gc-statepoint" title="永久链接至标题">¶</a></h4>
+<p><a class="reference internal" href="Statepoints.html"><span class="doc">This page</span></a> 包含了 <code class="docutils literal"><span class="pre">gc.statepoint</span></code> 详细文档。</p>
 </div>
 <div class="section" id="using-llvm-gcwrite">
-<h4><a class="toc-backref" href="#id11">Using <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a><a class="headerlink" href="#using-llvm-gcwrite" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id11">使用 <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a><a class="headerlink" href="#using-llvm-gcwrite" title="永久链接至标题">¶</a></h4>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="vg">@llvm.gcroot</span><span class="p">(</span><span class="k">i8</span><span class="p">**</span> <span class="nv">%ptrloc</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%metadata</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> intrinsic is used to inform LLVM that a stack variable
-references an object on the heap and is to be tracked for garbage collection.
-The exact impact on generated code is specified by the Function’s selected
-<a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a>.  All calls to <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> <strong>must</strong> reside
-inside the first basic block.</p>
-<p>The first argument <strong>must</strong> be a value referring to an alloca instruction or a
-bitcast of an alloca.  The second contains a pointer to metadata that should be
-associated with the pointer, and <strong>must</strong> be a constant or global value
-address.  If your target collector uses tags, use a null pointer for metadata.</p>
-<p>A compiler which performs manual SSA construction <strong>must</strong> ensure that SSA
-values representing GC references are stored in to the alloca passed to the
-respective <code class="docutils literal"><span class="pre">gcroot</span></code> before every call site and reloaded after every call.
-A compiler which uses mem2reg to raise imperative code using <code class="docutils literal"><span class="pre">alloca</span></code> into
-SSA form need only add a call to <code class="docutils literal"><span class="pre">&#64;llvm.gcroot</span></code> for those variables which
-are pointers into the GC heap.</p>
-<p>It is also important to mark intermediate values with <code class="docutils literal"><span class="pre">llvm.gcroot</span></code>.  For
-example, consider <code class="docutils literal"><span class="pre">h(f(),</span> <span class="pre">g())</span></code>.  Beware leaking the result of <code class="docutils literal"><span class="pre">f()</span></code> in the
-case that <code class="docutils literal"><span class="pre">g()</span></code> triggers a collection.  Note, that stack variables must be
-initialized and marked with <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> in function’s prologue.</p>
+<p>该 <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> 内部命令用来告诉LLVM一个堆栈变量引用了堆中的某个对象，这个引用应该被垃圾收集器所追踪。 生成的代码的确切影响由所选择的函数指定 <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a> 。所有调用 <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> 的语句 <strong>必须</strong> 驻留在本函数的第一个基本块内。（译者注：一般编写代码时的临时变量都会在栈上开辟一块内存空间，指针也不例外， <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> 正是指明了这样一种关系，某个栈上的临时变量引用了某个堆上的对象，这样垃圾回收器就可以追踪当前所有被引用的对象，正是从一系列的gcroot开始。必须驻留在第一个基本块中，也是出于安全的考虑，很可能某些操作会导致这个内存加载到寄存器中，没有及时更新回内存，导致垃圾回收器监测了错误的内存地址。）</p>
+<p>第一个参数 <strong>必须</strong> 是一个地址，指向指令alloca分配的地址或者alloca的一个bitcast转换。第二包含一个指向应与该指针相关联的元数据，<a href="#id1"><span class="problematic" id="id2">**</span></a>必须**是常量或全局值地址。如果你的目标收集器使用标签，用一个空指针作为元数据。</p>
+<p>手动执行静态单赋值（SSA）构建的编译器 <strong>必须</strong> 确保代表GC引用的被存储在alloca分配的地址的SSA值，在每次调用点之前能传递给相应的 <code class="docutils literal"><span class="pre">gcroot</span></code> 并在每次调用后重新加载。采用mem2reg提高代码性能的编译器，只需要对于那些指向GC堆的指针变量添加一个 <code class="docutils literal"><span class="pre">&#64;llvm.gcroot</span></code> 调用。</p>
+<p>同样重要的是，标记带有 <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> 的中间变量。例如，考虑 <code class="docutils literal"><span class="pre">h(f(),</span> <span class="pre">g())</span></code> 。 在 <code class="docutils literal"><span class="pre">g()</span></code> 触发一个收集动作时，必须小心 <code class="docutils literal"><span class="pre">f()</span></code> 的返回值发生泄露。请注意，堆栈变量必须在函数的开头部分被初始化并用 <cite>llvm.gcroot`</cite> 标记。（译者注：这个内存泄露的例子是说，如果嵌套函数调用，返回值会存储到了两个临时变量中，必须小心地标记这些用到的中间变量，假设f()返回了一个对象，存储在临时变量a1中，并没有用gcroot标记，那么g()函数内触发了一次垃圾回收，就会因为a1没有被标记为gcroot，对应的内存被标记为没有引用，就可能会被这次垃圾回收给回收掉，造成g()调用结束后，f()的返回值已经不可用了。这样不可用的内存地址传入h函数时必然会发生异常。）</p>
 <p>The <code class="docutils literal"><span class="pre">%metadata</span></code> argument can be used to avoid requiring heap objects to have
 ‘isa’ pointers or tag bits. [<a class="reference internal" href="#appel89">Appel89</a>, <a class="reference internal" href="#goldberg91">Goldberg91</a>, <a class="reference internal" href="#tolmach94">Tolmach94</a>] If specified,
 its value will be tracked along with the location of the pointer in the stack
 frame.</p>
-<p>Consider the following fragment of Java code:</p>
+<p>考虑如下的Java代码片段：</p>
 <div class="highlight-java"><div class="highlight"><pre><span></span><span class="o">{</span>
   <span class="n">Object</span> <span class="n">X</span><span class="o">;</span>   <span class="c1">// A null-initialized reference to an object</span>
   <span class="o">...</span>
 <span class="o">}</span>
 </pre></div>
 </div>
-<p>This block (which may be located in the middle of a function or in a loop nest),
-could be compiled to this LLVM code:</p>
+<p>这个块（可能位于一个函数的中间或循环嵌套）可以被编译成这个LLVM代码：</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">Entry:</span>
    <span class="c">;; In the entry block for the function, allocate the</span>
    <span class="c">;; stack space for X, which is an LLVM pointer.</span>
@@ -365,18 +254,9 @@ could be compiled to this LLVM code:</p>
 </div>
 </div>
 <div class="section" id="reading-and-writing-references-in-the-heap">
-<h3><a class="toc-backref" href="#id12">Reading and writing references in the heap</a><a class="headerlink" href="#reading-and-writing-references-in-the-heap" title="永久链接至标题">¶</a></h3>
-<p>Some collectors need to be informed when the mutator (the program that needs
-garbage collection) either reads a pointer from or writes a pointer to a field
-of a heap object.  The code fragments inserted at these points are called <em>read
-barriers</em> and <em>write barriers</em>, respectively.  The amount of code that needs to
-be executed is usually quite small and not on the critical path of any
-computation, so the overall performance impact of the barrier is tolerable.</p>
-<p>Barriers often require access to the <em>object pointer</em> rather than the <em>derived
-pointer</em> (which is a pointer to the field within the object).  Accordingly,
-these intrinsics take both pointers as separate arguments for completeness.  In
-this snippet, <code class="docutils literal"><span class="pre">%object</span></code> is the object pointer, and <code class="docutils literal"><span class="pre">%derived</span></code> is the derived
-pointer:</p>
+<h3><a class="toc-backref" href="#id12">在堆中读取和写入引用</a><a class="headerlink" href="#reading-and-writing-references-in-the-heap" title="永久链接至标题">¶</a></h3>
+<p>当mutator（需要垃圾收集的程序）从堆对象的字段读取指针或写入指针时，需要通知某些收集器。插入这些点的代码片段分别被称为*读屏障*和*写屏障*。需要执行的代码量通常很小，且不在任何计算的关键路径上，因此屏障的整体性能影响是可以接受的。</p>
+<p>屏障（Barriers）常常需要访问*对象指针*而非*衍生指针*（这是一个指针字段对象内）。因此，这些内在需要两个指针作为独立完整的参数。在这个片段中，<code class="docutils literal"><span class="pre">%object</span></code> 是对象指针，<code class="docutils literal"><span class="pre">%derived</span></code> 是派生的指针：</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="c">;; An array type.</span>
 <span class="nv">%class.Array</span> <span class="p">=</span> <span class="k">type</span> <span class="p">{</span> <span class="nv">%class.Object</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">[</span><span class="m">0</span> <span class="k">x</span> <span class="nv">%class.Object</span><span class="p">*]</span> <span class="p">}</span>
 <span class="p">...</span>
@@ -388,76 +268,45 @@ pointer:</p>
 <span class="nv">%derived</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%object</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%n</span>
 </pre></div>
 </div>
-<p>LLVM does not enforce this relationship between the object and derived pointer
-(although a particular <a class="reference internal" href="#plugin"><span class="std std-ref">collector strategy</span></a> might).  However, it
-would be an unusual collector that violated it.</p>
-<p>The use of these intrinsics is naturally optional if the target GC does not
-require the corresponding barrier.  The GC strategy used with such a collector
-should replace the intrinsic calls with the corresponding <code class="docutils literal"><span class="pre">load</span></code> or
-<code class="docutils literal"><span class="pre">store</span></code> instruction if they are used.</p>
-<p>One known deficiency with the current design is that the barrier intrinsics do
-not include the size or alignment of the underlying operation performed.  It is
-currently assumed that the operation is of pointer size and the alignment is
-assumed to be the target machine’s default alignment.</p>
+<p>LLVM不强制制定对象和派生的指针之间的这种关系（虽然具体为 <a class="reference internal" href="#plugin"><span class="std std-ref">collector strategy</span></a> ）。然而，很少有垃圾收集器违反它。</p>
+<p>使用这些内在的是自然可选如果目标的GC不需要相应屏障。如果使用他们这样的收集器所使用的GC策略应更换相应的 <code class="docutils literal"><span class="pre">load</span></code> 或 <code class="docutils literal"><span class="pre">store</span></code> 指令的内部调用。</p>
+<p>当前设计的一个已知缺陷是屏障内在函数不包括所执行的基础操作的大小或对齐。目前假定操作是指针大小，并且地址对齐被认为是目标机器的默认对齐。</p>
 <div class="section" id="write-barrier-llvm-gcwrite">
-<h4><a class="toc-backref" href="#id13">Write barrier: <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a><a class="headerlink" href="#write-barrier-llvm-gcwrite" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id13">写屏障： <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code></a><a class="headerlink" href="#write-barrier-llvm-gcwrite" title="永久链接至标题">¶</a></h4>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="vg">@llvm.gcwrite</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%value</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%object</span><span class="p">,</span> <span class="k">i8</span><span class="p">**</span> <span class="nv">%derived</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For write barriers, LLVM provides the <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code> intrinsic function.  It
-has exactly the same semantics as a non-volatile <code class="docutils literal"><span class="pre">store</span></code> to the derived
-pointer (the third argument).  The exact code generated is specified by the
-Function’s selected <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a>.</p>
-<p>Many important algorithms require write barriers, including generational and
-concurrent collectors.  Additionally, write barriers could be used to implement
-reference counting.</p>
+<p>对于写障碍，LLVM提供了 <code class="docutils literal"><span class="pre">llvm.gcwrite</span></code> 固有功能。它具有完全相同的语义非易失性 <code class="docutils literal"><span class="pre">store</span></code> 到派生的指针（第三个参数）。参考：<a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a> 产生的确切的代码是由函数的选择指定。</p>
+<p>许多重要的算法需要编写屏障，包括分代和并发收集器。另外，可以使用写屏障来实现引用计数。</p>
 </div>
 <div class="section" id="read-barrier-llvm-gcread">
-<h4><a class="toc-backref" href="#id14">Read barrier: <code class="docutils literal"><span class="pre">llvm.gcread</span></code></a><a class="headerlink" href="#read-barrier-llvm-gcread" title="永久链接至标题">¶</a></h4>
+<h4><a class="toc-backref" href="#id14">读障碍： <code class="docutils literal"><span class="pre">llvm.gcread</span></code></a><a class="headerlink" href="#read-barrier-llvm-gcread" title="永久链接至标题">¶</a></h4>
 <div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.gcread</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%object</span><span class="p">,</span> <span class="k">i8</span><span class="p">**</span> <span class="nv">%derived</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For read barriers, LLVM provides the <code class="docutils literal"><span class="pre">llvm.gcread</span></code> intrinsic function.  It has
-exactly the same semantics as a non-volatile <code class="docutils literal"><span class="pre">load</span></code> from the derived pointer
-(the second argument).  The exact code generated is specified by the Function’s
-selected <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a>.</p>
-<p>Read barriers are needed by fewer algorithms than write barriers, and may have a
-greater performance impact since pointer reads are more frequent than writes.</p>
+<p>对于读障碍，LLVM提供了 <code class="docutils literal"><span class="pre">llvm.gcread</span></code> 固有功能。它具有同样的语义从派生的指针（第二个参数）的非易失性``load``。 <a class="reference internal" href="#plugin"><span class="std std-ref">GC strategy</span></a> 产生的确切的代码是由函数的选择指定。</p>
+<p>读相对写来说，较少需要障碍，但仍然可能更大程度地影响性能，因为指针读取比写更频繁。</p>
 </div>
 </div>
 </div>
 <div class="section" id="built-in-gc-strategies">
-<span id="builtin-gc-strategies"></span><span id="plugin"></span><h2><a class="toc-backref" href="#id15">Built In GC Strategies</a><a class="headerlink" href="#built-in-gc-strategies" title="永久链接至标题">¶</a></h2>
-<p>LLVM includes built in support for several varieties of garbage collectors.</p>
+<span id="builtin-gc-strategies"></span><span id="plugin"></span><h2><a class="toc-backref" href="#id15">建于GC策略</a><a class="headerlink" href="#built-in-gc-strategies" title="永久链接至标题">¶</a></h2>
+<p>LLVM包含对几种垃圾收集器的内置支持。</p>
 <div class="section" id="the-shadow-stack-gc">
-<h3><a class="toc-backref" href="#id16">The Shadow Stack GC</a><a class="headerlink" href="#the-shadow-stack-gc" title="永久链接至标题">¶</a></h3>
-<p>To use this collector strategy, mark your functions with:</p>
+<h3><a class="toc-backref" href="#id16">影子堆栈GC（Shadow Stack GC）</a><a class="headerlink" href="#the-shadow-stack-gc" title="永久链接至标题">¶</a></h3>
+<p>要使用此收集器策略，请使用以下标签标记您的函数：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">.</span><span class="n">setGC</span><span class="p">(</span><span class="s">&quot;shadow-stack&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Unlike many GC algorithms which rely on a cooperative code generator to compile
-stack maps, this algorithm carefully maintains a linked list of stack roots
-[<a class="reference internal" href="#henderson02"><span class="std std-ref">Henderson2002</span></a>].  This so-called “shadow stack” mirrors the
-machine stack.  Maintaining this data structure is slower than using a stack map
-compiled into the executable as constant data, but has a significant portability
-advantage because it requires no special support from the target code generator,
-and does not require tricky platform-specific code to crawl the machine stack.</p>
-<p>The tradeoff for this simplicity and portability is:</p>
+<p>不同于依靠合作代码生成器来编译堆栈映射表的很多GC算法，该算法谨慎地保持着堆根链表 [<a class="reference internal" href="#henderson02"><span class="std std-ref">Henderson2002</span></a>]。这种所谓的 “shadow stack” 是机器堆栈的一个镜像。保持这种数据结构比使用编译成可执行固定数据堆栈映射慢，但有一个显著可移植性的优点，因为它不需要目标代码生成器的特殊支持，并且不需要棘手的特定平台代码，来抓取本机堆栈。</p>
+<p>这种简洁性和便携性的代价是：</p>
 <ul class="simple">
-<li>High overhead per function call.</li>
-<li>Not thread-safe.</li>
+<li>每次函数调用的开销很高。</li>
+<li>不是线程安全的。</li>
 </ul>
-<p>Still, it’s an easy way to get started.  After your compiler and runtime are up
-and running, writing a <a class="reference internal" href="#plugin"><span class="std std-ref">plugin</span></a> will allow you to take advantage
-of <a class="reference internal" href="#collector-algos"><span class="std std-ref">more advanced GC features</span></a> of LLVM in order to
-improve performance.</p>
-<p>The shadow stack doesn’t imply a memory allocation algorithm.  A semispace
-collector or building atop <code class="docutils literal"><span class="pre">malloc</span></code> are great places to start, and can be
-implemented with very little code.</p>
-<p>When it comes time to collect, however, your runtime needs to traverse the stack
-roots, and for this it needs to integrate with the shadow stack.  Luckily, doing
-so is very simple. (This code is heavily commented to help you understand the
-data structure, but there are only 20 lines of meaningful code.)</p>
+<p>不过，这是一个简单的入门方法。编译器和运行库启动并运行后，编写一个 <a class="reference internal" href="#plugin"><span class="std std-ref">plugin</span></a> 可以让您利用LLVM的更高级GC功能&lt;collector-algos&gt;来提高性能。</p>
+<p>该影子堆栈算法，并不需要编写内存分配算法。一个半空间收集器或构建在 <a href="#id1"><span class="problematic" id="id2">``</span></a>malloc` 上的分配器就是一个很好的入手点，可以用很少的代码来实现。</p>
+<p>但是，当需要收集时，您的运行时需要遍历堆栈根，因此需要与影子堆栈集成。幸运的是，这样做很简单。 （这段代码被大量的评论来帮助你理解数据结构，但是只有20行有意义的代码。）</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">/// @brief The map for a single function&#39;s stack frame.  One of these is</span>
 <span class="c1">///        compiled as constant data into the executable for each function.</span>
 <span class="c1">///</span>
@@ -509,100 +358,53 @@ data structure, but there are only 20 lines of meaningful code.)</p>
 </div>
 <div class="section" id="the-erlang-and-ocaml-gcs">
 <h3><a class="toc-backref" href="#id17">The ‘Erlang’ and ‘Ocaml’ GCs</a><a class="headerlink" href="#the-erlang-and-ocaml-gcs" title="永久链接至标题">¶</a></h3>
-<p>LLVM ships with two example collectors which leverage the <code class="docutils literal"><span class="pre">gcroot</span></code>
-mechanisms.  To our knowledge, these are not actually used by any language
-runtime, but they do provide a reasonable starting point for someone interested
-in writing an <code class="docutils literal"><span class="pre">gcroot</span></code> compatible GC plugin.  In particular, these are the
-only in tree examples of how to produce a custom binary stack map format using
-a <code class="docutils literal"><span class="pre">gcroot</span></code> strategy.</p>
-<p>As there names imply, the binary format produced is intended to model that
-used by the Erlang and OCaml compilers respectively.</p>
+<p>LLVM附带两个利用 <code class="docutils literal"><span class="pre">gcroot</span></code> 机制的示例收集器。据我们所知，这些实际上并没有被任何语言运行时使用，但是它们为有兴趣编写  <code class="docutils literal"><span class="pre">gcroot</span></code> 兼容GC的插件的人提供了一个合理的起点。特别是，这些是树型示例中唯一如何使用gcroot策略生成自定义二进制堆栈映射格式的示例。</p>
+<p>因为顾名思义，所产生的二进制格式是为了模拟Erlang和OCaml编译器分别使用的格式。</p>
 </div>
 <div class="section" id="the-statepoint-example-gc">
-<span id="statepoint-example-gc"></span><h3><a class="toc-backref" href="#id18">The Statepoint Example GC</a><a class="headerlink" href="#the-statepoint-example-gc" title="永久链接至标题">¶</a></h3>
+<span id="statepoint-example-gc"></span><h3><a class="toc-backref" href="#id18">Statepoint示例GC</a><a class="headerlink" href="#the-statepoint-example-gc" title="永久链接至标题">¶</a></h3>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">.</span><span class="n">setGC</span><span class="p">(</span><span class="s">&quot;statepoint-example&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>This GC provides an example of how one might use the infrastructure provided
-by <code class="docutils literal"><span class="pre">gc.statepoint</span></code>. This example GC is compatible with the
-<a class="reference internal" href="Statepoints.html#placesafepoints"><span class="std std-ref">PlaceSafepoints</span></a> and <a class="reference internal" href="Statepoints.html#rewritestatepointsforgc"><span class="std std-ref">RewriteStatepointsForGC</span></a> utility passes
-which simplify <code class="docutils literal"><span class="pre">gc.statepoint</span></code> sequence insertion. If you need to build a
-custom GC strategy around the <code class="docutils literal"><span class="pre">gc.statepoints</span></code> mechanisms, it is recommended
-that you use this one as a starting point.</p>
-<p>This GC strategy does not support read or write barriers.  As a result, these
-intrinsics are lowered to normal loads and stores.</p>
-<p>The stack map format generated by this GC strategy can be found in the
-<a class="reference internal" href="StackMaps.html#stackmap-section"><span class="std std-ref">Stack Map Section</span></a> using a format documented <a class="reference internal" href="Statepoints.html#statepoint-stackmap-format"><span class="std std-ref">here</span></a>. This format is intended to be the standard
-format supported by LLVM going forward.</p>
+<p>这个GC提供了一个例子，说明如何使用gc.statepoint提供的基础结构。这个示例GC兼容 <a class="reference internal" href="Statepoints.html#placesafepoints"><span class="std std-ref">PlaceSafepoints</span></a> 和 <a class="reference internal" href="Statepoints.html#rewritestatepointsforgc"><span class="std std-ref">RewriteStatepointsForGC</span></a> 实用Pass，可以简化gc.statepoint序列的插入。如果你需要在 <code class="docutils literal"><span class="pre">gc.statepoints</span></code> 机制周围建立一个自定义GC策略，建议你使用这个策略作为起点。</p>
+<p>此GC策略不支持读取或写入屏障。结果，这些内部函数被降级为正常的加载和存储。</p>
+<p>这个GC策略生成的堆栈映射格式可以在以下文件的 <a class="reference internal" href="StackMaps.html#stackmap-section"><span class="std std-ref">Stack Map Section</span></a> 中找到 ref:<cite>here &lt;statepoint-stackmap-format&gt;</cite> 。这种格式旨在成为LLVM向前发展的标准格式。</p>
 </div>
 <div class="section" id="the-coreclr-gc">
-<h3><a class="toc-backref" href="#id19">The CoreCLR GC</a><a class="headerlink" href="#the-coreclr-gc" title="永久链接至标题">¶</a></h3>
+<h3><a class="toc-backref" href="#id19">CoreCLR GC</a><a class="headerlink" href="#the-coreclr-gc" title="永久链接至标题">¶</a></h3>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">.</span><span class="n">setGC</span><span class="p">(</span><span class="s">&quot;coreclr&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>This GC leverages the <code class="docutils literal"><span class="pre">gc.statepoint</span></code> mechanism to support the
-<a class="reference external" href="https://github.com/dotnet/coreclr">CoreCLR</a> runtime.</p>
-<p>Support for this GC strategy is a work in progress. This strategy will
-differ from
-<a class="reference internal" href="#statepoint-example-gc"><span class="std std-ref">statepoint-example GC</span></a> strategy in
-certain aspects like:</p>
+<p>这个GC利用gc.statepoint机制来支持  <a class="reference external" href="https://github.com/dotnet/coreclr">CoreCLR</a>   运行时。</p>
+<p>这个GC策略的支持是一项正在进行的工作。 这个策略与 <a class="reference internal" href="#statepoint-example-gc"><span class="std std-ref">statepoint-example GC</span></a> 在某些方面有所不同，如：</p>
 <ul class="simple">
-<li>Base-pointers of interior pointers are not explicitly
-tracked and reported.</li>
-<li>A different format is used for encoding stack maps.</li>
-<li>Safe-point polls are only needed before loop-back edges
-and before tail-calls (not needed at function-entry).</li>
+<li>内部指针的基本指针没有明确的跟踪和报告。</li>
+<li>编码堆栈映射使用不同的格式。</li>
+<li>安全点轮询仅在回送边缘之前和尾部呼叫之前需要（在函数入口处不需要）。</li>
 </ul>
 </div>
 </div>
 <div class="section" id="custom-gc-strategies">
-<h2><a class="toc-backref" href="#id20">Custom GC Strategies</a><a class="headerlink" href="#custom-gc-strategies" title="永久链接至标题">¶</a></h2>
-<p>If none of the built in GC strategy descriptions met your needs above, you will
-need to define a custom GCStrategy and possibly, a custom LLVM pass to perform
-lowering.  Your best example of where to start defining a custom GCStrategy
-would be to look at one of the built in strategies.</p>
-<p>You may be able to structure this additional code as a loadable plugin library.
-Loadable plugins are sufficient if all you need is to enable a different
-combination of built in functionality, but if you need to provide a custom
-lowering pass, you will need to build a patched version of LLVM.  If you think
-you need a patched build, please ask for advice on llvm-dev.  There may be an
-easy way we can extend the support to make it work for your use case without
-requiring a custom build.</p>
+<h2><a class="toc-backref" href="#id20">自定义GC策略</a><a class="headerlink" href="#custom-gc-strategies" title="永久链接至标题">¶</a></h2>
+<p>如果内置的GC策略描述中没有一个满足您的需求，则需要定义一个自定义GCStrategy，并可能需要定制LLVM通道来执行降低操作。从哪里开始定义定制的GCStrategy最好的例子就是看看内置的策略之一。</p>
+<p>您可以将这些附加代码构建为可加载的插件库。如果您只需要启用内置功能的不同组合，则可加载插件就足够了，但是如果您需要提供自定义降级通道，则需要构建LLVM的修补版本。如果您认为您需要修补版本，请咨询llvm-dev的建议。可能有一个简单的方法，我们可以扩展支持，使其为您的用例工作，而无需自定义生成。</p>
 <div class="section" id="collector-requirements">
-<h3><a class="toc-backref" href="#id21">Collector Requirements</a><a class="headerlink" href="#collector-requirements" title="永久链接至标题">¶</a></h3>
-<p>You should be able to leverage any existing collector library that includes the following elements:</p>
+<h3><a class="toc-backref" href="#id21">垃圾收集器要求</a><a class="headerlink" href="#collector-requirements" title="永久链接至标题">¶</a></h3>
+<p>您应该能够使用用包含以下元素的任何现有的垃圾收集器库：</p>
 <ol class="arabic simple">
-<li>A memory allocator which exposes an allocation function your compiled
-code can call.</li>
-<li>A binary format for the stack map.  A stack map describes the location
-of references at a safepoint and is used by precise collectors to identify
-references within a stack frame on the machine stack. Note that collectors
-which conservatively scan the stack don’t require such a structure.</li>
-<li>A stack crawler to discover functions on the call stack, and enumerate the
-references listed in the stack map for each call site.</li>
-<li>A mechanism for identifying references in global locations (e.g. global
-variables).</li>
-<li>If you collector requires them, an LLVM IR implementation of your collectors
-load and store barriers.  Note that since many collectors don’t require
-barriers at all, LLVM defaults to lowering such barriers to normal loads
-and stores unless you arrange otherwise.</li>
+<li>一个内存分配器，它提供了编译后的代码可以调用的分配函数。</li>
+<li>堆栈映射的二进制格式。堆栈映射在一个safepoint描述引用的位置，在精确的收集器中用于标识机器堆栈上的堆栈帧内的引用。请注意，保守扫描堆栈的收集器不需要这样的结构。</li>
+<li>一个堆栈搜寻器发现调用堆栈上的函数，并枚举堆栈映射中列出的每个调用点的引用。</li>
+<li>用于识别全局位置（例如全局变量）中的引用的机制。</li>
+<li>如果您的收集器需要它们，您的收集器的LLVM IR实施会加载和存储屏障。请注意，由于许多垃圾收集器完全不需要任何屏障，LLVM默认将这些障碍降至正常的装载和存储，除非您另有安排。</li>
 </ol>
 </div>
 <div class="section" id="implementing-a-collector-plugin">
-<h3><a class="toc-backref" href="#id22">Implementing a collector plugin</a><a class="headerlink" href="#implementing-a-collector-plugin" title="永久链接至标题">¶</a></h3>
-<p>User code specifies which GC code generation to use with the <code class="docutils literal"><span class="pre">gc</span></code> function
-attribute or, equivalently, with the <code class="docutils literal"><span class="pre">setGC</span></code> method of <code class="docutils literal"><span class="pre">Function</span></code>.</p>
-<p>To implement a GC plugin, it is necessary to subclass <code class="docutils literal"><span class="pre">llvm::GCStrategy</span></code>,
-which can be accomplished in a few lines of boilerplate code.  LLVM’s
-infrastructure provides access to several important algorithms.  For an
-uncontroversial collector, all that remains may be to compile LLVM’s computed
-stack map to assembly code (using the binary representation expected by the
-runtime library).  This can be accomplished in about 100 lines of code.</p>
-<p>This is not the appropriate place to implement a garbage collected heap or a
-garbage collector itself.  That code should exist in the language’s runtime
-library.  The compiler plugin is responsible for generating code which conforms
-to the binary interface defined by library, most essentially the <a class="reference internal" href="#stack-map"><span class="std std-ref">stack map</span></a>.</p>
-<p>To subclass <code class="docutils literal"><span class="pre">llvm::GCStrategy</span></code> and register it with the compiler:</p>
+<h3><a class="toc-backref" href="#id22">实现一个收集器插件</a><a class="headerlink" href="#implementing-a-collector-plugin" title="永久链接至标题">¶</a></h3>
+<p>用户代码指定哪个GC代码生成与 <code class="docutils literal"><span class="pre">gc</span></code> 函数属性一起使用，或者等同于 <code class="docutils literal"><span class="pre">Function</span></code> 的 <code class="docutils literal"><span class="pre">setGC</span></code> 方法。</p>
+<p>要实现一个GC插件，需要继承 <code class="docutils literal"><span class="pre">llvm</span> <span class="pre">::</span> <span class="pre">GCStrategy</span></code> ，这可以通过几行样板代码完成。 LLVM的基础架构提供了对几个重要算法的访问。对于一个没有争议的收集器，剩下的可能是编译LLVM的计算堆栈映射到汇编代码（使用运行时库期望的二进制表示）。这可以在大约100行代码中完成。</p>
+<p>这不是实现垃圾收集堆或垃圾收集器本身的适当位置。该代码应该存在于该语言的运行时库中。编译器插件负责生成符合库定义的二进制接口的代码，最基本的是 <a class="reference internal" href="#stack-map"><span class="std std-ref">stack map</span></a>。</p>
+<p>要继承“<a href="#id1"><span class="problematic" id="id2">`</span></a>llvm :: GCStrategy”并将其注册到编译器：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// lib/MyGC/MyGC.cpp - Example LLVM GC plugin</span>
 
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/CodeGen/GCStrategy.h&quot;</span><span class="cp"></span>
@@ -622,17 +424,16 @@ to the binary interface defined by library, most essentially the <a class="refer
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>This boilerplate collector does nothing.  More specifically:</p>
+<p>这个示例收集器什么都不做。进一步来说：</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">llvm.gcread</span></code> calls are replaced with the corresponding <code class="docutils literal"><span class="pre">load</span></code>
 instruction.</li>
 <li><code class="docutils literal"><span class="pre">llvm.gcwrite</span></code> calls are replaced with the corresponding <code class="docutils literal"><span class="pre">store</span></code>
 instruction.</li>
-<li>No safe points are added to the code.</li>
-<li>The stack map is not compiled into the executable.</li>
+<li>没有安全点（safepoint）被添加到代码。</li>
+<li>堆栈映射不会编译到可执行文件中。</li>
 </ul>
-<p>Using the LLVM makefiles, this code
-can be compiled as a plugin using a simple makefile:</p>
+<p>使用LLVM makefiles，可以使用简单的makefile将此代码编译为插件：</p>
 <div class="highlight-make"><div class="highlight"><pre><span></span><span class="c"># lib/MyGC/Makefile</span>
 
 <span class="nv">LEVEL</span> <span class="o">:=</span> ../..
@@ -642,9 +443,7 @@ can be compiled as a plugin using a simple makefile:</p>
 <span class="cp">include $(LEVEL)/Makefile.common</span>
 </pre></div>
 </div>
-<p>Once the plugin is compiled, code using it may be compiled using <code class="docutils literal"><span class="pre">llc</span>
-<span class="pre">-load=MyGC.so</span></code> (though MyGC.so may have some other platform-specific
-extension):</p>
+<p>一旦插件被编译，使用它的代码可以使用 <code class="docutils literal"><span class="pre">llc</span> <span class="pre">-load</span> <span class="pre">=</span> <span class="pre">MyGC.so</span></code> 来编译（尽管MyGC.so可能有一些其他特定于平台的扩展）：</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ cat sample.ll
 define void @f() gc &quot;mygc&quot; {
 entry:
@@ -653,16 +452,11 @@ entry:
 $ llvm-as &lt; sample.ll | llc -load=MyGC.so
 </pre></div>
 </div>
-<p>It is also possible to statically link the collector plugin into tools, such as
-a language-specific compiler front-end.</p>
+<p>还可以将收集器插件静态链接到工具，如特定于语言的编译器前端。</p>
 </div>
 <div class="section" id="overview-of-available-features">
-<span id="collector-algos"></span><h3><a class="toc-backref" href="#id23">Overview of available features</a><a class="headerlink" href="#overview-of-available-features" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal"><span class="pre">GCStrategy</span></code> provides a range of features through which a plugin may do useful
-work.  Some of these are callbacks, some are algorithms that can be enabled,
-disabled, or customized.  This matrix summarizes the supported (and planned)
-features and correlates them with the collection techniques which typically
-require them.</p>
+<span id="collector-algos"></span><h3><a class="toc-backref" href="#id23">可用特性概述</a><a class="headerlink" href="#overview-of-available-features" title="永久链接至标题">¶</a></h3>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>GCStrategy``提供了一系列功能，通过它，插件可以做有用的工作。其中一些是回调，一些是可以启用，禁用或定制的算法。下表总结了已经支持（和计划支持）的功能，并将它们与通常需要它们的垃圾收集技术相关联。</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="14%" />
@@ -894,72 +688,48 @@ map</td>
 </tr>
 <tr class="row-odd"><td colspan="9">* Derived pointers only pose a hasard to copying collections.</td>
 </tr>
-<tr class="row-even"><td colspan="9"><strong>?</strong> denotes a feature which could be utilized if available.</td>
+<tr class="row-even"><td colspan="9"><a href="#id1"><span class="problematic" id="id2">**</span></a>？<a href="#id3"><span class="problematic" id="id4">**</span></a>表示可用时，有价值的功能。</td>
 </tr>
 </tbody>
 </table>
-<p>To be clear, the collection techniques above are defined as:</p>
+<p>需要明确的是，上面的收集技术被定义为：</p>
 <dl class="docutils">
-<dt>Shadow Stack</dt>
-<dd>The mutator carefully maintains a linked list of stack roots.</dd>
-<dt>Reference Counting</dt>
-<dd>The mutator maintains a reference count for each object and frees an object
-when its count falls to zero.</dd>
-<dt>Mark-Sweep</dt>
-<dd>When the heap is exhausted, the collector marks reachable objects starting
-from the roots, then deallocates unreachable objects in a sweep phase.</dd>
-<dt>Copying</dt>
-<dd>As reachability analysis proceeds, the collector copies objects from one heap
-area to another, compacting them in the process.  Copying collectors enable
-highly efficient “bump pointer” allocation and can improve locality of
-reference.</dd>
-<dt>Incremental</dt>
-<dd>(Including generational collectors.) Incremental collectors generally have all
-the properties of a copying collector (regardless of whether the mature heap
-is compacting), but bring the added complexity of requiring write barriers.</dd>
+<dt>影子堆栈（Shadow Stack）</dt>
+<dd>增变器仔细维护了一个堆栈根的链表。</dd>
+<dt>引用计数</dt>
+<dd>增变器维护每个对象的引用计数，并在计数降到零时释放对象。</dd>
+<dt>标记-清扫算法</dt>
+<dd>当堆空间用尽时，收集器将从根开始标记可到达的对象，然后在扫描阶段释放不可达对象。</dd>
+<dt>拷贝式垃圾收集</dt>
+<dd>随着可达性分析的进行，收集器将对象从一个堆区域复制到另一个堆区域，并将它们压缩在过程中。复制收集器可实现高效的“凹凸指针”分配，并可改善参考的局部性。</dd>
+<dt>增量回收</dt>
+<dd>（包括世代收集器）增量收集器通常具有复制收集器的所有属性（不管堆是否压缩），但是增加了需要编写屏障的复杂性。</dd>
 <dt>Threaded</dt>
-<dd>Denotes a multithreaded mutator; the collector must still stop the mutator
-(“stop the world”) before beginning reachability analysis.  Stopping a
-multithreaded mutator is a complicated problem.  It generally requires highly
-platform-specific code in the runtime, and the production of carefully
-designed machine code at safe points.</dd>
-<dt>Concurrent</dt>
-<dd>In this technique, the mutator and the collector run concurrently, with the
-goal of eliminating pause times.  In a <em>cooperative</em> collector, the mutator
-further aids with collection should a pause occur, allowing collection to take
-advantage of multiprocessor hosts.  The “stop the world” problem of threaded
-collectors is generally still present to a limited extent.  Sophisticated
-marking algorithms are necessary.  Read barriers may be necessary.</dd>
+<dd>表示多线程的增变器;在开始可达性分析之前，收集器必须仍然停止增变器（“停止整个世界”）。停止多线程增变是一个复杂的问题。它通常要求运行时具有高度特定于平台的代码，并在安全的地方生产精心设计的机器代码。</dd>
+<dt>concurrent=50</dt>
+<dd>在这种技术中，增变器和收集器同时运行，其目标是消除暂停时间。在一个 <em>合作</em> 收集器中，增变器进一步援助收集应暂停发生，允许收集利用多处理器主机。Threaded收集器的“停止世界”问题通常仍然存在有限的程度。复杂的标记算法是必要的。阅读屏障可能是必要的。</dd>
 </dl>
-<p>As the matrix indicates, LLVM’s garbage collection infrastructure is already
-suitable for a wide variety of collectors, but does not currently extend to
-multithreaded programs.  This will be added in the future as there is
-interest.</p>
+<p>如矩阵所示，LLVM的垃圾收集基础结构已经适用于各种各样的收集器，但目前不扩展到多线程程序。由于这是热门话题，很可能将在未来加入更多种收集器。</p>
 </div>
 <div class="section" id="computing-stack-maps">
-<span id="stack-map"></span><h3><a class="toc-backref" href="#id24">Computing stack maps</a><a class="headerlink" href="#computing-stack-maps" title="永久链接至标题">¶</a></h3>
-<p>LLVM automatically computes a stack map.  One of the most important features
-of a <code class="docutils literal"><span class="pre">GCStrategy</span></code> is to compile this information into the executable in
-the binary representation expected by the runtime library.</p>
-<p>The stack map consists of the location and identity of each GC root in the
-each function in the module.  For each root:</p>
+<span id="stack-map"></span><h3><a class="toc-backref" href="#id24">计算堆栈映射</a><a class="headerlink" href="#computing-stack-maps" title="永久链接至标题">¶</a></h3>
+<p>LLVM自动计算堆栈映射。<code class="docutils literal"><span class="pre">GCStrategy</span></code> 最重要的特性之一就是将这些信息编译成运行时库期望的二进制表示形式的可执行文件。</p>
+<p>堆栈图由模块中每个函数中每个GC根的位置和标识组成。对于每个根：</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">RootNum</span></code>: The index of the root.</li>
-<li><code class="docutils literal"><span class="pre">StackOffset</span></code>: The offset of the object relative to the frame pointer.</li>
-<li><code class="docutils literal"><span class="pre">RootMetadata</span></code>: The value passed as the <code class="docutils literal"><span class="pre">%metadata</span></code> parameter to the
-<code class="docutils literal"><span class="pre">&#64;llvm.gcroot</span></code> intrinsic.</li>
+<li><code class="docutils literal"><span class="pre">RootNum</span></code>: 根的索引。</li>
+<li><code class="docutils literal"><span class="pre">StackOffset</span></code>: 对象相对于帧指针的偏移量。</li>
+<li><code class="docutils literal"><span class="pre">RootMetadata</span></code>: 作为 <code class="docutils literal"><span class="pre">％metadata</span></code> 参数来传递给 <code class="docutils literal"><span class="pre">&#64;</span> <span class="pre">llvm.gcroot</span></code> 内在的值。</li>
 </ul>
-<p>Also, for the function as a whole:</p>
+<p>另外，对于整个函数：</p>
 <ul class="simple">
 <li><dl class="first docutils">
-<dt><code class="docutils literal"><span class="pre">getFrameSize()</span></code>: The overall size of the function’s initial stack frame,</dt>
-<dd>not accounting for any dynamic allocation.</dd>
+<dt><code class="docutils literal"><span class="pre">getFrameSize()</span></code>: 函数的初始堆栈框架的整体大小，</dt>
+<dd>不考虑任何动态分配。</dd>
 </dl>
 </li>
-<li><code class="docutils literal"><span class="pre">roots_size()</span></code>: The count of roots in the function.</li>
+<li><code class="docutils literal"><span class="pre">roots_size()</span></code>: 函数中根的数量。</li>
 </ul>
-<p>To access the stack map, use <code class="docutils literal"><span class="pre">GCFunctionMetadata::roots_begin()</span></code> and
--<code class="docutils literal"><span class="pre">end()</span></code> from the <a class="reference internal" href="#assembly"><span class="std std-ref">GCMetadataPrinter</span></a>:</p>
+<p>要访问堆栈映射，可以使用：<code class="docutils literal"><span class="pre">GCFunctionMetadata::roots_begin()</span></code> 和 <code class="docutils literal"><span class="pre">end()</span></code> ，参见 <a class="reference internal" href="#assembly"><span class="std std-ref">GCMetadataPrinter</span></a></p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">iterator</span> <span class="n">I</span> <span class="o">=</span> <span class="n">begin</span><span class="p">(),</span> <span class="n">E</span> <span class="o">=</span> <span class="n">end</span><span class="p">();</span> <span class="n">I</span> <span class="o">!=</span> <span class="n">E</span><span class="p">;</span> <span class="o">++</span><span class="n">I</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">GCFunctionInfo</span> <span class="o">*</span><span class="n">FI</span> <span class="o">=</span> <span class="o">*</span><span class="n">I</span><span class="p">;</span>
   <span class="kt">unsigned</span> <span class="n">FrameSize</span> <span class="o">=</span> <span class="n">FI</span><span class="o">-&gt;</span><span class="n">getFrameSize</span><span class="p">();</span>
@@ -975,30 +745,21 @@ each function in the module.  For each root:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>If the <code class="docutils literal"><span class="pre">llvm.gcroot</span></code> intrinsic is eliminated before code generation by a
-custom lowering pass, LLVM will compute an empty stack map.  This may be useful
-for collector plugins which implement reference counting or a shadow stack.</p>
+<p>如果在代码生成之前通过自定义降级Pass去除了 <code class="docutils literal"><span class="pre">llvm.gcroot</span></code>  内部函数，LLVM将计算一个空的堆栈映射。这可能对实现引用计数或影子堆栈的收集器插件有用。</p>
 </div>
 <div class="section" id="initializing-roots-to-null-initroots">
-<span id="init-roots"></span><h3><a class="toc-backref" href="#id25">Initializing roots to null: <code class="docutils literal"><span class="pre">InitRoots</span></code></a><a class="headerlink" href="#initializing-roots-to-null-initroots" title="永久链接至标题">¶</a></h3>
+<span id="init-roots"></span><h3><a class="toc-backref" href="#id25">将根初始化为null：<code class="docutils literal"><span class="pre">InitRoots</span></code></a><a class="headerlink" href="#initializing-roots-to-null-initroots" title="永久链接至标题">¶</a></h3>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">MyGC</span><span class="o">::</span><span class="n">MyGC</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">InitRoots</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>When set, LLVM will automatically initialize each root to <code class="docutils literal"><span class="pre">null</span></code> upon entry to
-the function.  This prevents the GC’s sweep phase from visiting uninitialized
-pointers, which will almost certainly cause it to crash.  This initialization
-occurs before custom lowering, so the two may be used together.</p>
-<p>Since LLVM does not yet compute liveness information, there is no means of
-distinguishing an uninitialized stack root from an initialized one.  Therefore,
-this feature should be used by all GC plugins.  It is enabled by default.</p>
+<p>设置后，LLVM将在进入该函数时自动将每个根初始化为 <code class="docutils literal"><span class="pre">null</span></code> 。这可以防止GC的扫描阶段访问未初始化的指针，这几乎肯定会导致崩溃。这个初始化发生在自定义降低之前，所以两者可以一起使用。</p>
+<p>由于LLVM尚未计算活跃度信息，因此无法区分未初始化的堆栈根与已初始化的堆。所以，这个功能应该被所有的GC插件使用。它是默认启用的。</p>
 </div>
 <div class="section" id="custom-lowering-of-intrinsics-customroots-customreadbarriers-and-customwritebarriers">
-<h3><a class="toc-backref" href="#id26">Custom lowering of intrinsics: <code class="docutils literal"><span class="pre">CustomRoots</span></code>, <code class="docutils literal"><span class="pre">CustomReadBarriers</span></code>, and <code class="docutils literal"><span class="pre">CustomWriteBarriers</span></code></a><a class="headerlink" href="#custom-lowering-of-intrinsics-customroots-customreadbarriers-and-customwritebarriers" title="永久链接至标题">¶</a></h3>
-<p>For GCs which use barriers or unusual treatment of stack roots, these
-flags allow the collector to perform arbitrary transformations of the
-LLVM IR:</p>
+<h3><a class="toc-backref" href="#id26">自定义降级内部函数：<code class="docutils literal"><span class="pre">CustomRoots</span></code>, <code class="docutils literal"><span class="pre">CustomReadBarriers</span></code>, and <code class="docutils literal"><span class="pre">CustomWriteBarriers</span></code></a><a class="headerlink" href="#custom-lowering-of-intrinsics-customroots-customreadbarriers-and-customwritebarriers" title="永久链接至标题">¶</a></h3>
+<p>对于使用屏障或堆栈根的异常处理的GC，这些标志允许收集器执行LLVM IR的任意转换：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyGC</span> <span class="o">:</span> <span class="k">public</span> <span class="n">GCStrategy</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="n">MyGC</span><span class="p">()</span> <span class="p">{</span>
@@ -1009,19 +770,12 @@ LLVM IR:</p>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>If any of these flags are set, LLVM suppresses its default lowering for
-the corresponding intrinsics.  Instead, you must provide a custom Pass
-which lowers the intrinsics as desired.  If you have opted in to custom
-lowering of a particular intrinsic your pass <strong>must</strong> eliminate all
-instances of the corresponding intrinsic in functions which opt in to
-your GC.  The best example of such a pass is the ShadowStackGC and it’s
-ShadowStackGCLowering pass.</p>
-<p>There is currently no way to register such a custom lowering pass
-without building a custom copy of LLVM.</p>
+<p>如果设置了这些标志中的任何一个，则LLVM会禁止相应内部函数的默认降低。相反，您必须提供一个自定义Pass，以根据需要降低内部函数。如果您已经选择了自定义降低某个特定的内在因素，那么您必须**删除选择加入到GC中的相应内在函数的所有实例。这种传球的最好的例子是ShadowStackGC，它是ShadowStackGCLowering传球。</p>
+<p>目前没有办法在没有构建LLVM的定制副本的情况下注册这样的自定义降级Pass。</p>
 </div>
 <div class="section" id="generating-safe-points-neededsafepoints">
-<span id="safe-points"></span><h3><a class="toc-backref" href="#id27">Generating safe points: <code class="docutils literal"><span class="pre">NeededSafePoints</span></code></a><a class="headerlink" href="#generating-safe-points-neededsafepoints" title="永久链接至标题">¶</a></h3>
-<p>LLVM can compute four kinds of safe points:</p>
+<span id="safe-points"></span><h3><a class="toc-backref" href="#id27">生成安全点: <code class="docutils literal"><span class="pre">NeededSafePoints</span></code></a><a class="headerlink" href="#generating-safe-points-neededsafepoints" title="永久链接至标题">¶</a></h3>
+<p>LLVM可以计算四种安全点：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">GC</span> <span class="p">{</span>
   <span class="c1">/// PointKind - The type of a collector-safe point.</span>
   <span class="c1">///</span>
@@ -1034,8 +788,7 @@ without building a custom copy of LLVM.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>A collector can request any combination of the four by setting the
-<code class="docutils literal"><span class="pre">NeededSafePoints</span></code> mask:</p>
+<p>收集器可以通过设置NeededSafePoints掩码来请求这四者的任意组合：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">MyGC</span><span class="o">::</span><span class="n">MyGC</span><span class="p">()</span>  <span class="p">{</span>
   <span class="n">NeededSafePoints</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">GC</span><span class="o">::</span><span class="n">Loop</span>
                    <span class="o">|</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">GC</span><span class="o">::</span><span class="n">Return</span>
@@ -1044,7 +797,7 @@ without building a custom copy of LLVM.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>It can then use the following routines to access safe points.</p>
+<p>然后它可以使用以下例程来访问安全点。</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">iterator</span> <span class="n">I</span> <span class="o">=</span> <span class="n">begin</span><span class="p">(),</span> <span class="n">E</span> <span class="o">=</span> <span class="n">end</span><span class="p">();</span> <span class="n">I</span> <span class="o">!=</span> <span class="n">E</span><span class="p">;</span> <span class="o">++</span><span class="n">I</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">GCFunctionInfo</span> <span class="o">*</span><span class="n">MD</span> <span class="o">=</span> <span class="o">*</span><span class="n">I</span><span class="p">;</span>
   <span class="kt">size_t</span> <span class="n">PointCount</span> <span class="o">=</span> <span class="n">MD</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">();</span>
@@ -1057,34 +810,21 @@ without building a custom copy of LLVM.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Almost every collector requires <code class="docutils literal"><span class="pre">PostCall</span></code> safe points, since these correspond
-to the moments when the function is suspended during a call to a subroutine.</p>
-<p>Threaded programs generally require <code class="docutils literal"><span class="pre">Loop</span></code> safe points to guarantee that the
-application will reach a safe point within a bounded amount of time, even if it
-is executing a long-running loop which contains no function calls.</p>
-<p>Threaded collectors may also require <code class="docutils literal"><span class="pre">Return</span></code> and <code class="docutils literal"><span class="pre">PreCall</span></code> safe points to
-implement “stop the world” techniques using self-modifying code, where it is
-important that the program not exit the function without reaching a safe point
-(because only the topmost function has been patched).</p>
+<p>几乎每个收集器要求 <code class="docutils literal"><span class="pre">PostCall</span></code> 安全点，因为这些对应于函数在调用子例程期间暂停的时刻。</p>
+<p>多线程程序通常需要使用 <code class="docutils literal"><span class="pre">Loop</span></code> 安全点来保证应用程序在有限的时间内到达安全点，即使它正在执行一个不包含函数调用的长时间运行的循环。</p>
+<p>螺纹收集器也可能需要 <code class="docutils literal"><span class="pre">Return</span></code> 和 <code class="docutils literal"><span class="pre">PreCall</span></code> 安全点来实现使用自修改代码来“停止世界”的技术，在那里重要的是程序不能在没有达到安全点的情况下退出函数（因为只有最上面的功能已被修复）。</p>
 </div>
 <div class="section" id="emitting-assembly-code-gcmetadataprinter">
-<span id="assembly"></span><h3><a class="toc-backref" href="#id28">Emitting assembly code: <code class="docutils literal"><span class="pre">GCMetadataPrinter</span></code></a><a class="headerlink" href="#emitting-assembly-code-gcmetadataprinter" title="永久链接至标题">¶</a></h3>
-<p>LLVM allows a plugin to print arbitrary assembly code before and after the rest
-of a module’s assembly code.  At the end of the module, the GC can compile the
-LLVM stack map into assembly code. (At the beginning, this information is not
-yet computed.)</p>
-<p>Since AsmWriter and CodeGen are separate components of LLVM, a separate abstract
-base class and registry is provided for printing assembly code, the
-<code class="docutils literal"><span class="pre">GCMetadaPrinter</span></code> and <code class="docutils literal"><span class="pre">GCMetadataPrinterRegistry</span></code>.  The AsmWriter will look
-for such a subclass if the <code class="docutils literal"><span class="pre">GCStrategy</span></code> sets <code class="docutils literal"><span class="pre">UsesMetadata</span></code>:</p>
+<span id="assembly"></span><h3><a class="toc-backref" href="#id28">生成汇编代码： <code class="docutils literal"><span class="pre">GCMetadataPrinter</span></code></a><a class="headerlink" href="#emitting-assembly-code-gcmetadataprinter" title="永久链接至标题">¶</a></h3>
+<p>LLVM允许插件在模块的汇编代码的其余部分之前和之后打印任意汇编代码。在模块结束时，GC可以将LLVM堆栈映射编译为汇编代码。 （起初，这个信息还没有计算出来。）</p>
+<p>由于AsmWriter和CodeGen是LLVM的独立组件，因此为打印汇编代码， <code class="docutils literal"><span class="pre">GCMetadaPrinter</span></code> 和 <code class="docutils literal"><span class="pre">GCMetadataPrinterRegistry</span></code> 提供了独立的抽象基类和注册表。如果 <code class="docutils literal"><span class="pre">GCStrategy</span></code> 设置了  <code class="docutils literal"><span class="pre">UsesMetadata</span></code> ，AsmWriter将查找这样的子类：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">MyGC</span><span class="o">::</span><span class="n">MyGC</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">UsesMetadata</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>This separation allows JIT-only clients to be smaller.</p>
-<p>Note that LLVM does not currently have analogous APIs to support code generation
-in the JIT, nor using the object writers.</p>
+<p>这种分离式设计可以让只含有JIT的编译器缩减体积。</p>
+<p>请注意，LLVM目前没有类似的API来支持JIT中的代码生成，也没有使用对象写入器。</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// lib/MyGC/MyGCPrinter.cpp - Example LLVM GC printer</span>
 
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/CodeGen/GCMetadataPrinter.h&quot;</span><span class="cp"></span>
@@ -1105,10 +845,7 @@ in the JIT, nor using the object writers.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The collector should use <code class="docutils literal"><span class="pre">AsmPrinter</span></code> to print portable assembly code.  The
-collector itself contains the stack map for the entire module, and may access
-the <code class="docutils literal"><span class="pre">GCFunctionInfo</span></code> using its own <code class="docutils literal"><span class="pre">begin()</span></code> and <code class="docutils literal"><span class="pre">end()</span></code> methods.  Here’s
-a realistic example:</p>
+<p>收集器应使用“AsmPrinter”来打印便携式汇编代码。收集器本身包含整个模块的堆栈映射，可以使用自己的 <code class="docutils literal"><span class="pre">begin()</span></code> 和 <code class="docutils literal"><span class="pre">end()</span></code> 方法访问GCFunctionInfo。这是一个真实的例子：</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;llvm/CodeGen/AsmPrinter.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/Function.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/DataLayout.h&quot;</span><span class="cp"></span>
@@ -1191,7 +928,7 @@ a realistic example:</p>
 </div>
 </div>
 <div class="section" id="references">
-<h2><a class="toc-backref" href="#id29">References</a><a class="headerlink" href="#references" title="永久链接至标题">¶</a></h2>
+<h2><a class="toc-backref" href="#id29">参考文献</a><a class="headerlink" href="#references" title="永久链接至标题">¶</a></h2>
 <p id="appel89">[Appel89] Runtime Tags Aren’t Necessary. Andrew W. Appel. Lisp and Symbolic
 Computation 19(7):703-705, July 1989.</p>
 <p id="goldberg91">[Goldberg91] Tag-free garbage collection for strongly typed programming
@@ -1227,7 +964,7 @@ programming.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2003-2018, LLVM Project.
-      最后更新于 2018-01-13.
+      最后更新于 2018-01-14.
       由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6 创建。
     </div>
   </body>
