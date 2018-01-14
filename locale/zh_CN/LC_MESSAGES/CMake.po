@@ -19,18 +19,19 @@ msgstr ""
 
 #: ../../CMake.rst:3
 msgid "Building LLVM with CMake"
-msgstr ""
+msgstr "使用CMake构建LLVM系统"
 
 #: ../../CMake.rst:9
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
 
 #: ../../CMake.rst:11
 msgid ""
 "`CMake <http://www.cmake.org/>`_ is a cross-platform build-generator "
 "tool. CMake does not build the project, it generates the files needed by "
 "your build tool (GNU make, Visual Studio, etc.) for building LLVM."
-msgstr ""
+msgstr "`CMake <http://www.cmake.org/>`_ 是一款跨平台构建生成系统。虽然CMake本身并不负责项目构建，但它能够生成"
+"其他构建工具 (例如 GNU make, Visual Studio 等) 必要的配置项，来构建LLVM。"
 
 #: ../../CMake.rst:15
 msgid ""
@@ -41,14 +42,18 @@ msgid ""
 "reference for customizing your build. If you already have experience with"
 " CMake, this is the recommended starting point."
 msgstr ""
+"如果您担心没法顺利构建一个实用的LLVM系统，请先阅读 `Quick start`_ 一节。"
+"如果您从未使用过CMake构建工具，请先从 `Basic CMake usage`_ 开始读起，然后阅读 `Quick start`_ 一节。"
+"`Options and variables`_ 一节是一份自定义构建的参考，您可以获取如何定制化构建LLVM的相关信息。"
+"如果您已经很熟悉CMake构建工具，那么推荐您直接阅读 `Options and variables`_ 一节。"
 
 #: ../../CMake.rst:24
 msgid "Quick start"
-msgstr ""
+msgstr "快速入门"
 
 #: ../../CMake.rst:26
 msgid "We use here the command-line, non-interactive CMake interface."
-msgstr ""
+msgstr "我们将使用CMake的命令行工具，而非GUI接口。"
 
 #: ../../CMake.rst:28
 msgid ""
@@ -58,24 +63,33 @@ msgid ""
 "output <http://lists.llvm.org/pipermail/llvm-commits/Week-of-"
 "Mon-20141117/244797.html>`_ when running :doc:`Lit <CommandGuide/lit>`."
 msgstr ""
+"首先下载 `Download <http://www.cmake.org/cmake/resources/software.html>`_  并安装CMake工具。"
+"最低可用版本是 2.8.8, 但如果您还使用Ninja构建工具，则必须使用 CMake v3.2或更新版本，才能在运行  :doc:`Lit <CommandGuide/lit>` 时得到 "
+"`交互式输出 <http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20141117/244797.html>`_ 。"
+"（译者注：ninja构建工具是一套快速构建C/C++项目的构建套件，类似于GNU Make，对于LLVM这类代码量大的项目，相比make能够明显提升构建速度。使用时只需将CMake的生成目标设定为ninja即可。"
+"命令为：cmake -G \"Ninja\ path/to/llvm/source）" 
 
 #: ../../CMake.rst:34
 msgid ""
 "Open a shell. Your development tools must be reachable from this shell "
 "through the PATH environment variable."
 msgstr ""
+"打开命令行。您的开发工具必须能从该命令行中访问到，换言之，应该将工具链添加到PATH路径中。"
+
 
 #: ../../CMake.rst:37
 msgid ""
 "Create a build directory. Building LLVM in the source directory is not "
 "supported. cd to this directory:"
 msgstr ""
+"创建一个build文件夹。在源码路径中构建LLVM是不支持的， 需要先cd到这个构建目录中。"
 
 #: ../../CMake.rst:45
 msgid ""
 "Execute this command in the shell replacing `path/to/llvm/source/root` "
 "with the path to the root of your LLVM source tree:"
 msgstr ""
+"执行这行命令时，请把 `path/to/llvm/source/root` 换成您真正的llvm源码所在的目录，相对目录或绝对目录均可。"
 
 #: ../../CMake.rst:52
 msgid ""
@@ -84,6 +98,8 @@ msgid ""
 "default values for all build parameters. See the `Options and variables`_"
 " section for a list of build parameters that you can modify."
 msgstr ""
+"CMake 会自动检查您的开发环境，执行一系列测试命令，最终生成必要的配置文件来构建LLVM。"
+"CMake 会自动使用默认的构建参数，请阅读 `Options and variables`_ 一节来了解哪些构建参数是您可以修改的。"
 
 #: ../../CMake.rst:57
 msgid ""
@@ -96,34 +112,44 @@ msgid ""
 "instance. You can force CMake to use a given build tool; for "
 "instructions, see the `Usage`_ section, below."
 msgstr ""
+"如果CMake无法找到您的开发工具链或者它认为此套工具并不健全，目前的命令可能会运行失败。"
+"在这种情况下，请确保CMake找到的工具链是您希望让其使用的，并且是当前shell环境唯一能访问的到的（例如，请不要给不同版本的gcc设置相同的名字，并且全部放到PATH路径下）。"
+"并且确保使用适合的shell来访问您目前想用的开发环境。（例如，如果您使用一个POSIX shell来访问MinGW工具，CMake会拒绝构建MinGW makefile）。"
+"您可以为CMake强制指定一套工具，具体请阅读下面 `Usage`_ 一节。"
+
 
 #: ../../CMake.rst:65
 msgid ""
 "After CMake has finished running, proceed to use IDE project files, or "
 "start the build from the build directory:"
 msgstr ""
+"CMake 运行结束后，将会生成Makefile或IDE project配置，对于IDE支持的配置，您可以选择打开它并在IDE中构建，或者继续使用命令行直接构建。"
 
 #: ../../CMake.rst:72
 msgid ""
 "The ``--build`` option tells ``cmake`` to invoke the underlying build "
 "tool (``make``, ``ninja``, ``xcodebuild``, ``msbuild``, etc.)"
 msgstr ""
+"使用 ``--build`` 参数，可以让CMake直接调用构建工具（``make`` GNU Makefile, ``ninja`` Ninja构建系统, ``xcodebuild`` XCode工具链, ``msbuild`` Visual Studio工具链 这类指令）来直接构建项目。"
+
 
 #: ../../CMake.rst:75
 msgid ""
 "The underlying build tool can be invoked directly, of course, but the "
 "``--build`` option is portable."
 msgstr ""
+"刚才列出的这些构建工具也可以直接调用，但``--build``可以在任何情况下使用，更具可移植性。"
 
 #: ../../CMake.rst:78
 msgid "After LLVM has finished building, install it from the build directory:"
-msgstr ""
+msgstr "在LLVM构建完成后，你可以直接从构建目录安装构建好的代码库和工具到您的系统里。"
 
 #: ../../CMake.rst:84
 msgid ""
 "The ``--target`` option with ``install`` parameter in addition to the "
 "``--build`` option tells ``cmake`` to build the ``install`` target."
 msgstr ""
+"``--target`` 选项可以指定构建目标，其中 ``install`` 构建目标就是用来安装项目的。"
 
 #: ../../CMake.rst:87
 msgid ""
@@ -131,16 +157,20 @@ msgid ""
 "invoking the ``cmake_install.cmake`` script generated in the build "
 "directory:"
 msgstr ""
+"您可以在安装时指定一个不同的安装路径，通过调用刚刚生成的 ``cmake_install.cmake`` 脚本。"
+
 
 #: ../../CMake.rst:99
 msgid "Basic CMake usage"
-msgstr ""
+msgstr "CMake基本用法"
 
 #: ../../CMake.rst:101
 msgid ""
 "This section explains basic aspects of CMake which you may need in your "
 "day-to-day usage."
 msgstr ""
+"这一节主要讲解了Cmake的基本使用方法，以及最常用的指令。"
+
 
 #: ../../CMake.rst:104
 msgid ""
@@ -828,7 +858,7 @@ msgstr ""
 
 #: ../../CMake.rst:467
 msgid "Executing the test suite"
-msgstr ""
+msgstr "运行测试套件"
 
 #: ../../CMake.rst:469
 msgid ""
@@ -866,7 +896,7 @@ msgstr ""
 
 #: ../../CMake.rst:493
 msgid "Embedding LLVM in your project"
-msgstr ""
+msgstr "在您的项目中嵌入LLVM"
 
 #: ../../CMake.rst:495
 msgid ""
@@ -876,12 +906,16 @@ msgid ""
 "based projects against an installed version of LLVM regardless of how it "
 "was built."
 msgstr ""
+"从LLVM3.5版开始，CMake和autoconf/Makefile构建系统，都支持讲LLVM库作为一个子项目导入到其他CMake项目中。"
+"这意味着LLVM的用户们可以用直接使用CMake来开发自己的基于LLVM的项目，而无需再关心怎么安装适合的LLVM版本的问题。"
+
 
 #: ../../CMake.rst:500
 msgid ""
 "Here is a simple example of a CMakeLists.txt file that imports the LLVM "
 "libraries and uses them to build a simple application ``simple-tool``."
 msgstr ""
+"这里有个简单的CMakeLists.txt文件实例，是关于导入LLVM库和如何使用LLVM库构建一个简单的小工具 ``simple-tool`` 。"
 
 #: ../../CMake.rst:531
 msgid ""
@@ -893,10 +927,13 @@ msgid ""
 "``-DLLVM_DIR=/usr/share/llvm/cmake`` to the ``cmake`` command or by "
 "setting it directly in ``ccmake`` or ``cmake-gui``)."
 msgstr ""
+"find_package(...) 这条语句在CONFIG模式下（如上面例子中用到的），将会在几个目录下搜索 ``LLVMConfig.cmake`` 这个配置文件（详情请查看CMake文档）。"
+"它会创建一个 ``LLVM_DIR`` 缓存项来存储 ``LLVMConfig.cmake`` 所在的目录，或者您可以重写这个变量来制定另外一个LLVM库的安装目录"
+"（例如，向 ``cmake`` 传入此参数 ``-DLLVM_DIR=/usr/share/llvm/cmake`` 或者直接在GUI中设定，使用 ``ccmake`` 或 ``cmake-gui`` ）。"
 
 #: ../../CMake.rst:538
 msgid "This file is available in two different locations."
-msgstr ""
+msgstr "这个文件在以下两个不同目录下均可用。"
 
 #: ../../CMake.rst:540
 msgid ""
@@ -921,12 +958,17 @@ msgid ""
 " is not installed or you wish to build directly against the LLVM build "
 "tree you can use ``LLVM_DIR`` as previously mentioned."
 msgstr ""
+"如果LLVM被安装在了您系统的默认路径下 （如Linux在 ``/usr/`` 下）且被正确安装， ``find_package(LLVM ...)`` 将会自动为您找到 LLVM。"
+"如果LLVM没有安装或者您希望直接使用另一个构建好的LLVM库而无需安装，如同刚才提到过的那样，您可以设置 ``LLVM_DIR`` 来指定LLVM库的安装目录。"
+
 
 #: ../../CMake.rst:554
 msgid ""
 "The ``LLVMConfig.cmake`` file sets various useful variables. Notable "
 "variables include"
 msgstr ""
+"``LLVMConfig.cmake`` 配置文件设定了一系列非常有用的CMake变量。值得注意的变量有："
+
 
 #: ../../CMake.rst:559
 msgid "``LLVM_CMAKE_DIR``"
@@ -936,7 +978,7 @@ msgstr ""
 msgid ""
 "The path to the LLVM CMake directory (i.e. the directory containing "
 "LLVMConfig.cmake)."
-msgstr ""
+msgstr "LLVM 的 CMake 目录 （包含 LLVMConfig.cmake 的那个目录）"
 
 #: ../../CMake.rst:562
 msgid "``LLVM_DEFINITIONS``"
@@ -946,7 +988,7 @@ msgstr ""
 msgid ""
 "A list of preprocessor defines that should be used when building against "
 "LLVM."
-msgstr ""
+msgstr "一系列构建中要用到的预处理器"
 
 #: ../../CMake.rst:565
 msgid "``LLVM_ENABLE_ASSERTIONS``"
@@ -954,7 +996,7 @@ msgstr ""
 
 #: ../../CMake.rst:565
 msgid "This is set to ON if LLVM was built with assertions, otherwise OFF."
-msgstr ""
+msgstr "如果想构建时启用断言，那么将其设定为ON，否则设为OFF"
 
 #: ../../CMake.rst:569
 msgid "``LLVM_ENABLE_EH``"
@@ -964,7 +1006,7 @@ msgstr ""
 msgid ""
 "This is set to ON if LLVM was built with exception handling (EH) enabled,"
 " otherwise OFF."
-msgstr ""
+msgstr "是否开启异常处理，设定为ON则开启，否则设为OFF"
 
 #: ../../CMake.rst:573
 msgid "``LLVM_ENABLE_RTTI``"
@@ -974,7 +1016,7 @@ msgstr ""
 msgid ""
 "This is set to ON if LLVM was built with run time type information "
 "(RTTI), otherwise OFF."
-msgstr ""
+msgstr "启用RTTI支持（run time type information 运行时类型信息）时设定为ON，否则设为OFF"
 
 #: ../../CMake.rst:576
 msgid "``LLVM_INCLUDE_DIRS``"
@@ -982,7 +1024,7 @@ msgstr ""
 
 #: ../../CMake.rst:576
 msgid "A list of include paths to directories containing LLVM header files."
-msgstr ""
+msgstr "一系列include目录，包含有所有LLVM的头文件。"
 
 #: ../../CMake.rst:580
 msgid "``LLVM_PACKAGE_VERSION``"
@@ -992,7 +1034,7 @@ msgstr ""
 msgid ""
 "The LLVM version. This string can be used with CMake conditionals, e.g., "
 "``if (${LLVM_PACKAGE_VERSION} VERSION_LESS \"3.5\")``."
-msgstr ""
+msgstr "LLVM的版本信息，这个可以被用于CMake条件语句（例如：``if (${LLVM_PACKAGE_VERSION} VERSION_LESS \"3.5\")``）。"
 
 #: ../../CMake.rst:583
 msgid "``LLVM_TOOLS_BINARY_DIR``"
@@ -1000,7 +1042,7 @@ msgstr ""
 
 #: ../../CMake.rst:583
 msgid "The path to the directory containing the LLVM tools (e.g. ``llvm-as``)."
-msgstr ""
+msgstr "这个路径中包含了LLVM的二进制工具链（例如 ``llvm-as``等）。"
 
 #: ../../CMake.rst:585
 msgid ""
@@ -1010,6 +1052,8 @@ msgid ""
 "available components look at the output of running ``llvm-config "
 "--components``."
 msgstr ""
+"需要注意的一点是，在上面的代码示例中，我们链接 ``simple-tool`` 时用到了几个LLVM库。这几个库的名称查找是通过 ``llvm_map_components_to_libnames()`` 这一CMake函数"
+"实现的。想了解全部可用的组件名，可用通过运行命令 ``llvm-config --components``进行查看。"
 
 #: ../../CMake.rst:590
 msgid ""
@@ -1017,10 +1061,12 @@ msgid ""
 "instead of ``llvm_map_components_to_libnames()``. This is now deprecated "
 "and will be removed in a future version of LLVM."
 msgstr ""
+"提醒一点，如果您使用 LLVM < 3.5 等版本，``llvm_map_components_to_libraries()`` 是 ``llvm_map_components_to_libnames()`` 的原名，"
+"目前该函数名已经过时并且将会在新的版本中被移除。"
 
 #: ../../CMake.rst:597
 msgid "Developing LLVM passes out of source"
-msgstr ""
+msgstr "在源码目录外开发LLVM pass"
 
 #: ../../CMake.rst:599
 msgid ""
@@ -1028,14 +1074,15 @@ msgid ""
 "against an installed or built LLVM). An example of a project layout is "
 "provided below."
 msgstr ""
+"在LLVM源码目录外开发LLVM pass也是可行的（例如：通过一个已安装的或已编译的LLVM库）。下面展示了一个示例项目的结构："
 
 #: ../../CMake.rst:613
 msgid "Contents of ``<project dir>/CMakeLists.txt``:"
-msgstr ""
+msgstr "``<project dir>/CMakeLists.txt`` 的内容："
 
 #: ../../CMake.rst:624
 msgid "Contents of ``<project dir>/<pass name>/CMakeLists.txt``:"
-msgstr ""
+msgstr "``<project dir>/<pass name>/CMakeLists.txt`` 的内容："
 
 #: ../../CMake.rst:630
 msgid ""

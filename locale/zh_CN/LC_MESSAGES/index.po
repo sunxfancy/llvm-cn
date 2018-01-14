@@ -444,7 +444,7 @@ msgstr "子系统文档"
 
 #: ../../index.rst:224
 msgid "For API clients and LLVM developers."
-msgstr "适合API客户端和LLVM开发者阅读。"
+msgstr "适合API调用者和LLVM开发者阅读。"
 
 #: ../../index.rst:263
 msgid ":doc:`WritingAnLLVMPass`"
@@ -781,7 +781,7 @@ msgstr ""
 msgid ""
 "Describes the LLVMBuild organization and files used by LLVM to specify "
 "component descriptions."
-msgstr "描述了LLVMBuild 组织和LLVM用到的文件的详细说明"
+msgstr "描述了LLVMBuild 的结构和LLVM用到的文件的详细说明"
 
 #: ../../index.rst:404
 msgid ":doc:`MakefileGuide`"
