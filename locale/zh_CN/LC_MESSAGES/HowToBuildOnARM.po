@@ -19,42 +19,42 @@ msgstr ""
 
 #: ../../HowToBuildOnARM.rst:3
 msgid "How To Build On ARM"
-msgstr ""
+msgstr "如何在ARM平台上构建"
 
 #: ../../HowToBuildOnARM.rst:6
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
 
 #: ../../HowToBuildOnARM.rst:8
 msgid ""
 "This document contains information about building/testing LLVM and Clang "
 "on an ARM machine."
-msgstr ""
+msgstr "本文档包含在ARM机器上构建/测试LLVM和Clang的信息。"
 
 #: ../../HowToBuildOnARM.rst:11
 msgid ""
 "This document is *NOT* tailored to help you cross-compile LLVM/Clang to "
 "ARM on another architecture, for example an x86_64 machine. To find out "
 "more about cross-compiling, please check :doc:`HowToCrossCompileLLVM`."
-msgstr ""
+msgstr "这份文档 *不* 是帮助您了解在其他系统上（例如x86_64的机器）交叉编译LLVM / Clang到ARM上的。要了解更多关于交叉编译，请检查 :doc:`HowToCrossCompileLLVM` 。"
 
 #: ../../HowToBuildOnARM.rst:16
 msgid "Notes On Building LLVM/Clang on ARM"
-msgstr ""
+msgstr "在ARM上构建LLVM / Clang的注意事项"
 
 #: ../../HowToBuildOnARM.rst:17
 msgid ""
 "Here are some notes on building/testing LLVM/Clang on ARM. Note that ARM "
 "encompasses a wide variety of CPUs; this advice is primarily based on the"
 " ARMv6 and ARMv7 architectures and may be inapplicable to older chips."
-msgstr ""
+msgstr "这里是在ARM上构建/测试LLVM / Clang的一些注意事项。需要注意的是ARM涵盖了各种各样的CPU;目前这个文档主要是基于ARMv6和ARMv7体系结构，可能不适用某些较旧的芯片。"
 
 #: ../../HowToBuildOnARM.rst:21
 msgid ""
 "The most popular Linaro/Ubuntu OS's for ARM boards, e.g., the Pandaboard,"
 " have become hard-float platforms. There are a number of choices when "
 "using CMake. Autoconf usage is deprecated as of 3.8."
-msgstr ""
+msgstr "最流行的Linaro/Ubuntu的操作系统的ARM板，例如，Pandaboard，已经成为难以替换的平台。使用CMake您将有许多选择。而Autoconf构建系统已在LLVM3.8被废弃。"
 
 #: ../../HowToBuildOnARM.rst:25
 msgid ""
@@ -65,25 +65,25 @@ msgid ""
 "you'll use an ARM board to cross-compile to other arches. If you're "
 "running Compiler-RT tests, also include the x86 back-end, or some tests "
 "will fail."
-msgstr ""
+msgstr "用 ``Relese`` 模式构建LLVM / Clang将是首选，因为它消耗更少的内存。否则，构建过程很可能会由于由于内存不足而失败。当然，由于只构建较少的后端（ARM和AArch64），构建过程也快了很多。不支持其他后端是因为，大多数人不太可能会使用ARM板交叉编译到其他的系统架构上。如果你运行Compiler-RT的测试（包括x86后端测试），其中某些测试将会失败。"
 
 #: ../../HowToBuildOnARM.rst:38
 msgid "Other options you can use are:"
-msgstr ""
+msgstr "您可以使用其他选项是："
 
 #: ../../HowToBuildOnARM.rst:48
 msgid ""
 "After that, just typing ``make -jN`` or ``ninja`` will build everything. "
 "``make -jN check-all`` or ``ninja check-all`` will run all compiler "
 "tests. For running the test suite, please refer to :doc:`TestingGuide`."
-msgstr ""
+msgstr "之后，只需输入 ``make -jN`` or ``ninja`` 将会开始构建。 ``make -jN check-all`` or ``ninja check-all`` 将运行所有的编译器测试。对于运行测试套件，请参考 :doc:`TestingGuide` 。"
 
 #: ../../HowToBuildOnARM.rst:52
 msgid ""
 "If you are building LLVM/Clang on an ARM board with 1G of memory or less,"
 " please use ``gold`` rather then GNU ``ld``. In any case it is probably a"
 " good idea to set up a swap partition, too."
-msgstr ""
+msgstr "如果您是在内存少于1G的ARM板上构建LLVM / Clang的，请使用 ``gold`` 而不是GNU ``ld`` 。大多数情况下，建立一个交换分区将是一个不错的主意。"
 
 #: ../../HowToBuildOnARM.rst:60
 msgid ""
@@ -91,14 +91,14 @@ msgid ""
 "are disappearing, caches being flushed on every big.LITTLE switch, and "
 "other similar issues.  To help ease the effect of this, set the Linux "
 "scheduler to \"performance\" on **all** cores using this little script:"
-msgstr ""
+msgstr "ARM开发板可能是不稳定的，您可能会遇到内核消失，big.LITTLE切换时刷新缓存，和其它类似的问题。为了帮助缓解这样的问题，可以对**全部**使用该脚本的内核设置Linux scheduler到 \"performance\"。"
 
 #: ../../HowToBuildOnARM.rst:72
 msgid ""
 "Remember to turn that off after the build, or you may risk burning your "
 "CPU. Most modern kernels don't need that, so only use it if you have "
 "problems."
-msgstr ""
+msgstr "记得把它们关掉，否则构建结束后，长时间运行可能会烧毁这款CPU。大多数现代的内核并不需要这样做，所以只有当你遇到类似问题时再进行这样的设置。"
 
 #: ../../HowToBuildOnARM.rst:76
 msgid ""
@@ -107,7 +107,7 @@ msgid ""
 "external hard-drives (those are also a lot faster). So, at least, you "
 "should consider to buy a fast USB stick.  On systems with a fast eMMC, "
 "that's a good option too."
-msgstr ""
+msgstr "在SD卡上运行构建是没问题的，但相比质量好的USB记忆棒，SD卡更容易出现错误，甚至比外部硬盘驱动器更容易出错（这些也更快）。所以，至少，你应该考虑买一个快速的USB记忆棒。在一个快速的eMMC系统，也是一个很好的选择。"
 
 #: ../../HowToBuildOnARM.rst:82
 msgid ""
@@ -115,5 +115,5 @@ msgid ""
 "can provide *at least* 4 amperes, this is especially important if you use"
 " USB devices with your board. Externally powered USB/SATA harddrives are "
 "even better than having a good power supply."
-msgstr ""
+msgstr "请确保你有一个高质量的电源（几十美元的）可以提供 *至少* 4安培，这一点在你还需要同时使用其他USB设备（如移动硬盘）时显得尤其重要。当然，使用外部供电的USB / SATA硬盘，这可能比有一个好的电源更加有效。"
 

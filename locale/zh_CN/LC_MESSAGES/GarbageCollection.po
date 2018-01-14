@@ -19,22 +19,22 @@ msgstr ""
 
 #: ../../GarbageCollection.rst:3
 msgid "Garbage Collection with LLVM"
-msgstr ""
+msgstr "垃圾收集与LLVM"
 
 #: ../../GarbageCollection.rst:9
 msgid "Abstract"
-msgstr ""
+msgstr "摘要"
 
 #: ../../GarbageCollection.rst:11
 msgid ""
 "This document covers how to integrate LLVM into a compiler for a language"
 " which supports garbage collection.  **Note that LLVM itself does not "
 "provide a garbage collector.**  You must provide your own."
-msgstr ""
+msgstr "本文介绍了如何为LLVM集成一个编译器，构建支持垃圾收集的语言。 **请注意，LLVM本身不提供垃圾收集器** ，您必须自行提供。"
 
 #: ../../GarbageCollection.rst:16
 msgid "Quick Start"
-msgstr ""
+msgstr "快速开始"
 
 #: ../../GarbageCollection.rst:18
 msgid ""
@@ -43,21 +43,21 @@ msgid ""
 " definition. Note that the collector strategy is a description of how "
 "LLVM should generate code such that it interacts with your collector and "
 "runtime, not a description of the collector itself."
-msgstr ""
+msgstr "首先，你应该选择一个垃圾收集策略。 LLVM包括许多内置的，但你也可以实现一个自定义的可加载插件。注意，垃圾收集器的策略是在描述LLVM应该如何生成代码，使得生成的代码与垃圾收集器和运行时正确交互，并不是垃圾收集器本身的描述。"
 
 #: ../../GarbageCollection.rst:24
 msgid ""
 "Next, mark your generated functions as using your chosen collector "
 "strategy. From c++, you can call:"
-msgstr ""
+msgstr "接下来，用你选择的收集策略标记您生成的函数。从C++代码中，您可以调用："
 
 #: ../../GarbageCollection.rst:32
 msgid "This will produce IR like the following fragment:"
-msgstr ""
+msgstr "这将产生像下面的中间代码片段："
 
 #: ../../GarbageCollection.rst:39
 msgid "When generating LLVM IR for your functions, you will need to:"
-msgstr ""
+msgstr "当为你的函数生成LLVM IR时，你将需要："
 
 #: ../../GarbageCollection.rst:41
 msgid ""
@@ -65,13 +65,13 @@ msgid ""
 "and store instructions.  These intrinsics are used to represent load and "
 "store barriers.  If you collector does not require such barriers, you can"
 " skip this step."
-msgstr ""
+msgstr "使用 ``@ llvm.gcread`` 和/或 ``@ llvm.gcwrite`` 代替标准的加载和存储指令。这些内部函数用于表示加载和存储的barriers。如果你收集器不需要这样的barriers，你可以跳过这一步。"
 
 #: ../../GarbageCollection.rst:46
 msgid ""
 "Use the memory allocation routines provided by your garbage collector's "
 "runtime library."
-msgstr ""
+msgstr "使用您的垃圾收集器的运行时库提供的内存分配程序"
 
 #: ../../GarbageCollection.rst:49
 msgid ""
@@ -79,7 +79,7 @@ msgid ""
 "runtime's binary interface.  LLVM is not involved in the process.  In "
 "particular, the LLVM type system is not suitable for conveying such "
 "information though the compiler."
-msgstr ""
+msgstr "如果您的垃圾收集器需要它们，可以根据您的运行时的二进制接口生成类型映射。 LLVM不参与这个过程。特别是，LLVM类型系统不适合通过编译器传送这些信息。"
 
 #: ../../GarbageCollection.rst:54
 msgid ""
@@ -87,7 +87,7 @@ msgid ""
 "collector. Many collectors require running application code to "
 "periodically check a flag and conditionally call a runtime function.  "
 "This is often referred to as a safepoint poll."
-msgstr ""
+msgstr "插入与垃圾收集器交互所需的任何协调代码。许多收集器需要运行某些代码来定期检查flags并有条件地调用运行时功能。这通常被称为safepoint轮询。（译者注：safepoint的概念是进行垃圾收集动作时，可以安全执行的位置，通常是函数开始前后，所有寄存器中的指针都被保存到栈中时，这时对栈中适当位置扫描，即可获取所有引用的入口点。）"
 
 #: ../../GarbageCollection.rst:59
 msgid ""
@@ -96,7 +96,7 @@ msgid ""
 "encode them into your final stack maps.  Depending on the collector "
 "strategy chosen, this is accomplished by using either the "
 "``@llvm.gcroot`` intrinsics or an ``gc.statepoint`` relocation sequence."
-msgstr ""
+msgstr "您将需要在生成的IR中确定根（例如：引用堆对象的收集器需要知道），让LLVM可以把他们编码进你最终的栈映射表。根据选择的收集器策略，这是可以通过使用  ``@ llvm.gcroot`` 内部函数或 ``gc.statepoint`` 重定位序列来实现。"
 
 #: ../../GarbageCollection.rst:65
 msgid ""
@@ -104,22 +104,22 @@ msgid ""
 "generated when evaluating an expression.  In ``h(f(), g())``, the result "
 "of ``f()`` could easily be collected if evaluating ``g()`` triggers a "
 "collection."
-msgstr ""
+msgstr "不要忘记为计算表达式时生成的每个中间值创建一个根。在  ``h(f(), g())`` 表达式中，如果 ``g()`` 触发了一个收集动作，那么 ``f()`` 的结果也应该可以很容易地被收集。"
 
 #: ../../GarbageCollection.rst:69
 msgid ""
 "Finally, you need to link your runtime library with the generated program"
 " executable (for a static compiler) or ensure the appropriate symbols are"
 " available for the runtime linker (for a JIT compiler)."
-msgstr ""
+msgstr "最后，你需要你的运行时库与生成的可执行程序（对于静态编译）链接或保证对应的符号可以在运行时被链接（对于JIT编译器）。"
 
 #: ../../GarbageCollection.rst:75
 msgid "Introduction"
-msgstr ""
+msgstr "导言"
 
 #: ../../GarbageCollection.rst:78
 msgid "What is Garbage Collection?"
-msgstr ""
+msgstr "什么是垃圾收集？"
 
 #: ../../GarbageCollection.rst:80
 msgid ""
@@ -128,7 +128,7 @@ msgid ""
 " to produce and maintain.  Many programming languages rely on garbage "
 "collection for automatic memory management.  There are two primary forms "
 "of garbage collection: conservative and accurate."
-msgstr ""
+msgstr "垃圾收集是一种广泛应用的技术，允许开发者不必关心堆对象的生存期，使得软件更容易构建和维护。许多编程语言依赖垃圾回收的自动内存管理特性。垃圾收集器有以下两种主要形式：保守的和准确的。"
 
 #: ../../GarbageCollection.rst:86
 msgid ""
@@ -138,7 +138,7 @@ msgid ""
 "special information from the compiler.  The `Boehm collector "
 "<http://www.hpl.hp.com/personal/Hans_Boehm/gc/>`__ is an example of a "
 "state-of-the-art conservative collector."
-msgstr ""
+msgstr "保守垃圾收集往往不需要从任一语言或编译的任何特殊的支持：它可以处理非类型安全的编程语言（例如C / C++），并且不需要从编译器获取任何特殊的信息。这款 `Boehm collector <http://www.hpl.hp.com/personal/Hans_Boehm/gc/>`__ 是一个最先进的保守收集器的例子。"
 
 #: ../../GarbageCollection.rst:93
 msgid ""
@@ -147,7 +147,7 @@ msgid ""
 "type-safe in most cases).  Identifying pointers at run-time requires "
 "compiler support to locate all places that hold live pointer variables at"
 " run-time, including the :ref:`processor stack and registers <gcroot>`."
-msgstr ""
+msgstr "准确垃圾收集需要在运行时（这需要源语言是类型安全在大多数情况下），以确定在程序中的所有指针的能力。在运行时确定的指针，需要编译器的支持，以找到在运行时保持住指针变量的所有地方，包括：:ref:`processor stack and registers <gcroot>`。"
 
 #: ../../GarbageCollection.rst:99
 msgid ""
@@ -160,7 +160,9 @@ msgid ""
 "integer values that happen to point to objects in the program.  In "
 "addition, some aggressive compiler transformations can break conservative"
 " garbage collectors (though these seem rare in practice)."
-msgstr ""
+msgstr "保守的垃圾收集是有吸引力的，因为它不需要任何特殊的编译器的支持，但它确实有问题。特别是，由于保守的垃圾收集器不能*知道*，在机器一个特定的word可能是一个指针，它不能在堆中移动活动对象（导致不能使用压缩和世代GC算法），"
+"它可能偶尔发生内存泄漏，因为某些整数值可能恰好等于某个指针地址。此外，一些激进的编译器转换可能打破保守的垃圾收集器（虽然这些似乎在实践中罕见）。"
+"（译者注：保守的垃圾收集器将栈中所有可能的值都当做假想的指针，如果某个不是指针的数字被当做指针，那么将会导致某些可以被回收的元素一直不被回收，如果恰好是某个比较大的树结构的根，则会有大量内存泄露。不过这种收集器之所以实用，就是因为发生特殊情况的概率非常小。）"
 
 #: ../../GarbageCollection.rst:108
 msgid ""
@@ -170,59 +172,60 @@ msgid ""
 "pointers active in the program, some optimizations are less effective.  "
 "In practice, however, the locality and performance benefits of using "
 "aggressive garbage collection techniques dominates any low-level losses."
-msgstr ""
+msgstr "准确的垃圾收集器不会受到这些问题的困扰，但他们可能会在标量优化时受到影响。特别是，由于在运行时必须能够识别和更新所有在程序中的活指针，一些优化会变得不太有效。然而在实践中，采用积极的垃圾收集技术的局部性和性能优势要胜过任何底层优化的损失。"
 
 #: ../../GarbageCollection.rst:115
 msgid ""
 "This document describes the mechanisms and interfaces provided by LLVM to"
 " support accurate garbage collection."
-msgstr ""
+msgstr "本文档描述了由LLVM提供支持和维护的准确垃圾收集器的机制和接口。"
 
 #: ../../GarbageCollection.rst:119
 msgid "Goals and non-goals"
-msgstr ""
+msgstr "目标和非目标"
 
 #: ../../GarbageCollection.rst:121
 msgid ""
 "LLVM's intermediate representation provides :ref:`garbage collection "
 "intrinsics <gc_intrinsics>` that offer support for a broad class of "
 "collector models.  For instance, the intrinsics permit:"
-msgstr ""
+msgstr "LLVM的中间表示为 :ref:`garbage collection intrinsics <gc_intrinsics>` 等很多收集器模型提供支持。例如，这些内置的收集器模型被支持："
 
 #: ../../GarbageCollection.rst:125
 msgid "semi-space collectors"
-msgstr ""
+msgstr "半空间垃圾收集器"
 
 #: ../../GarbageCollection.rst:127
 msgid "mark-sweep collectors"
-msgstr ""
+msgstr "标记 - 清除垃圾收集器"
 
 #: ../../GarbageCollection.rst:129
 msgid "generational collectors"
-msgstr ""
+msgstr "世代垃圾收集器
+"
 
 #: ../../GarbageCollection.rst:131
 msgid "incremental collectors"
-msgstr ""
+msgstr "增量式垃圾收集器"
 
 #: ../../GarbageCollection.rst:133
 msgid "concurrent collectors"
-msgstr ""
+msgstr "并发垃圾收集器"
 
 #: ../../GarbageCollection.rst:135
 msgid "cooperative collectors"
-msgstr ""
+msgstr "合作式垃圾收集器"
 
 #: ../../GarbageCollection.rst:137
 msgid "reference counting"
-msgstr ""
+msgstr "参考计数"
 
 #: ../../GarbageCollection.rst:139
 msgid ""
 "We hope that the support built into the LLVM IR is sufficient to support "
 "a broad class of garbage collected languages including Scheme, ML, Java, "
 "C#, Perl, Python, Lua, Ruby, other scripting languages, and more."
-msgstr ""
+msgstr "我们希望在LLVM IR上建立对垃圾收集的支持，使其能够支持一大类需要垃圾回收的语言，包括 Scheme，ML，Java，C#，Perl，Python，Lua，Ruby，其他脚本语言等。"
 
 #: ../../GarbageCollection.rst:143
 msgid ""
@@ -238,62 +241,62 @@ msgid ""
 "DWARF debugging info, for example.  The difference primarily lies in the "
 "lack of an established standard in the domain of garbage collection --- "
 "thus the need for a flexible extension mechanism."
-msgstr ""
+msgstr "需要注意的是LLVM **本身不提供垃圾回收** --- 这应该是你的语言的运行时库的一部分。 LLVM提供了描述垃圾收集要求编译器的框架。特别是，LLVM提供用于产生调用堆栈的结构表，轮询safepoint，并发读写屏障（barriers）的支持。您还可以扩展LLVM  - 可以通过一个可加载的 :ref:`code generation plugins <plugin>` - 生成一套符合 *二进制接口* 和 *运行时库* 的指定代码和数据结构。这类似于，如LLVM和DWARF调试信息之间的关系。所不同的，主要在于缺乏垃圾收集的领域标准---因此需要一个灵活的扩展机制。"
 
 #: ../../GarbageCollection.rst:155
 msgid ""
 "The aspects of the binary interface with which LLVM's GC support is "
 "concerned are:"
-msgstr ""
+msgstr "与LLVM的GC支持有关的二进制接口有："
 
 #: ../../GarbageCollection.rst:158
 msgid ""
 "Creation of GC safepoints within code where collection is allowed to "
 "execute safely."
-msgstr ""
+msgstr "在可以安全执行收集代码的位置创建GC safepoints "
 
 #: ../../GarbageCollection.rst:161
 msgid ""
 "Computation of the stack map.  For each safe point in the code, object "
 "references within the stack frame must be identified so that the "
 "collector may traverse and perhaps update them."
-msgstr ""
+msgstr "堆栈映射表的计算。为代码中的每个安全点，堆栈帧中的对象的引用必须确定，使得收集器可以遍历和或许更新它们。"
 
 #: ../../GarbageCollection.rst:165
 msgid ""
 "Write barriers when storing object references to the heap.  These are "
 "commonly used to optimize incremental scans in generational collectors."
-msgstr ""
+msgstr "存储堆对象引用的时候发出Write barriers。这些都是世代收集，增量扫描常用的操作。"
 
 #: ../../GarbageCollection.rst:168
 msgid ""
 "Emission of read barriers when loading object references.  These are "
 "useful for interoperating with concurrent collectors."
-msgstr ""
+msgstr "加载对象引用的时候发出Read barriers。这些对并发收集器交互操作非常有用。"
 
 #: ../../GarbageCollection.rst:171
 msgid "There are additional areas that LLVM does not directly address:"
-msgstr ""
+msgstr "还有其他方面的LLVM不能直接解决："
 
 #: ../../GarbageCollection.rst:173
 msgid "Registration of global roots with the runtime."
-msgstr ""
+msgstr "运行时全局根的注册。"
 
 #: ../../GarbageCollection.rst:175
 msgid "Registration of stack map entries with the runtime."
-msgstr ""
+msgstr "运行时栈映射表的注册。"
 
 #: ../../GarbageCollection.rst:177
 msgid ""
 "The functions used by the program to allocate memory, trigger a "
 "collection, etc."
-msgstr ""
+msgstr "分配内存时使用的函数，触发垃圾收集等。"
 
 #: ../../GarbageCollection.rst:180
 msgid ""
 "Computation or compilation of type maps, or registration of them with the"
 " runtime.  These are used to crawl the heap for object references."
-msgstr ""
+msgstr "类型映射表的计算或编译，或在运行时注册该表。这些都是在堆中爬取对象引用所必要的信息。（译者注：类型表对于GC非常重要，因为在堆中，所有内存都是一片连续的数据，你必须能够知道其中哪些是指针，哪些不是，所以必须有所有类型的元数据）"
 
 #: ../../GarbageCollection.rst:183
 msgid ""
@@ -307,11 +310,11 @@ msgid ""
 "designs and easy extension points.  If you don't already have a specific "
 "binary interface you need to support, we recommend trying to use one of "
 "these built in collector strategies."
-msgstr ""
+msgstr "一般情况下，LLVM对GC支持不包括可充分解决与IR的其他功能，并且不指定一个特定的二进制接口功能。从有利的一面，这意味着你应该能够LLVM与现有的运行时集成。另一方面，它为新语言的开发者留下了很多工作。我们试图通过提供内置的收集策略的描述，可以与许多常见设计的收集器易于扩展整合，以减轻这部分工作量。如果你还没有，你需要支持特定的二进制接口，我们建议您尝试使用这些内置在收集策略之一。"
 
 #: ../../GarbageCollection.rst:197
 msgid "LLVM IR Features"
-msgstr ""
+msgstr "LLVM IR特性"
 
 #: ../../GarbageCollection.rst:199
 msgid ""
@@ -319,18 +322,18 @@ msgid ""
 ":doc:`LLVM intermediate representation <LangRef>`.  The exact behavior of"
 " these IR features is specified by the selected :ref:`GC strategy "
 "description <plugin>`."
-msgstr ""
+msgstr "本节介绍所提供的垃圾收集设施 :doc:`LLVM intermediate representation <LangRef>`。 选定的这些IR的确切行为可以参考这里： :ref:`GC strategy description <plugin>`。"
 
 #: ../../GarbageCollection.rst:205
 msgid "Specifying GC code generation: ``gc \"...\"``"
-msgstr ""
+msgstr "指定GC代码的生成: ``gc \"...\"``"
 
 #: ../../GarbageCollection.rst:211
 msgid ""
 "The ``gc`` function attribute is used to specify the desired GC strategy "
 "to the compiler.  Its programmatic equivalent is the ``setGC`` method of "
 "``Function``."
-msgstr ""
+msgstr "该 ``gc`` 功能属性用于指定所需的GC策略编译器。其方案相当于是 ``Function`` 的 ``setGC`` 方法。"
 
 #: ../../GarbageCollection.rst:214
 msgid ""
@@ -340,18 +343,18 @@ msgid ""
 "your copy of LLVM. It is the selected GC strategy which defines the exact"
 " nature of the code generated to support GC.  If none is found, the "
 "compiler will raise an error."
-msgstr ""
+msgstr "在一个函数上设置  ``gc \"name\"``  会触发搜索来尝试匹配GCStrategy的子类。一些收集器的策略是内置的。您可以添加其他的策略或者使用可加载插件机制，或者直接编写Patching修改LLVM。是被选的GC策略定义了支持GC的代码的确切性质。如果没有找到，编译器会产生一个错误。"
 
 #: ../../GarbageCollection.rst:220
 msgid ""
 "Specifying the GC style on a per-function basis allows LLVM to link "
 "together programs that use different garbage collection algorithms (or "
 "none at all)."
-msgstr ""
+msgstr "指定的GC，在每个函数的基础上，允许LLVM使用不同的垃圾收集算法（或没有）"
 
 #: ../../GarbageCollection.rst:226
 msgid "Identifying GC roots on the stack"
-msgstr ""
+msgstr "在栈上识别GC根"
 
 #: ../../GarbageCollection.rst:228
 msgid ""
@@ -362,21 +365,21 @@ msgid ""
 "<plugin>` basis).  Longer term, we will probably either migrate away from"
 " ``llvm.gcroot`` entirely, or substantially merge their implementations. "
 "Note that most new development work is focused on ``gc.statepoint``."
-msgstr ""
+msgstr "LLVM目前支持在safepoints描述编译代码引用两种不同的机制。 ``llvm.gcroot`` 是旧的机制; ``gc.statepoint`` 已经成为最新特性。目前，您可以选择执行（以 :ref:`GC strategy <plugin>`  为基础）。从长期来看，我们可能要么远离 ``llvm.gcroot`` 实现完全迁移或实质上合并它们的实现。请注意，大多数新的开发工作主要集中在 ``gc.statepoint`` 。"
 
 #: ../../GarbageCollection.rst:237
 msgid "Using ``gc.statepoint``"
-msgstr ""
+msgstr "使用 ``gc.statepoint``"
 
 #: ../../GarbageCollection.rst:238
 msgid ""
 ":doc:`This page <Statepoints>` contains detailed documentation for "
 "``gc.statepoint``."
-msgstr ""
+msgstr ":doc:`This page <Statepoints>` 包含了 ``gc.statepoint`` 详细文档。"
 
 #: ../../GarbageCollection.rst:242
 msgid "Using ``llvm.gcwrite``"
-msgstr ""
+msgstr "使用 ``llvm.gcwrite``"
 
 #: ../../GarbageCollection.rst:248
 msgid ""
@@ -385,7 +388,7 @@ msgid ""
 "garbage collection. The exact impact on generated code is specified by "
 "the Function's selected :ref:`GC strategy <plugin>`.  All calls to "
 "``llvm.gcroot`` **must** reside inside the first basic block."
-msgstr ""
+msgstr "该 ``llvm.gcroot`` 内部命令用来告诉LLVM一个堆栈变量引用了堆中的某个对象，这个引用应该被垃圾收集器所追踪。 生成的代码的确切影响由所选择的函数指定 :ref:`GC strategy <plugin>` 。所有调用 ``llvm.gcroot`` 的语句 **必须** 驻留在本函数的第一个基本块内。（译者注：一般编写代码时的临时变量都会在栈上开辟一块内存空间，指针也不例外， ``llvm.gcroot`` 正是指明了这样一种关系，某个栈上的临时变量引用了某个堆上的对象，这样垃圾回收器就可以追踪当前所有被引用的对象，正是从一系列的gcroot开始。必须驻留在第一个基本块中，也是出于安全的考虑，很可能某些操作会导致这个内存加载到寄存器中，没有及时更新回内存，导致垃圾回收器监测了错误的内存地址。）"
 
 #: ../../GarbageCollection.rst:254
 msgid ""
@@ -394,7 +397,7 @@ msgid ""
 "that should be associated with the pointer, and **must** be a constant or"
 " global value address.  If your target collector uses tags, use a null "
 "pointer for metadata."
-msgstr ""
+msgstr "第一个参数 **必须** 是一个地址，指向指令alloca分配的地址或者alloca的一个bitcast转换。第二包含一个指向应与该指针相关联的元数据，**必须**是常量或全局值地址。如果你的目标收集器使用标签，用一个空指针作为元数据。"
 
 #: ../../GarbageCollection.rst:259
 msgid ""
@@ -404,7 +407,7 @@ msgid ""
 "every call. A compiler which uses mem2reg to raise imperative code using "
 "``alloca`` into SSA form need only add a call to ``@llvm.gcroot`` for "
 "those variables which are pointers into the GC heap."
-msgstr ""
+msgstr "手动执行静态单赋值（SSA）构建的编译器 **必须** 确保代表GC引用的被存储在alloca分配的地址的SSA值，在每次调用点之前能传递给相应的 ``gcroot`` 并在每次调用后重新加载。采用mem2reg提高代码性能的编译器，只需要对于那些指向GC堆的指针变量添加一个 ``@llvm.gcroot`` 调用。"
 
 #: ../../GarbageCollection.rst:266
 msgid ""
@@ -413,7 +416,7 @@ msgid ""
 "``f()`` in the case that ``g()`` triggers a collection.  Note, that stack"
 " variables must be initialized and marked with ``llvm.gcroot`` in "
 "function's prologue."
-msgstr ""
+msgstr "同样重要的是，标记带有 ``llvm.gcroot`` 的中间变量。例如，考虑 ``h(f(), g())`` 。 在 ``g()`` 触发一个收集动作时，必须小心 ``f()`` 的返回值发生泄露。请注意，堆栈变量必须在函数的开头部分被初始化并用 `llvm.gcroot`` 标记。（译者注：这个内存泄露的例子是说，如果嵌套函数调用，返回值会存储到了两个临时变量中，必须小心地标记这些用到的中间变量，假设f()返回了一个对象，存储在临时变量a1中，并没有用gcroot标记，那么g()函数内触发了一次垃圾回收，就会因为a1没有被标记为gcroot，对应的内存被标记为没有引用，就可能会被这次垃圾回收给回收掉，造成g()调用结束后，f()的返回值已经不可用了。这样不可用的内存地址传入h函数时必然会发生异常。）"
 
 #: ../../GarbageCollection.rst:271
 msgid ""
@@ -421,21 +424,21 @@ msgid ""
 " have 'isa' pointers or tag bits. [Appel89_, Goldberg91_, Tolmach94_] If "
 "specified, its value will be tracked along with the location of the "
 "pointer in the stack frame."
-msgstr ""
+msgstr " `％metadata` 参数可以用来避免要求堆对象具有 'isa' 指针或标记位。 [Appel89_，Goldberg91_，Tolmach94_] 如果指定，它的值将随着指针在堆栈帧中的位置一起被跟踪。"
 
 #: ../../GarbageCollection.rst:276
 msgid "Consider the following fragment of Java code:"
-msgstr ""
+msgstr "考虑如下的Java代码片段："
 
 #: ../../GarbageCollection.rst:285
 msgid ""
 "This block (which may be located in the middle of a function or in a loop"
 " nest), could be compiled to this LLVM code:"
-msgstr ""
+msgstr "这个块（可能位于一个函数的中间或循环嵌套）可以被编译成这个LLVM代码："
 
 #: ../../GarbageCollection.rst:315
 msgid "Reading and writing references in the heap"
-msgstr ""
+msgstr "在堆中读取和写入引用"
 
 #: ../../GarbageCollection.rst:317
 msgid ""
@@ -446,7 +449,7 @@ msgid ""
 "The amount of code that needs to be executed is usually quite small and "
 "not on the critical path of any computation, so the overall performance "
 "impact of the barrier is tolerable."
-msgstr ""
+msgstr "当mutator（需要垃圾收集的程序）从堆对象的字段读取指针或写入指针时，需要通知某些收集器。插入这些点的代码片段分别被称为*读屏障*和*写屏障*。需要执行的代码量通常很小，且不在任何计算的关键路径上，因此屏障的整体性能影响是可以接受的。"
 
 #: ../../GarbageCollection.rst:324
 #, python-format
@@ -456,14 +459,14 @@ msgid ""
 "Accordingly, these intrinsics take both pointers as separate arguments "
 "for completeness.  In this snippet, ``%object`` is the object pointer, "
 "and ``%derived`` is the derived pointer:"
-msgstr ""
+msgstr "屏障（Barriers）常常需要访问*对象指针*而非*衍生指针*（这是一个指针字段对象内）。因此，这些内在需要两个指针作为独立完整的参数。在这个片段中，``%object`` 是对象指针，``%derived`` 是派生的指针："
 
 #: ../../GarbageCollection.rst:342
 msgid ""
 "LLVM does not enforce this relationship between the object and derived "
 "pointer (although a particular :ref:`collector strategy <plugin>` might)."
 "  However, it would be an unusual collector that violated it."
-msgstr ""
+msgstr "LLVM不强制制定对象和派生的指针之间的这种关系（虽然具体为 :ref:`collector strategy <plugin>` ）。然而，很少有垃圾收集器违反它。"
 
 #: ../../GarbageCollection.rst:346
 msgid ""
@@ -471,7 +474,7 @@ msgid ""
 "not require the corresponding barrier.  The GC strategy used with such a "
 "collector should replace the intrinsic calls with the corresponding "
 "``load`` or ``store`` instruction if they are used."
-msgstr ""
+msgstr "使用这些内在的是自然可选如果目标的GC不需要相应屏障。如果使用他们这样的收集器所使用的GC策略应更换相应的 ``load`` 或 ``store`` 指令的内部调用。"
 
 #: ../../GarbageCollection.rst:351
 msgid ""
@@ -480,11 +483,11 @@ msgid ""
 "operation performed.  It is currently assumed that the operation is of "
 "pointer size and the alignment is assumed to be the target machine's "
 "default alignment."
-msgstr ""
+msgstr "当前设计的一个已知缺陷是屏障内在函数不包括所执行的基础操作的大小或对齐。目前假定操作是指针大小，并且地址对齐被认为是目标机器的默认对齐。"
 
 #: ../../GarbageCollection.rst:357
 msgid "Write barrier: ``llvm.gcwrite``"
-msgstr ""
+msgstr "写屏障： ``llvm.gcwrite``"
 
 #: ../../GarbageCollection.rst:363
 msgid ""
@@ -492,18 +495,18 @@ msgid ""
 "function.  It has exactly the same semantics as a non-volatile ``store`` "
 "to the derived pointer (the third argument).  The exact code generated is"
 " specified by the Function's selected :ref:`GC strategy <plugin>`."
-msgstr ""
+msgstr "对于写障碍，LLVM提供了 ``llvm.gcwrite`` 固有功能。它具有完全相同的语义非易失性 ``store`` 到派生的指针（第三个参数）。参考：:ref:`GC strategy <plugin>` 产生的确切的代码是由函数的选择指定。"
 
 #: ../../GarbageCollection.rst:368
 msgid ""
 "Many important algorithms require write barriers, including generational "
 "and concurrent collectors.  Additionally, write barriers could be used to"
 " implement reference counting."
-msgstr ""
+msgstr "许多重要的算法需要编写屏障，包括分代和并发收集器。另外，可以使用写屏障来实现引用计数。"
 
 #: ../../GarbageCollection.rst:373
 msgid "Read barrier: ``llvm.gcread``"
-msgstr ""
+msgstr "读障碍： ``llvm.gcread``"
 
 #: ../../GarbageCollection.rst:379
 msgid ""
@@ -511,32 +514,32 @@ msgid ""
 "  It has exactly the same semantics as a non-volatile ``load`` from the "
 "derived pointer (the second argument).  The exact code generated is "
 "specified by the Function's selected :ref:`GC strategy <plugin>`."
-msgstr ""
+msgstr "对于读障碍，LLVM提供了 ``llvm.gcread`` 固有功能。它具有同样的语义从派生的指针（第二个参数）的非易失性``load``。 :ref:`GC strategy <plugin>` 产生的确切的代码是由函数的选择指定。"
 
 #: ../../GarbageCollection.rst:384
 msgid ""
 "Read barriers are needed by fewer algorithms than write barriers, and may"
 " have a greater performance impact since pointer reads are more frequent "
 "than writes."
-msgstr ""
+msgstr "读相对写来说，较少需要障碍，但仍然可能更大程度地影响性能，因为指针读取比写更频繁。"
 
 #: ../../GarbageCollection.rst:392
 msgid "Built In GC Strategies"
-msgstr ""
+msgstr "建于GC策略"
 
 #: ../../GarbageCollection.rst:394
 msgid ""
 "LLVM includes built in support for several varieties of garbage "
 "collectors."
-msgstr ""
+msgstr "LLVM包含对几种垃圾收集器的内置支持。"
 
 #: ../../GarbageCollection.rst:397
 msgid "The Shadow Stack GC"
-msgstr ""
+msgstr "影子堆栈GC（Shadow Stack GC）"
 
 #: ../../GarbageCollection.rst:399
 msgid "To use this collector strategy, mark your functions with:"
-msgstr ""
+msgstr "要使用此收集器策略，请使用以下标签标记您的函数："
 
 #: ../../GarbageCollection.rst:405
 msgid ""
@@ -548,19 +551,19 @@ msgid ""
 "as constant data, but has a significant portability advantage because it "
 "requires no special support from the target code generator, and does not "
 "require tricky platform-specific code to crawl the machine stack."
-msgstr ""
+msgstr "不同于依靠合作代码生成器来编译堆栈映射表的很多GC算法，该算法谨慎地保持着堆根链表 [:ref:`Henderson2002 <henderson02>`]。这种所谓的 \"shadow stack\" 是机器堆栈的一个镜像。保持这种数据结构比使用编译成可执行固定数据堆栈映射慢，但有一个显著可移植性的优点，因为它不需要目标代码生成器的特殊支持，并且不需要棘手的特定平台代码，来抓取本机堆栈。"
 
 #: ../../GarbageCollection.rst:413
 msgid "The tradeoff for this simplicity and portability is:"
-msgstr ""
+msgstr "这种简洁性和便携性的代价是："
 
 #: ../../GarbageCollection.rst:415
 msgid "High overhead per function call."
-msgstr ""
+msgstr "每次函数调用的开销很高。"
 
 #: ../../GarbageCollection.rst:417
 msgid "Not thread-safe."
-msgstr ""
+msgstr "不是线程安全的。"
 
 #: ../../GarbageCollection.rst:419
 msgid ""
@@ -568,14 +571,14 @@ msgid ""
 "are up and running, writing a :ref:`plugin <plugin>` will allow you to "
 "take advantage of :ref:`more advanced GC features <collector-algos>` of "
 "LLVM in order to improve performance."
-msgstr ""
+msgstr "不过，这是一个简单的入门方法。编译器和运行库启动并运行后，编写一个 :ref:`plugin <plugin>` 可以让您利用LLVM的更高级GC功能<collector-algos>来提高性能。"
 
 #: ../../GarbageCollection.rst:425
 msgid ""
 "The shadow stack doesn't imply a memory allocation algorithm.  A "
 "semispace collector or building atop ``malloc`` are great places to "
 "start, and can be implemented with very little code."
-msgstr ""
+msgstr "该影子堆栈算法，并不需要编写内存分配算法。一个半空间收集器或构建在 ``malloc` 上的分配器就是一个很好的入手点，可以用很少的代码来实现。"
 
 #: ../../GarbageCollection.rst:429
 msgid ""
@@ -584,11 +587,11 @@ msgid ""
 "stack.  Luckily, doing so is very simple. (This code is heavily commented"
 " to help you understand the data structure, but there are only 20 lines "
 "of meaningful code.)"
-msgstr ""
+msgstr "但是，当需要收集时，您的运行时需要遍历堆栈根，因此需要与影子堆栈集成。幸运的是，这样做很简单。 （这段代码被大量的评论来帮助你理解数据结构，但是只有20行有意义的代码。）"
 
 #: ../../GarbageCollection.rst:485
 msgid "The 'Erlang' and 'Ocaml' GCs"
-msgstr ""
+msgstr " 'Erlang' 和 'Ocaml' 的 GC"
 
 #: ../../GarbageCollection.rst:487
 msgid ""
@@ -598,17 +601,17 @@ msgid ""
 "someone interested in writing an ``gcroot`` compatible GC plugin.  In "
 "particular, these are the only in tree examples of how to produce a "
 "custom binary stack map format using a ``gcroot`` strategy."
-msgstr ""
+msgstr "LLVM附带两个利用 ``gcroot`` 机制的示例收集器。据我们所知，这些实际上并没有被任何语言运行时使用，但是它们为有兴趣编写  ``gcroot`` 兼容GC的插件的人提供了一个合理的起点。特别是，这些是树型示例中唯一如何使用gcroot策略生成自定义二进制堆栈映射格式的示例。"
 
 #: ../../GarbageCollection.rst:494
 msgid ""
 "As there names imply, the binary format produced is intended to model "
 "that used by the Erlang and OCaml compilers respectively."
-msgstr ""
+msgstr "因为顾名思义，所产生的二进制格式是为了模拟Erlang和OCaml编译器分别使用的格式。"
 
 #: ../../GarbageCollection.rst:500
 msgid "The Statepoint Example GC"
-msgstr ""
+msgstr "Statepoint示例GC"
 
 #: ../../GarbageCollection.rst:506
 msgid ""
@@ -618,13 +621,13 @@ msgid ""
 "which simplify ``gc.statepoint`` sequence insertion. If you need to build"
 " a custom GC strategy around the ``gc.statepoints`` mechanisms, it is "
 "recommended that you use this one as a starting point."
-msgstr ""
+msgstr "这个GC提供了一个例子，说明如何使用gc.statepoint提供的基础结构。这个示例GC兼容 :ref:`PlaceSafepoints` 和 :ref:`RewriteStatepointsForGC` 实用Pass，可以简化gc.statepoint序列的插入。如果你需要在 ``gc.statepoints`` 机制周围建立一个自定义GC策略，建议你使用这个策略作为起点。"
 
 #: ../../GarbageCollection.rst:513
 msgid ""
 "This GC strategy does not support read or write barriers.  As a result, "
 "these intrinsics are lowered to normal loads and stores."
-msgstr ""
+msgstr "此GC策略不支持读取或写入屏障。结果，这些内部函数被降级为正常的加载和存储。"
 
 #: ../../GarbageCollection.rst:516
 msgid ""
@@ -632,44 +635,44 @@ msgid ""
 ":ref:`stackmap-section` using a format documented :ref:`here <statepoint-"
 "stackmap-format>`. This format is intended to be the standard format "
 "supported by LLVM going forward."
-msgstr ""
+msgstr "这个GC策略生成的堆栈映射格式可以在以下文件的 :ref:`stackmap-section` 中找到 ref:`here <statepoint-stackmap-format>` 。这种格式旨在成为LLVM向前发展的标准格式。"
 
 #: ../../GarbageCollection.rst:522
 msgid "The CoreCLR GC"
-msgstr ""
+msgstr "CoreCLR GC"
 
 #: ../../GarbageCollection.rst:528
 msgid ""
 "This GC leverages the ``gc.statepoint`` mechanism to support the `CoreCLR"
 " <https://github.com/dotnet/coreclr>`__ runtime."
-msgstr ""
+msgstr "这个GC利用gc.statepoint机制来支持  `CoreCLR <https://github.com/dotnet/coreclr>`__   运行时。"
 
 #: ../../GarbageCollection.rst:531
 msgid ""
 "Support for this GC strategy is a work in progress. This strategy will "
 "differ from :ref:`statepoint-example GC<statepoint_example_gc>` strategy "
 "in certain aspects like:"
-msgstr ""
+msgstr "这个GC策略的支持是一项正在进行的工作。 这个策略与 :ref:`statepoint-example GC <statepoint_example_gc>` 在某些方面有所不同，如："
 
 #: ../../GarbageCollection.rst:536
 msgid ""
 "Base-pointers of interior pointers are not explicitly tracked and "
 "reported."
-msgstr ""
+msgstr "内部指针的基本指针没有明确的跟踪和报告。"
 
 #: ../../GarbageCollection.rst:539
 msgid "A different format is used for encoding stack maps."
-msgstr ""
+msgstr "编码堆栈映射使用不同的格式。"
 
 #: ../../GarbageCollection.rst:541
 msgid ""
 "Safe-point polls are only needed before loop-back edges and before tail-"
 "calls (not needed at function-entry)."
-msgstr ""
+msgstr "安全点轮询仅在回送边缘之前和尾部呼叫之前需要（在函数入口处不需要）。"
 
 #: ../../GarbageCollection.rst:545
 msgid "Custom GC Strategies"
-msgstr ""
+msgstr "自定义GC策略"
 
 #: ../../GarbageCollection.rst:547
 msgid ""
@@ -677,7 +680,7 @@ msgid ""
 "you will need to define a custom GCStrategy and possibly, a custom LLVM "
 "pass to perform lowering.  Your best example of where to start defining a"
 " custom GCStrategy would be to look at one of the built in strategies."
-msgstr ""
+msgstr "如果内置的GC策略描述中没有一个满足您的需求，则需要定义一个自定义GCStrategy，并可能需要定制LLVM通道来执行降低操作。从哪里开始定义定制的GCStrategy最好的例子就是看看内置的策略之一。"
 
 #: ../../GarbageCollection.rst:552
 msgid ""
@@ -688,23 +691,23 @@ msgid ""
 "of LLVM.  If you think you need a patched build, please ask for advice on"
 " llvm-dev.  There may be an easy way we can extend the support to make it"
 " work for your use case without requiring a custom build."
-msgstr ""
+msgstr "您可以将这些附加代码构建为可加载的插件库。如果您只需要启用内置功能的不同组合，则可加载插件就足够了，但是如果您需要提供自定义降级通道，则需要构建LLVM的修补版本。如果您认为您需要修补版本，请咨询llvm-dev的建议。可能有一个简单的方法，我们可以扩展支持，使其为您的用例工作，而无需自定义生成。"
 
 #: ../../GarbageCollection.rst:561
 msgid "Collector Requirements"
-msgstr ""
+msgstr "垃圾收集器要求"
 
 #: ../../GarbageCollection.rst:563
 msgid ""
 "You should be able to leverage any existing collector library that "
 "includes the following elements:"
-msgstr ""
+msgstr "您应该能够使用用包含以下元素的任何现有的垃圾收集器库："
 
 #: ../../GarbageCollection.rst:565
 msgid ""
 "A memory allocator which exposes an allocation function your compiled "
 "code can call."
-msgstr ""
+msgstr "一个内存分配器，它提供了编译后的代码可以调用的分配函数。"
 
 #: ../../GarbageCollection.rst:568
 msgid ""
@@ -713,19 +716,19 @@ msgid ""
 "references within a stack frame on the machine stack. Note that "
 "collectors which conservatively scan the stack don't require such a "
 "structure."
-msgstr ""
+msgstr "堆栈映射的二进制格式。堆栈映射在一个safepoint描述引用的位置，在精确的收集器中用于标识机器堆栈上的堆栈帧内的引用。请注意，保守扫描堆栈的收集器不需要这样的结构。"
 
 #: ../../GarbageCollection.rst:573
 msgid ""
 "A stack crawler to discover functions on the call stack, and enumerate "
 "the references listed in the stack map for each call site."
-msgstr ""
+msgstr "一个堆栈搜寻器发现调用堆栈上的函数，并枚举堆栈映射中列出的每个调用点的引用。"
 
 #: ../../GarbageCollection.rst:576
 msgid ""
 "A mechanism for identifying references in global locations (e.g. global "
 "variables)."
-msgstr ""
+msgstr "用于识别全局位置（例如全局变量）中的引用的机制。"
 
 #: ../../GarbageCollection.rst:579
 msgid ""
@@ -733,18 +736,18 @@ msgid ""
 "collectors load and store barriers.  Note that since many collectors "
 "don't require barriers at all, LLVM defaults to lowering such barriers to"
 " normal loads and stores unless you arrange otherwise."
-msgstr ""
+msgstr "如果您的收集器需要它们，您的收集器的LLVM IR实施会加载和存储屏障。请注意，由于许多垃圾收集器完全不需要任何屏障，LLVM默认将这些障碍降至正常的装载和存储，除非您另有安排。"
 
 #: ../../GarbageCollection.rst:586
 msgid "Implementing a collector plugin"
-msgstr ""
+msgstr "实现一个收集器插件"
 
 #: ../../GarbageCollection.rst:588
 msgid ""
 "User code specifies which GC code generation to use with the ``gc`` "
 "function attribute or, equivalently, with the ``setGC`` method of "
 "``Function``."
-msgstr ""
+msgstr "用户代码指定哪个GC代码生成与 ``gc`` 函数属性一起使用，或者等同于 ``Function`` 的 ``setGC`` 方法。"
 
 #: ../../GarbageCollection.rst:591
 msgid ""
@@ -755,7 +758,7 @@ msgid ""
 " may be to compile LLVM's computed stack map to assembly code (using the "
 "binary representation expected by the runtime library).  This can be "
 "accomplished in about 100 lines of code."
-msgstr ""
+msgstr "要实现一个GC插件，需要继承 ``llvm :: GCStrategy`` ，这可以通过几行样板代码完成。 LLVM的基础架构提供了对几个重要算法的访问。对于一个没有争议的收集器，剩下的可能是编译LLVM的计算堆栈映射到汇编代码（使用运行时库期望的二进制表示）。这可以在大约100行代码中完成。"
 
 #: ../../GarbageCollection.rst:598
 msgid ""
@@ -764,58 +767,58 @@ msgid ""
 "runtime library.  The compiler plugin is responsible for generating code "
 "which conforms to the binary interface defined by library, most "
 "essentially the :ref:`stack map <stack-map>`."
-msgstr ""
+msgstr "这不是实现垃圾收集堆或垃圾收集器本身的适当位置。该代码应该存在于该语言的运行时库中。编译器插件负责生成符合库定义的二进制接口的代码，最基本的是 :ref:`stack map <stack-map>`。"
 
 #: ../../GarbageCollection.rst:604
 msgid "To subclass ``llvm::GCStrategy`` and register it with the compiler:"
-msgstr ""
+msgstr "要继承“`llvm :: GCStrategy”并将其注册到编译器："
 
 #: ../../GarbageCollection.rst:626
 msgid "This boilerplate collector does nothing.  More specifically:"
-msgstr ""
+msgstr "这个示例收集器什么都不做。进一步来说："
 
 #: ../../GarbageCollection.rst:628
 msgid ""
 "``llvm.gcread`` calls are replaced with the corresponding ``load`` "
 "instruction."
-msgstr ""
+msgstr " ``llvm.gcread`` 调用将被替换为相应的 ``load`` 指令。"
 
 #: ../../GarbageCollection.rst:631
 msgid ""
 "``llvm.gcwrite`` calls are replaced with the corresponding ``store`` "
 "instruction."
-msgstr ""
+msgstr " ``llvm.gcwrite`` 调用将被替换相应的 ``store`` 指令。"
 
 #: ../../GarbageCollection.rst:634
 msgid "No safe points are added to the code."
-msgstr ""
+msgstr "没有安全点（safepoint）被添加到代码。"
 
 #: ../../GarbageCollection.rst:636
 msgid "The stack map is not compiled into the executable."
-msgstr ""
+msgstr "堆栈映射不会编译到可执行文件中。"
 
 #: ../../GarbageCollection.rst:638
 msgid ""
 "Using the LLVM makefiles, this code can be compiled as a plugin using a "
 "simple makefile:"
-msgstr ""
+msgstr "使用LLVM makefiles，可以使用简单的makefile将此代码编译为插件："
 
 #: ../../GarbageCollection.rst:651
 msgid ""
 "Once the plugin is compiled, code using it may be compiled using ``llc "
 "-load=MyGC.so`` (though MyGC.so may have some other platform-specific "
 "extension):"
-msgstr ""
+msgstr "一旦插件被编译，使用它的代码可以使用 ``llc -load = MyGC.so`` 来编译（尽管MyGC.so可能有一些其他特定于平台的扩展）："
 
 #: ../../GarbageCollection.rst:664
 msgid ""
 "It is also possible to statically link the collector plugin into tools, "
 "such as a language-specific compiler front-end."
-msgstr ""
+msgstr "还可以将收集器插件静态链接到工具，如特定于语言的编译器前端。"
 
 #: ../../GarbageCollection.rst:670
 msgid "Overview of available features"
-msgstr ""
+msgstr "可用特性概述"
 
 #: ../../GarbageCollection.rst:672
 msgid ""
@@ -824,7 +827,7 @@ msgid ""
 "be enabled, disabled, or customized.  This matrix summarizes the "
 "supported (and planned) features and correlates them with the collection "
 "techniques which typically require them."
-msgstr ""
+msgstr "``GCStrategy``提供了一系列功能，通过它，插件可以做有用的工作。其中一些是回调，一些是可以启用，禁用或定制的算法。下表总结了已经支持（和计划支持）的功能，并将它们与通常需要它们的垃圾收集技术相关联。"
 
 #: ../../GarbageCollection.rst:685
 msgid "Algorithm"
@@ -980,44 +983,44 @@ msgstr ""
 
 #: ../../GarbageCollection.rst:740
 msgid "**?** denotes a feature which could be utilized if available."
-msgstr ""
+msgstr "**？**表示可用时，有价值的功能。"
 
 #: ../../GarbageCollection.rst:743
 msgid "To be clear, the collection techniques above are defined as:"
-msgstr ""
+msgstr "需要明确的是，上面的收集技术被定义为："
 
 #: ../../GarbageCollection.rst:746
 msgid "Shadow Stack"
-msgstr ""
+msgstr "影子堆栈（Shadow Stack）"
 
 #: ../../GarbageCollection.rst:746
 msgid "The mutator carefully maintains a linked list of stack roots."
-msgstr ""
+msgstr "增变器仔细维护了一个堆栈根的链表。"
 
 #: ../../GarbageCollection.rst:750
 msgid "Reference Counting"
-msgstr ""
+msgstr "引用计数"
 
 #: ../../GarbageCollection.rst:749
 msgid ""
 "The mutator maintains a reference count for each object and frees an "
 "object when its count falls to zero."
-msgstr ""
+msgstr "增变器维护每个对象的引用计数，并在计数降到零时释放对象。"
 
 #: ../../GarbageCollection.rst:754
 msgid "Mark-Sweep"
-msgstr ""
+msgstr "标记-清扫算法"
 
 #: ../../GarbageCollection.rst:753
 msgid ""
 "When the heap is exhausted, the collector marks reachable objects "
 "starting from the roots, then deallocates unreachable objects in a sweep "
 "phase."
-msgstr ""
+msgstr "当堆空间用尽时，收集器将从根开始标记可到达的对象，然后在扫描阶段释放不可达对象。"
 
 #: ../../GarbageCollection.rst:760
 msgid "Copying"
-msgstr ""
+msgstr "拷贝式垃圾收集"
 
 #: ../../GarbageCollection.rst:757
 msgid ""
@@ -1025,11 +1028,11 @@ msgid ""
 "heap area to another, compacting them in the process.  Copying collectors"
 " enable highly efficient \"bump pointer\" allocation and can improve "
 "locality of reference."
-msgstr ""
+msgstr "随着可达性分析的进行，收集器将对象从一个堆区域复制到另一个堆区域，并将它们压缩在过程中。复制收集器可实现高效的“凹凸指针”分配，并可改善参考的局部性。"
 
 #: ../../GarbageCollection.rst:765
 msgid "Incremental"
-msgstr ""
+msgstr "增量回收"
 
 #: ../../GarbageCollection.rst:763
 msgid ""
@@ -1037,7 +1040,7 @@ msgid ""
 "have all the properties of a copying collector (regardless of whether the"
 " mature heap is compacting), but bring the added complexity of requiring "
 "write barriers."
-msgstr ""
+msgstr "（包括世代收集器）增量收集器通常具有复制收集器的所有属性（不管堆是否压缩），但是增加了需要编写屏障的复杂性。"
 
 #: ../../GarbageCollection.rst:772
 msgid "Threaded"
@@ -1050,11 +1053,11 @@ msgid ""
 "Stopping a multithreaded mutator is a complicated problem.  It generally "
 "requires highly platform-specific code in the runtime, and the production"
 " of carefully designed machine code at safe points."
-msgstr ""
+msgstr "表示多线程的增变器;在开始可达性分析之前，收集器必须仍然停止增变器（“停止整个世界”）。停止多线程增变是一个复杂的问题。它通常要求运行时具有高度特定于平台的代码，并在安全的地方生产精心设计的机器代码。"
 
 #: ../../GarbageCollection.rst:780
 msgid "Concurrent"
-msgstr ""
+msgstr "concurrent=50"
 
 #: ../../GarbageCollection.rst:775
 msgid ""
@@ -1065,7 +1068,7 @@ msgid ""
 "world\" problem of threaded collectors is generally still present to a "
 "limited extent.  Sophisticated marking algorithms are necessary.  Read "
 "barriers may be necessary."
-msgstr ""
+msgstr "在这种技术中，增变器和收集器同时运行，其目标是消除暂停时间。在一个 *合作* 收集器中，增变器进一步援助收集应暂停发生，允许收集利用多处理器主机。Threaded收集器的“停止世界”问题通常仍然存在有限的程度。复杂的标记算法是必要的。阅读屏障可能是必要的。"
 
 #: ../../GarbageCollection.rst:782
 msgid ""
@@ -1073,62 +1076,62 @@ msgid ""
 "already suitable for a wide variety of collectors, but does not currently"
 " extend to multithreaded programs.  This will be added in the future as "
 "there is interest."
-msgstr ""
+msgstr "如矩阵所示，LLVM的垃圾收集基础结构已经适用于各种各样的收集器，但目前不扩展到多线程程序。由于这是热门话题，很可能将在未来加入更多种收集器。"
 
 #: ../../GarbageCollection.rst:790
 msgid "Computing stack maps"
-msgstr ""
+msgstr "计算堆栈映射"
 
 #: ../../GarbageCollection.rst:792
 msgid ""
 "LLVM automatically computes a stack map.  One of the most important "
 "features of a ``GCStrategy`` is to compile this information into the "
 "executable in the binary representation expected by the runtime library."
-msgstr ""
+msgstr "LLVM自动计算堆栈映射。``GCStrategy`` 最重要的特性之一就是将这些信息编译成运行时库期望的二进制表示形式的可执行文件。"
 
 #: ../../GarbageCollection.rst:796
 msgid ""
 "The stack map consists of the location and identity of each GC root in "
 "the each function in the module.  For each root:"
-msgstr ""
+msgstr "堆栈图由模块中每个函数中每个GC根的位置和标识组成。对于每个根："
 
 #: ../../GarbageCollection.rst:799
 msgid "``RootNum``: The index of the root."
-msgstr ""
+msgstr "``RootNum``: 根的索引。"
 
 #: ../../GarbageCollection.rst:801
 msgid "``StackOffset``: The offset of the object relative to the frame pointer."
-msgstr ""
+msgstr "``StackOffset``: 对象相对于帧指针的偏移量。"
 
 #: ../../GarbageCollection.rst:803
 msgid ""
 "``RootMetadata``: The value passed as the ``%metadata`` parameter to the "
 "``@llvm.gcroot`` intrinsic."
-msgstr ""
+msgstr "``RootMetadata``: 作为 ``％metadata`` 参数来传递给 ``@ llvm.gcroot`` 内在的值。"
 
 #: ../../GarbageCollection.rst:806
 msgid "Also, for the function as a whole:"
-msgstr ""
+msgstr "另外，对于整个函数："
 
 #: ../../GarbageCollection.rst:809
 msgid ""
 "``getFrameSize()``: The overall size of the function's initial stack "
 "frame,"
-msgstr ""
+msgstr "``getFrameSize()``: 函数的初始堆栈框架的整体大小，"
 
 #: ../../GarbageCollection.rst:809
 msgid "not accounting for any dynamic allocation."
-msgstr ""
+msgstr "不考虑任何动态分配。"
 
 #: ../../GarbageCollection.rst:811
 msgid "``roots_size()``: The count of roots in the function."
-msgstr ""
+msgstr "``roots_size()``: 函数中根的数量。"
 
 #: ../../GarbageCollection.rst:813
 msgid ""
 "To access the stack map, use ``GCFunctionMetadata::roots_begin()`` and "
 "-``end()`` from the :ref:`GCMetadataPrinter <assembly>`:"
-msgstr ""
+msgstr "要访问堆栈映射，可以使用：``GCFunctionMetadata::roots_begin()`` 和 ``end()`` ，参见 :ref:`GCMetadataPrinter <assembly>` "
 
 #: ../../GarbageCollection.rst:832
 msgid ""
@@ -1136,11 +1139,11 @@ msgid ""
 "a custom lowering pass, LLVM will compute an empty stack map.  This may "
 "be useful for collector plugins which implement reference counting or a "
 "shadow stack."
-msgstr ""
+msgstr "如果在代码生成之前通过自定义降级Pass去除了 ``llvm.gcroot``  内部函数，LLVM将计算一个空的堆栈映射。这可能对实现引用计数或影子堆栈的收集器插件有用。"
 
 #: ../../GarbageCollection.rst:839
 msgid "Initializing roots to null: ``InitRoots``"
-msgstr ""
+msgstr "将根初始化为null：``InitRoots`` "
 
 #: ../../GarbageCollection.rst:847
 msgid ""
@@ -1149,7 +1152,7 @@ msgid ""
 "uninitialized pointers, which will almost certainly cause it to crash.  "
 "This initialization occurs before custom lowering, so the two may be used"
 " together."
-msgstr ""
+msgstr "设置后，LLVM将在进入该函数时自动将每个根初始化为 ``null`` 。这可以防止GC的扫描阶段访问未初始化的指针，这几乎肯定会导致崩溃。这个初始化发生在自定义降低之前，所以两者可以一起使用。"
 
 #: ../../GarbageCollection.rst:852
 msgid ""
@@ -1157,20 +1160,20 @@ msgid ""
 "of distinguishing an uninitialized stack root from an initialized one.  "
 "Therefore, this feature should be used by all GC plugins.  It is enabled "
 "by default."
-msgstr ""
+msgstr "由于LLVM尚未计算活跃度信息，因此无法区分未初始化的堆栈根与已初始化的堆。所以，这个功能应该被所有的GC插件使用。它是默认启用的。"
 
 #: ../../GarbageCollection.rst:857
 msgid ""
 "Custom lowering of intrinsics: ``CustomRoots``, ``CustomReadBarriers``, "
 "and ``CustomWriteBarriers``"
-msgstr ""
+msgstr "自定义降级内部函数：``CustomRoots``, ``CustomReadBarriers``, and ``CustomWriteBarriers`` "
 
 #: ../../GarbageCollection.rst:859
 msgid ""
 "For GCs which use barriers or unusual treatment of stack roots, these "
 "flags allow the collector to perform arbitrary transformations of the "
 "LLVM IR:"
-msgstr ""
+msgstr "对于使用屏障或堆栈根的异常处理的GC，这些标志允许收集器执行LLVM IR的任意转换："
 
 #: ../../GarbageCollection.rst:874
 msgid ""
@@ -1181,38 +1184,38 @@ msgid ""
 "instances of the corresponding intrinsic in functions which opt in to "
 "your GC.  The best example of such a pass is the ShadowStackGC and it's "
 "ShadowStackGCLowering pass."
-msgstr ""
+msgstr "如果设置了这些标志中的任何一个，则LLVM会禁止相应内部函数的默认降低。相反，您必须提供一个自定义Pass，以根据需要降低内部函数。如果您已经选择了自定义降低某个特定的内在因素，那么您必须**删除选择加入到GC中的相应内在函数的所有实例。这种传球的最好的例子是ShadowStackGC，它是ShadowStackGCLowering传球。"
 
 #: ../../GarbageCollection.rst:882
 msgid ""
 "There is currently no way to register such a custom lowering pass without"
 " building a custom copy of LLVM."
-msgstr ""
+msgstr "目前没有办法在没有构建LLVM的定制副本的情况下注册这样的自定义降级Pass。"
 
 #: ../../GarbageCollection.rst:888
 msgid "Generating safe points: ``NeededSafePoints``"
-msgstr ""
+msgstr "生成安全点: ``NeededSafePoints`` "
 
 #: ../../GarbageCollection.rst:890
 msgid "LLVM can compute four kinds of safe points:"
-msgstr ""
+msgstr "LLVM可以计算四种安全点："
 
 #: ../../GarbageCollection.rst:905
 msgid ""
 "A collector can request any combination of the four by setting the "
 "``NeededSafePoints`` mask:"
-msgstr ""
+msgstr "收集器可以通过设置NeededSafePoints掩码来请求这四者的任意组合："
 
 #: ../../GarbageCollection.rst:917
 msgid "It can then use the following routines to access safe points."
-msgstr ""
+msgstr "然后它可以使用以下例程来访问安全点。"
 
 #: ../../GarbageCollection.rst:932
 msgid ""
 "Almost every collector requires ``PostCall`` safe points, since these "
 "correspond to the moments when the function is suspended during a call to"
 " a subroutine."
-msgstr ""
+msgstr "几乎每个收集器要求 ``PostCall`` 安全点，因为这些对应于函数在调用子例程期间暂停的时刻。"
 
 #: ../../GarbageCollection.rst:935
 msgid ""
@@ -1220,7 +1223,7 @@ msgid ""
 "that the application will reach a safe point within a bounded amount of "
 "time, even if it is executing a long-running loop which contains no "
 "function calls."
-msgstr ""
+msgstr "多线程程序通常需要使用 ``Loop`` 安全点来保证应用程序在有限的时间内到达安全点，即使它正在执行一个不包含函数调用的长时间运行的循环。"
 
 #: ../../GarbageCollection.rst:939
 msgid ""
@@ -1229,11 +1232,11 @@ msgid ""
 "code, where it is important that the program not exit the function "
 "without reaching a safe point (because only the topmost function has been"
 " patched)."
-msgstr ""
+msgstr "螺纹收集器也可能需要 ``Return`` 和 ``PreCall`` 安全点来实现使用自修改代码来“停止世界”的技术，在那里重要的是程序不能在没有达到安全点的情况下退出函数（因为只有最上面的功能已被修复）。"
 
 #: ../../GarbageCollection.rst:947
 msgid "Emitting assembly code: ``GCMetadataPrinter``"
-msgstr ""
+msgstr "生成汇编代码： ``GCMetadataPrinter`` "
 
 #: ../../GarbageCollection.rst:949
 msgid ""
@@ -1241,7 +1244,7 @@ msgid ""
 "the rest of a module's assembly code.  At the end of the module, the GC "
 "can compile the LLVM stack map into assembly code. (At the beginning, "
 "this information is not yet computed.)"
-msgstr ""
+msgstr "LLVM允许插件在模块的汇编代码的其余部分之前和之后打印任意汇编代码。在模块结束时，GC可以将LLVM堆栈映射编译为汇编代码。 （起初，这个信息还没有计算出来。）"
 
 #: ../../GarbageCollection.rst:954
 msgid ""
@@ -1250,17 +1253,17 @@ msgid ""
 "the ``GCMetadaPrinter`` and ``GCMetadataPrinterRegistry``.  The AsmWriter"
 " will look for such a subclass if the ``GCStrategy`` sets "
 "``UsesMetadata``:"
-msgstr ""
+msgstr "由于AsmWriter和CodeGen是LLVM的独立组件，因此为打印汇编代码， ``GCMetadaPrinter`` 和 ``GCMetadataPrinterRegistry`` 提供了独立的抽象基类和注册表。如果 ``GCStrategy`` 设置了  ``UsesMetadata`` ，AsmWriter将查找这样的子类："
 
 #: ../../GarbageCollection.rst:965
 msgid "This separation allows JIT-only clients to be smaller."
-msgstr ""
+msgstr "这种分离式设计可以让只含有JIT的编译器缩减体积。"
 
 #: ../../GarbageCollection.rst:967
 msgid ""
 "Note that LLVM does not currently have analogous APIs to support code "
 "generation in the JIT, nor using the object writers."
-msgstr ""
+msgstr "请注意，LLVM目前没有类似的API来支持JIT中的代码生成，也没有使用对象写入器。"
 
 #: ../../GarbageCollection.rst:991
 msgid ""
@@ -1268,11 +1271,11 @@ msgid ""
 "  The collector itself contains the stack map for the entire module, and "
 "may access the ``GCFunctionInfo`` using its own ``begin()`` and ``end()``"
 " methods.  Here's a realistic example:"
-msgstr ""
+msgstr "收集器应使用“AsmPrinter”来打印便携式汇编代码。收集器本身包含整个模块的堆栈映射，可以使用自己的 ``begin()`` 和 ``end()`` 方法访问GCFunctionInfo。这是一个真实的例子："
 
 #: ../../GarbageCollection.rst:1077
 msgid "References"
-msgstr ""
+msgstr "参考文献"
 
 #: ../../GarbageCollection.rst:1081
 msgid ""
