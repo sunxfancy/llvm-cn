@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../HowToCrossCompileLLVM.rst:3
 msgid "How To Cross-Compile Clang/LLVM using Clang/LLVM"
-msgstr ""
+msgstr "如何使用Clang/LLVM工具链来交叉编译Clang和LLVM"
 
 #: ../../HowToCrossCompileLLVM.rst:6
 msgid "Introduction"

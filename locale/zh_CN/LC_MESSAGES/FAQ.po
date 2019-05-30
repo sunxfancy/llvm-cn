@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../FAQ.rst:3
 msgid "Frequently Asked Questions (FAQ)"
-msgstr ""
+msgstr "常见的问题（FAQ）"
 
 #: ../../FAQ.rst:10
 msgid "License"

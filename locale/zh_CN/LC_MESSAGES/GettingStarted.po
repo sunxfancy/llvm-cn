@@ -240,29 +240,29 @@ msgstr ""
 
 #: ../../GettingStarted.rst:112
 msgid "The default target (i.e. ``make``) will build all of LLVM"
-msgstr ""
+msgstr "默认的构建目标（例如，直接执行 ``make``）将会构建整个LLVM"
 
 #: ../../GettingStarted.rst:114
 msgid ""
 "The ``check-all`` target (i.e. ``make check-all``) will run the "
 "regression tests to ensure everything is in working order."
-msgstr ""
+msgstr "构建目标 ``check-all`` （例如，执行 ``make check-all``）将会执行回归测试来确保所有部分都被正确有序地被执行。"
 
 #: ../../GettingStarted.rst:117
 msgid ""
 "CMake will generate build targets for each tool and library, and most "
 "LLVM sub-projects generate their own ``check-<project>`` target."
-msgstr ""
+msgstr "CMake将会为每个tools文件夹中的每个工具，以及每个库文件都创建一个构建目标，并且大多数LLVM子项目都有自己的 ``check-<project>`` 构建目标。"
 
 #: ../../GettingStarted.rst:120
 msgid "For more information see `CMake <CMake.html>`_"
-msgstr ""
+msgstr "更多详细内容，请参考 `CMake <CMake.html>`_ 相关文档。"
 
 #: ../../GettingStarted.rst:122
 msgid ""
 "If you get an \"internal compiler error (ICE)\" or test failures, see "
 "`below`_."
-msgstr ""
+msgstr "如果您遇见了 \"internal compiler error (ICE)\" 这一错误，或测试失败，请参考 `below`_ 。"
 
 #: ../../GettingStarted.rst:125
 msgid ""
@@ -272,6 +272,7 @@ msgid ""
 "Go to `Program Layout`_ to learn about the layout of the source code "
 "tree."
 msgstr ""
+
 
 #: ../../GettingStarted.rst:131
 msgid "Requirements"
@@ -869,7 +870,7 @@ msgstr ""
 
 #: ../../GettingStarted.rst:396
 msgid "Getting Started with LLVM"
-msgstr ""
+msgstr "开始使用LLVM"
 
 #: ../../GettingStarted.rst:398
 msgid ""
@@ -886,7 +887,7 @@ msgstr ""
 
 #: ../../GettingStarted.rst:406
 msgid "Terminology and Notation"
-msgstr ""
+msgstr "术语和符号"
 
 #: ../../GettingStarted.rst:408
 msgid ""
@@ -919,7 +920,7 @@ msgstr ""
 
 #: ../../GettingStarted.rst:427
 msgid "Setting Up Your Environment"
-msgstr ""
+msgstr "设置环境变量"
 
 #: ../../GettingStarted.rst:429
 msgid ""

@@ -9,51 +9,52 @@ msgstr ""
 "Project-Id-Version: LLVM 3.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-04-17 11:36+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2019-05-30 03:03-0700\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.3\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh\n"
+"X-Generator: Poedit 2.0.2\n"
 
 #: ../../Packaging.rst:3
 msgid "Advice on Packaging LLVM"
-msgstr ""
+msgstr "有关打包LLVM的建议"
 
 #: ../../Packaging.rst:9
 msgid "Overview"
-msgstr ""
+msgstr "概述"
 
 #: ../../Packaging.rst:11
 msgid ""
-"LLVM sets certain default configure options to make sure our developers "
-"don't break things for constrained platforms.  These settings are not "
-"optimal for most desktop systems, and we hope that packagers (e.g., "
-"Redhat, Debian, MacPorts, etc.) will tweak them.  This document lists "
-"settings we suggest you tweak."
+"LLVM sets certain default configure options to make sure our developers don't break things for constrained platforms.  These "
+"settings are not optimal for most desktop systems, and we hope that packagers (e.g., Redhat, Debian, MacPorts, etc.) will "
+"tweak them.  This document lists settings we suggest you tweak."
 msgstr ""
+"LLVM设置的默认配置选项，能确保我们的开发人员不会破坏特定平台的内容。但这些设置对于大多数桌面系统来说并不是最佳的，我们希望打包"
+"工具（例如Redhat，Debian，MacPorts等）能够对这些设置进行调整。本文档列出了我们建议您调整的设置。"
 
 #: ../../Packaging.rst:16
 msgid ""
-"LLVM's API changes with each release, so users are likely to want, for "
-"example, both LLVM-2.6 and LLVM-2.7 installed at the same time to support"
-" apps developed against each."
-msgstr ""
+"LLVM's API changes with each release, so users are likely to want, for example, both LLVM-2.6 and LLVM-2.7 installed at the "
+"same time to support apps developed against each."
+msgstr "LLVM的API随版本升级而变化，因此用户可能希望同时安装LLVM-2.6和LLVM-2.7，以支持针对不同版本开发的应用程序。"
 
 #: ../../Packaging.rst:21
 msgid "Compile Flags"
-msgstr ""
+msgstr "编译选项"
 
 #: ../../Packaging.rst:23
 msgid ""
-"LLVM runs much more quickly when it's optimized and assertions are "
-"removed. However, such a build is currently incompatible with users who "
-"build without defining ``NDEBUG``, and the lack of assertions makes it "
-"hard to debug problems in user code.  We recommend allowing users to "
-"install both optimized and debug versions of LLVM in parallel.  The "
-"following configure flags are relevant:"
+"LLVM runs much more quickly when it's optimized and assertions are removed. However, such a build is currently incompatible "
+"with users who build without defining ``NDEBUG``, and the lack of assertions makes it hard to debug problems in user code.  We "
+"recommend allowing users to install both optimized and debug versions of LLVM in parallel.  The following configure flags are "
+"relevant:"
 msgstr ""
+"LLVM在经过优化和移除断言后运行得更快。但是，该构建目前对于没有设置``NDEBUG``的用户不起作用，并且缺少断言使得用户很难调试代码中"
+"的bug。我们建议允许用户同时安装LLVM的release版和debug版本。下面是是相关的配置选项："
 
 #: ../../Packaging.rst:33
 msgid "``--disable-assertions``"
@@ -61,11 +62,11 @@ msgstr ""
 
 #: ../../Packaging.rst:30
 msgid ""
-"Builds LLVM with ``NDEBUG`` defined.  Changes the LLVM ABI.  Also "
-"available by setting ``DISABLE_ASSERTIONS=0|1`` in ``make``'s "
-"environment.  This defaults to enabled regardless of the optimization "
-"setting, but it slows things down."
+"Builds LLVM with ``NDEBUG`` defined.  Changes the LLVM ABI.  Also available by setting ``DISABLE_ASSERTIONS=0|1`` in "
+"``make``'s environment.  This defaults to enabled regardless of the optimization setting, but it slows things down."
 msgstr ""
+"使用``NDEBUG``选项来构建LLVM。会更改LLVM ABI。也可以在``make``的环境中设置``DISABLE_ASSERTIONS=0|1``。此选项默"
+"认为启用，无论优化选项如何，都会降低运行速度。"
 
 #: ../../Packaging.rst:38
 msgid "``--enable-debug-symbols``"
@@ -73,10 +74,11 @@ msgstr ""
 
 #: ../../Packaging.rst:36
 msgid ""
-"Builds LLVM with ``-g``.  Also available by setting ``DEBUG_SYMBOLS=0|1``"
-" in ``make``'s environment.  This defaults to disabled when optimizing, "
-"so you should turn it back on to let users debug their programs."
+"Builds LLVM with ``-g``.  Also available by setting ``DEBUG_SYMBOLS=0|1`` in ``make``'s environment.  This defaults to "
+"disabled when optimizing, so you should turn it back on to let users debug their programs."
 msgstr ""
+"使用``-g``构建LLVM。也可以在``make``的环境中设置``DEBUG_SYMBOLS=0|1``。release构建时默认为禁用，因此您应该重新打开它以允许用户调试"
+"其程序。"
 
 #: ../../Packaging.rst:44
 msgid "``--enable-optimized``"
@@ -84,60 +86,60 @@ msgstr ""
 
 #: ../../Packaging.rst:41
 msgid ""
-"(For svn checkouts) Builds LLVM with ``-O2`` and, by default, turns off "
-"debug symbols.  Also available by setting ``ENABLE_OPTIMIZED=0|1`` in "
-"``make``'s environment.  This defaults to enabled when not in a checkout."
+"(For svn checkouts) Builds LLVM with ``-O2`` and, by default, turns off debug symbols.  Also available by setting "
+"``ENABLE_OPTIMIZED=0|1`` in ``make``'s environment.  This defaults to enabled when not in a checkout."
 msgstr ""
+"（对于svn checkouts）使用``-O2``构建LLVM，默认情况下，关闭调试符号。也可以在``make``的环境中设置``ENABLE_OPTIMIZED = 0 | 1``。"
+"默认情况下，在非checkout环境时启用。"
 
 #: ../../Packaging.rst:47
 msgid "C++ Features"
-msgstr ""
+msgstr "C++ 特性"
 
 #: ../../Packaging.rst:52
 msgid "RTTI"
-msgstr ""
+msgstr "RTTI"
 
 #: ../../Packaging.rst:50
 msgid ""
-"LLVM disables RTTI by default.  Add ``REQUIRES_RTTI=1`` to your "
-"environment while running ``make`` to re-enable it.  This will allow "
-"users to build with RTTI enabled and still inherit from LLVM classes."
+"LLVM disables RTTI by default.  Add ``REQUIRES_RTTI=1`` to your environment while running ``make`` to re-enable it.  This will "
+"allow users to build with RTTI enabled and still inherit from LLVM classes."
 msgstr ""
+"LLVM默认禁用RTTI。在运行``make``时将``REQUIRES_RTTI = 1``添加到您的环境中以重新启用它。这将允许用户在启用RTTI的情况下进行构建，"
+"并仍然从LLVM类继承。"
 
 #: ../../Packaging.rst:55
 msgid "Shared Library"
-msgstr ""
+msgstr "动态库"
 
 #: ../../Packaging.rst:57
 msgid ""
-"Configure with ``--enable-shared`` to build "
-"``libLLVM-<major>.<minor>.(so|dylib)`` and link the tools against it.  "
-"This saves lots of binary size at the cost of some startup time."
+"Configure with ``--enable-shared`` to build ``libLLVM-<major>.<minor>.(so|dylib)`` and link the tools against it.  This saves "
+"lots of binary size at the cost of some startup time."
 msgstr ""
+"配置``--enable-shared``来构建``libLLVM-<major>.<minor>.(so|dylib)``并链接工具。这大量地节省了二进制文件大小，但需要花费一些启动"
+"时间。"
 
 #: ../../Packaging.rst:62
 msgid "Dependencies"
-msgstr ""
+msgstr "依赖项"
 
 #: ../../Packaging.rst:66
 msgid "``--enable-libffi``"
 msgstr ""
 
 #: ../../Packaging.rst:65
-msgid ""
-"Depend on `libffi <http://sources.redhat.com/libffi/>`_ to allow the LLVM"
-" interpreter to call external functions."
-msgstr ""
+msgid "Depend on `libffi <http://sources.redhat.com/libffi/>`_ to allow the LLVM interpreter to call external functions."
+msgstr "依赖于`libffi <http://sources.redhat.com/libffi/>`_允许LLVM解释器调用外部函数。"
 
 #: ../../Packaging.rst:68
 msgid "``--with-oprofile``"
-msgstr ""
+msgstr "``--with-oprofile``"
 
 #: ../../Packaging.rst:70
 msgid ""
-"Depend on `libopagent "
-"<http://oprofile.sourceforge.net/doc/devel/index.html>`_ (>=version "
-"0.9.4) to let the LLVM JIT tell oprofile about function addresses and "
-"line numbers."
+"Depend on `libopagent <http://oprofile.sourceforge.net/doc/devel/index.html>`_ (>=version 0.9.4) to let the LLVM JIT tell "
+"oprofile about function addresses and line numbers."
 msgstr ""
-
+"依赖于`libopagent <http://oprofile.sourceforge.net/doc/devel/index.html>`_（> = 0.9.4版）让LLVM JIT告诉oprofile有关函数地址和行"
+"号的信息。"

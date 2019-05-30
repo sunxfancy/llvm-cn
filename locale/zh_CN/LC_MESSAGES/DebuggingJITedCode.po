@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../DebuggingJITedCode.rst:3
 msgid "Debugging JIT-ed Code With GDB"
-msgstr ""
+msgstr "使用GDB来debug由JIT生成的机器码"
 
 #: ../../DebuggingJITedCode.rst:6
 msgid "Background"

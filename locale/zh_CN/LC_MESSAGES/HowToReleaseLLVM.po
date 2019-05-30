@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../HowToReleaseLLVM.rst:3
 msgid "How To Release LLVM To The Public"
-msgstr ""
+msgstr "如何发布LLVM"
 
 #: ../../HowToReleaseLLVM.rst:10
 msgid "Introduction"

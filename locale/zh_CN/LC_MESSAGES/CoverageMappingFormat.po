@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../CoverageMappingFormat.rst:6
 msgid "LLVM Code Coverage Mapping Format"
-msgstr ""
+msgstr "LLVM代码覆盖率映射格式"
 
 #: ../../CoverageMappingFormat.rst:12
 msgid "Introduction"

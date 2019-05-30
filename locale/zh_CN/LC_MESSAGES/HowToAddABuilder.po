@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../HowToAddABuilder.rst:3
 msgid "How To Add Your Build Configuration To LLVM Buildbot Infrastructure"
-msgstr ""
+msgstr "如何为LLVM构建机器人来添加您自己的构建参数"
 
 #: ../../HowToAddABuilder.rst:6
 msgid "Introduction"

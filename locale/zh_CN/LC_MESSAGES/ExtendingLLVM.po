@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../ExtendingLLVM.rst:3
 msgid "Extending LLVM: Adding instructions, intrinsics, types, etc."
-msgstr ""
+msgstr "扩展LLVM：增加新的指令，内部命令，类型等"
 
 #: ../../ExtendingLLVM.rst:6
 msgid "Introduction and Warning"

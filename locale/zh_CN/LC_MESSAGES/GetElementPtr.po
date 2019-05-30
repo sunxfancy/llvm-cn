@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../GetElementPtr.rst:3
 msgid "The Often Misunderstood GEP Instruction"
-msgstr ""
+msgstr "常被错误理解的GEP指令详解"
 
 #: ../../GetElementPtr.rst:9
 msgid "Introduction"

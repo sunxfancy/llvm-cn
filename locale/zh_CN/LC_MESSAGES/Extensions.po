@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../Extensions.rst:3
 msgid "LLVM Extensions"
-msgstr ""
+msgstr "LLVM扩展"
 
 #: ../../Extensions.rst:12
 msgid "Introduction"

@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../ExceptionHandling.rst:3
 msgid "Exception Handling in LLVM"
-msgstr ""
+msgstr "LLVM中的异常处理"
 
 #: ../../ExceptionHandling.rst:9
 msgid "Introduction"

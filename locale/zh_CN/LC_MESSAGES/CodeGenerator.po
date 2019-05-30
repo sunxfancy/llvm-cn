@@ -19,15 +19,15 @@ msgstr ""
 
 #: ../../CodeGenerator.rst:3
 msgid "The LLVM Target-Independent Code Generator"
-msgstr ""
+msgstr "LLVM的平台相关代码生成器"
 
 #: ../../CodeGenerator.rst:26
 msgid "This is a work in progress."
-msgstr ""
+msgstr "该部分工作仍在进行中。"
 
 #: ../../CodeGenerator.rst:29
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
 
 #: ../../CodeGenerator.rst:31
 msgid ""

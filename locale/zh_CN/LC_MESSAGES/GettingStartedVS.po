@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../GettingStartedVS.rst:3
 msgid "Getting Started with the LLVM System using Microsoft Visual Studio"
-msgstr ""
+msgstr "通过Microsoft Visual Studio来开始使用LLVM系统"
 
 #: ../../GettingStartedVS.rst:10
 msgid "Overview"

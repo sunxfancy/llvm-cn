@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../CompilerWriterInfo.rst:3
 msgid "Architecture & Platform Information for Compiler Writers"
-msgstr ""
+msgstr "为编译器开发者编写的体系结构及平台信息手册"
 
 #: ../../CompilerWriterInfo.rst:10
 msgid ""

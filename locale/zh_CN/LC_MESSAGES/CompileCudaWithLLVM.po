@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../CompileCudaWithLLVM.rst:3
 msgid "Compiling CUDA C/C++ with LLVM"
-msgstr ""
+msgstr "使用LLVM编译CUDA C/C++程序"
 
 #: ../../CompileCudaWithLLVM.rst:9
 msgid "Introduction"

@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../GoldPlugin.rst:3
 msgid "The LLVM gold plugin"
-msgstr ""
+msgstr "LLVM gold插件"
 
 #: ../../GoldPlugin.rst:6
 msgid "Introduction"

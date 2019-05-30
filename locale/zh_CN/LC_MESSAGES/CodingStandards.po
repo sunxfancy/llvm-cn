@@ -19,11 +19,11 @@ msgstr ""
 
 #: ../../CodingStandards.rst:3
 msgid "LLVM Coding Standards"
-msgstr ""
+msgstr "LLVM 代码规范"
 
 #: ../../CodingStandards.rst:9
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
 
 #: ../../CodingStandards.rst:11
 msgid ""
